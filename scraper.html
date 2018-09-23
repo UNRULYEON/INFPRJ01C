@@ -8,6 +8,17 @@
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="http://danml.com/js/download.js"></script>
+    <style>
+      #problem-container{
+        border: 1px solid #eeeeee;
+        padding: 20px;
+      }
+      #problem-container > p{
+      }
+      #problem-container > p:nth-child(odd) {
+        background: #eeeeee;
+      }
+    </style>
   </header>
   <body>
       <div class="container">
@@ -47,7 +58,9 @@
               <span id="total-painter-details" style="margin-left: 10px;"></span>
             </div>
             <button class="button button-outline" id="clear-log" onclick="clearLog()" disabled>Clear log</button>
-            <div id="problem-container"></div>
+            <div id="problem-container">
+              <h3>ERROR LOG</h3>
+            </div>
           </fieldset>
           <div>
             <h2>Results (collection)</h2>
