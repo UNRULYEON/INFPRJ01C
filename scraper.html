@@ -1,0 +1,247 @@
+<html>
+  <header>
+    <title>Rijksmuseum Scraper</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+    <link rel="stylesheet" href="https://cdn.rawgit.com/necolas/normalize.css/master/normalize.css">
+    <link rel="stylesheet" href="https://cdn.rawgit.com/milligram/milligram/master/dist/milligram.min.css">
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="http://danml.com/js/download.js"></script>
+  </header>
+  <body>
+      <div class="container">
+
+      <div class="row">
+        <div class="column column-20"></div>
+        <div class="column column-60">
+          <fieldset style="margin-top: 50px;">
+            <label for="type">Type</label>
+            <select id="type">
+              <option value="schilderij">Schilderij</option>
+            </select>
+            <label for="key">Key</label>
+            <input type="text" placeholder="5nYAVAUm" id="key">
+            <label for="min_res_p">Start result page (10 items)</label>
+            <input type="text" placeholder="1" id="min_res_p">
+            <label for="max_res_p">End result page (10 items)</label>
+            <input type="text" placeholder="10.000" id="max_res_p">
+            <div>
+              <input type="checkbox" id="imageOnly">
+              <label class="label-inline" for="imageOnly">Image only</label>
+            </div>
+            <div>
+              <button class="button button-outline" onclick="getTotal()">Get total</button>
+              <span id="count" style="margin-left: 10px;"></span>
+            </div>
+            <div>
+              <button class="button" onclick="previewCollection()" id="preview">Preview collection</button>
+              <span id="total-collection" style="margin-left: 10px;"></span>
+            </div>
+            <div>
+              <button class="button" onclick="previewCollectionDetails()" id="get-collection-details" disabled>Preview collection details</button>
+              <span id="total-collection-details" style="margin-left: 10px;"></span>
+            </div>
+            <div>
+              <button class="button" onclick="previewPainterDetails()" id="get-painter-details" disabled>Preview painter details</button>
+              <span id="total-painter-details" style="margin-left: 10px;"></span>
+            </div>
+            <button class="button button-outline" id="clear-log" onclick="clearLog()" disabled>Clear log</button>
+            <div id="problem-container"></div>
+          </fieldset>
+          <div>
+            <h2>Results (collection)</h2>
+            <button class="button button-outline" onclick="downloadJSON('collection')" id="downloadCollection" disabled>Download collection</button>
+            <button class="button button-outline" onclick="downloadJSON('collectionDetails')" id="downloadCollectionDetails" disabled>Download collection details</button>
+            <button class="button button-outline" onclick="downloadJSON('painterDetails')" id="downloadPainterDetails" disabled>Download painter details</button>
+          </div>
+          <pre class="prettyprint lang-xml" id="result"></pre>
+        </div>
+        <div class="column column-20"></div>
+      </div>
+    </div>
+
+    <script>
+      let dataCollection = []
+      let dataCollectionDetails = []
+      let dataPainterDetails = []
+
+      function previewCollection() {
+        dataCollection = []
+        dataCollectionDetails = []
+        dataPainterDetails = []
+
+        document.getElementById('total-collection-details').innerHTML = ""
+        document.getElementById('total-painter-details').innerHTML = ""
+
+        document.getElementById('downloadCollectionDetails').disabled = true;
+        document.getElementById('downloadPainterDetails').disabled = true;
+
+        let baseURL = "https://www.rijksmuseum.nl/api/nl/collection";
+
+        let type = document.getElementById('type').value;
+        let key = document.getElementById('key').value;
+        let imageOnly = document.getElementById('imageOnly').checked ? "&imgonly=true" : "";
+        let min = document.getElementById('min_res_p').value;
+        let max = document.getElementById('max_res_p').value;
+
+        let urlCollection = baseURL + "?key=" + key + "&type=" + type + imageOnly + "&format=json";
+
+        console.log(urlCollection);
+
+        if(key && min && max) {
+          for (min; min <= max; min++) {
+            fetch(urlCollection + "&p=" + min) //returns a promise
+            .then(function(response){
+              if (response.status !== 200) {
+                console.log("Looks like there was a problem. Status code: " + response.status);
+                let msg = '<p>[COLLECTION] - Status code: <strong>' + response.status,
+                    div = document.getElementById("problem-container")
+
+                div.insertAdjacentHTML('beforeend', msg)
+                document.getElementById('clear-log').disabled = false;
+                return
+              }
+
+              response.json()
+              .then(data => {
+                console.log(data)
+                for (i = 0; i < data.artObjects.length; i++) {
+                  dataCollection.push(data.artObjects[i])
+                  document.getElementById('total-collection').innerHTML = "Total items: " + dataCollection.length;
+                }
+                if (dataCollection.length < 100) {
+                  document.getElementById("result").innerHTML = JSON.stringify(dataCollection, undefined, 2);
+                }
+                document.getElementById('downloadCollection').disabled = false;
+                document.getElementById('get-collection-details').disabled = false;
+                document.getElementById('get-painter-details').disabled = false;
+              })
+            })
+          }
+        } else {
+          alert('Can\'t preview data without the key, min and max');
+        }
+      }
+
+      function previewCollectionDetails() {
+        for (i = 0; i < dataCollection.length; i++) {
+          let urlCollectionDetails = "https://www.rijksmuseum.nl/api/nl/collection/" + dataCollection[i].objectNumber + "?key=5nYAVAUm&format=json"
+
+          fetch(urlCollectionDetails)
+          .then(response => {
+            if (response.status !== 200) {
+              console.log("Looks like there was a problem. Status code: " + response.status);
+              let msg = '<p>[COLLECTION DETAILS] - Status code: <strong>' + response.status,
+                  div = document.getElementById("problem-container")
+
+              div.insertAdjacentHTML('beforeend', msg)
+              document.getElementById('clear-log').disabled = false;
+              return
+            }
+
+            response.json()
+            .then(data => {
+              console.log(data)
+              dataCollectionDetails.push(data.artObject)
+              document.getElementById('total-collection-details').innerHTML = "Total items: " +  dataCollectionDetails.length;
+            })
+
+            document.getElementById('downloadCollectionDetails').disabled = false;
+          })
+        }
+      }
+
+      function previewPainterDetails() {
+        for(i = 0; i < dataCollection.length; i++) {
+          let painter = dataCollection[i].principalOrFirstMaker.toLowerCase().replace(/ /g,"-")
+
+          let urlPainterDetials = "https://www.rijksmuseum.nl/api/pages/nl/rijksstudio/kunstenaars/" + painter + "?key=5nYAVAUm&format=json"
+          fetch(urlPainterDetials)
+          .then(response => {
+            if (response.status !== 200) {
+              console.log("Looks like there was a problem. Status code: " + response.status);
+              let msg = '<p>[PAINTER DETAILS] - Status code: <strong>' + response.status + '</strong>. Painter: <strong>' + painter + '</strong>',
+                  msg2 = '<p>[PAINTER DETAILS] - URL: <strong>' + urlPainterDetials + '</strong>',
+                  div = document.getElementById("problem-container")
+
+              div.insertAdjacentHTML('beforeend', msg)
+              div.insertAdjacentHTML('beforeend', msg2)
+              document.getElementById('clear-log').disabled = false;
+              return
+            }
+
+            response.json()
+            .then(data => {
+              console.log(data)
+              dataPainterDetails.push(data.contentPage)
+              document.getElementById('total-painter-details').innerHTML = "Total items: " +  dataPainterDetails.length;
+            })
+
+            document.getElementById('downloadPainterDetails').disabled = false;
+          })
+        }
+      }
+
+      function downloadJSON(type) {
+        switch (type) {
+          case "collection":
+            console.log(dataCollection)
+            download(JSON.stringify(dataCollection), "Collection.json", "application/json");
+            break;
+          case "collectionDetails":
+            console.log(dataCollectionDetails)
+            download(JSON.stringify(dataCollectionDetails), "CollectionDetails.json", "application/json");
+            break;
+          case "painterDetails":
+            console.log(dataPainterDetails)
+            download(JSON.stringify(dataPainterDetails), "Painter.json", "application/json");
+            break;
+        }
+      }
+
+      function getTotal() {
+
+        document.getElementById('downloadCollection').disabled = true;
+        document.getElementById('downloadCollectionDetails').disabled = true;
+        document.getElementById('downloadPainterDetails').disabled = true;
+        document.getElementById('get-collection-details').disabled = true;
+        document.getElementById('get-painter-details').disabled = true;
+        document.getElementById('total-collection').innerHTML = ""
+        document.getElementById('total-collection-details').innerHTML = ""
+        document.getElementById('total-painter-details').innerHTML = ""
+
+
+        let baseURL = "https://www.rijksmuseum.nl/api/nl/collection";
+
+        let type = document.getElementById('type').value;
+        let key = document.getElementById('key').value;
+        let imageOnly = document.getElementById('imageOnly').checked ? "&imgonly=true" : "";
+
+        const urlCollection = baseURL + "?key=" + key + "&type=" + type + imageOnly + "&format=json";
+
+        console.log(urlCollection);
+
+        if(key) {
+          fetch(urlCollection) //returns a promise
+            .then(res => res.json()) //here we're returning another promise that res.json() returns when the data is ready
+            .then(data => {
+              document.getElementById("count").innerHTML = "Total: " + data.count + " items. Recommended maximum: " + Math.ceil((data.count / 10));
+            });
+        } else {
+          alert('Can\'t get the total count without a key');
+        }
+      }
+
+      function clearLog() {
+        document.getElementById('problem-container').innerHTML = ""
+        document.getElementById('clear-log').disabled = true;
+      }
+    </script>
+
+
+    <script id="__bs_script__">//<![CDATA[
+      document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.24.7'><\/script>".replace("HOST", location.hostname));
+  //]]></script>
+  </body>
+</html>
