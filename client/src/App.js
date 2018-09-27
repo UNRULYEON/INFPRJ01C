@@ -1,33 +1,35 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import {
+  BrowserRouter as Router,
+  Route
+} from 'react-router-dom';
 import './App.css';
 
-class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      message: []
-    }
-  }
+// Views
+import Home from './views/home/Home';
+import Schilderijen from './views/schilderijen/Schilderijen';
+import Schilders from './views/schilders/Schilders';
 
-  componentDidMount() {
-    fetch('/')
-      .then(res => this.setState({res}));
-  }
+// Components
+import Header from './components/header/Header';
+import Footer from './components/footer/Footer';
+
+class App extends Component {
 
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          {this.state.message.map(message =>
-            <p key={message.id}>{ message }</p>
-          )}
-        </p>
-      </div>
+      <Router>
+        <div className="App">
+          <Header/>
+          <Route exact path="/" component={Home}/>
+          <Route path="/schilderijen" component={Schilderijen}/>
+          <Route path="/schilders" component={Schilders}/>
+          {/* TODO: make a footer */}
+                <Footer />
+                {/* <Footer />  */}
+                {/* <Link */}
+        </div>
+      </Router>
     );
   }
 }
