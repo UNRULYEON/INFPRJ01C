@@ -32,9 +32,9 @@
               <option value="schilderij">Schilderij</option>
             </select>
             <label for="key">Key</label>
-            <input type="text" placeholder="5nYAVAUm" id="key">
+            <input type="text" id="key" value="5nYAVAUm">
             <label for="min_res_p">Start result page (10 items)</label>
-            <input type="text" placeholder="1" id="min_res_p">
+            <input type="text" value="1" id="min_res_p">
             <label for="max_res_p">End result page (10 items)</label>
             <input type="text" placeholder="10.000" id="max_res_p">
             <div>
@@ -120,8 +120,11 @@
               .then(data => {
                 console.log(data)
                 for (i = 0; i < data.artObjects.length; i++) {
-                  dataCollection.push(data.artObjects[i])
-                  document.getElementById('total-collection').innerHTML = "Total items: " + dataCollection.length;
+				  if(data.artObjects[i].productionPlaces != 'undefined' && data.artObjects[i].productionPlaces.length > 0){
+					dataCollection.push(data.artObjects[i])
+					document.getElementById('total-collection').innerHTML = "Total items: " + dataCollection.length;
+				  }
+                  
                 }
                 if (dataCollection.length < 100) {
                   document.getElementById("result").innerHTML = JSON.stringify(dataCollection, undefined, 2);
