@@ -8,7 +8,7 @@ class Schilderijen extends Component {
 
   render() {
     return (
-      <section>
+      <section className="section-container">
         <PageTitle title="Schilderijen"/>
       </section>
     );
