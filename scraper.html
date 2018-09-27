@@ -168,14 +168,31 @@
         }
       }
 
+	  
+	    function removeAccents(str) {
+		  let accents = 'ÀÁÂÃÄÅàáâãäåßÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüÑñŠšŸÿýŽž';
+		  let accentsOut = "AAAAAAaaaaaaBOOOOOOOooooooEEEEeeeeeCcDIIIIiiiiUUUUuuuuNnSsYyyZz";
+		  str = str.split('');
+		  str.forEach((letter, index) => {
+			let i = accents.indexOf(letter);
+			if (i != -1) {
+			  str[index] = accentsOut[i];
+			}
+		  })
+		  return str.join('');
+		}
+	  
       function previewPainterDetails() {
         for(i = 0; i < dataCollection.length; i++) {
           let painter = dataCollection[i].principalOrFirstMaker.toLowerCase().replace(/ /g,"-")
-
+		  
+		  painter = removeAccents(painter);
           let urlPainterDetials = "https://www.rijksmuseum.nl/api/pages/nl/rijksstudio/kunstenaars/" + painter + "?key=5nYAVAUm&format=json"
+		  console.log(urlPainterDetials);
           fetch(urlPainterDetials)
           .then(response => {
             if (response.status !== 200) {
+			  
               console.log("Looks like there was a problem. Status code: " + response.status);
               let msg = '<p>[PAINTER DETAILS] - Status code: <strong>' + response.status + '</strong>. Painter: <strong>' + painter + '</strong>',
                   msg2 = '<p>[PAINTER DETAILS] - URL: <strong>' + urlPainterDetials + '</strong>',
