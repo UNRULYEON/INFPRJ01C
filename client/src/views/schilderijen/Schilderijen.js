@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
+import './Schilderijen.css'
+
+// Components
+import PageTitle from '../../components/pageLink/PageLink'
 
 class Schilderijen extends Component {
 
   render() {
     return (
-      <div>
-        <h2>Schilderijen</h2>
-      </div>
+      <section>
+        <PageTitle title="Schilderijen"/>
+      </section>
     );
   }
 }

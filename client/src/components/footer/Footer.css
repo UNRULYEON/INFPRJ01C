@@ -1,0 +1,35 @@
+footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: #EEEEEE;
+    width: 100%;
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+
+footer-container {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+#post{
+    float: left;
+    width: 30%;
+    margin-left: 10px;
+}
+
+#mos {
+    float: left;
+    width: 30%;
+    margin-left: 10px;
+}
+
+#vs {
+    float: left;
+    width: 30%;
+    margin-left: 10px;
+}

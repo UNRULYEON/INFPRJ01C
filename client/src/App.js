@@ -1,14 +1,18 @@
 import React, { Component } from 'react';
 import {
   BrowserRouter as Router,
-  Route,
-  Link
+  Route
 } from 'react-router-dom';
 import './App.css';
 
+// Views
 import Home from './views/home/Home';
 import Schilderijen from './views/schilderijen/Schilderijen';
 import Schilders from './views/schilders/Schilders';
+
+// Components
+import Header from './components/header/Header';
+import Footer from './components/footer/Footer';
 
 class App extends Component {
 
@@ -16,17 +20,14 @@ class App extends Component {
     return (
       <Router>
         <div className="App">
-          <header className="App-header">
-            <h1 className="App-title">Welcome to React</h1>
-            <ul>
-              <li><Link to="/">Home</Link></li>
-              <li><Link to="/schilderijen">About</Link></li>
-              <li><Link to="/schilders">Topics</Link></li>
-            </ul>
-          </header>
+          <Header/>
           <Route exact path="/" component={Home}/>
           <Route path="/schilderijen" component={Schilderijen}/>
           <Route path="/schilders" component={Schilders}/>
+          {/* TODO: make a footer */}
+                <Footer />
+                {/* <Footer />  */}
+                {/* <Link */}
         </div>
       </Router>
     );
