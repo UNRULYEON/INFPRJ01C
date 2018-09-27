@@ -5,6 +5,10 @@ import {
 } from 'react-router-dom';
 import './Header.css';
 
+// Icons
+import cart from '../../icons/cart.svg';
+import arrow_down from '../../icons/arrow_down.svg';
+
 class Header extends Component {
 
   render() {
@@ -18,7 +22,11 @@ class Header extends Component {
             <input id="search-bar-input" placeholder="Zoeken"></input>
           </div>
           <div id="header-actions">
-            <span>testest</span>
+            <span>
+              Inloggen
+              <img src={arrow_down} alt="ad" width="24"/>
+            </span>
+            <span><img src={cart} alt="Cart" width="44"/></span>
           </div>
         </div>
         <div id="header-container-secondary">

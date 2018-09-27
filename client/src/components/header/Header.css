@@ -2,7 +2,8 @@ header{
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
-  width: 100%;
+  width: calc(100% - 100px);
+  padding: 0 50px;
   border-bottom: 1px solid #eeeeee;
 }
 
@@ -46,7 +47,7 @@ header{
 #header-actions{
   display: flex;
   flex-flow: row nowrap;
-  align-self: center;
+  align-items: center;
   justify-content: flex-end;
   text-align: right;
   min-width: 200px;
