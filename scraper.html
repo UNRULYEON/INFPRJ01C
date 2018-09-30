@@ -120,27 +120,27 @@
               .then(data => {
                 console.log(data)
                 for (i = 0; i < data.artObjects.length; i++) {
-				  if(data.artObjects[i].productionPlaces != 'undefined' && data.artObjects[i].productionPlaces.length > 0){
-					dataCollection.push(data.artObjects[i])
-					document.getElementById('total-collection').innerHTML = "Total items: " + dataCollection.length;
-				  }
-                  
+                  if(data.artObjects[i].productionPlaces != 'undefined' && data.artObjects[i].productionPlaces.length > 0){
+                    dataCollection.push(data.artObjects[i])
+                    document.getElementById('total-collection').innerHTML = "Total items: " + dataCollection.length;
+                  }
+
+                  if (dataCollection.length < 100) {
+                    document.getElementById("result").innerHTML = JSON.stringify(dataCollection, undefined, 2);
+                  }
                 }
-                if (dataCollection.length < 100) {
-                  document.getElementById("result").innerHTML = JSON.stringify(dataCollection, undefined, 2);
-                }
-                document.getElementById('downloadCollection').disabled = false;
-                document.getElementById('get-collection-details').disabled = false;
-                document.getElementById('get-painter-details').disabled = false;
               })
             })
           }
+          document.getElementById('downloadCollection').disabled = false;
+          document.getElementById('get-collection-details').disabled = false;
         } else {
           alert('Can\'t preview data without the key, min and max');
         }
       }
 
       function previewCollectionDetails() {
+        dataCollectionDetails = []
         for (i = 0; i < dataCollection.length; i++) {
           let urlCollectionDetails = "https://www.rijksmuseum.nl/api/nl/collection/" + dataCollection[i].objectNumber + "?key=5nYAVAUm&format=json"
 
@@ -164,19 +164,23 @@
             })
 
             document.getElementById('downloadCollectionDetails').disabled = false;
+            document.getElementById('get-painter-details').disabled = false;
           })
         }
       }
 
       function previewPainterDetails() {
+        dataPainterDetails = []
         for(i = 0; i < dataCollection.length; i++) {
+
+          let currentItem = dataCollection[i]
           let painter = dataCollection[i].principalOrFirstMaker.toLowerCase().replace(/ /g,"-")
 
           let urlPainterDetials = "https://www.rijksmuseum.nl/api/pages/nl/rijksstudio/kunstenaars/" + painter + "?key=5nYAVAUm&format=json"
           fetch(urlPainterDetials)
           .then(response => {
             if (response.status !== 200) {
-              console.log("Looks like there was a problem. Status code: " + response.status);
+              console.log("Looks like there was a problem. Removing items from other collections. Status code: " + response.status);
               let msg = '<p>[PAINTER DETAILS] - Status code: <strong>' + response.status + '</strong>. Painter: <strong>' + painter + '</strong>',
                   msg2 = '<p>[PAINTER DETAILS] - URL: <strong>' + urlPainterDetials + '</strong>',
                   div = document.getElementById("problem-container")
@@ -184,6 +188,16 @@
               div.insertAdjacentHTML('beforeend', msg)
               div.insertAdjacentHTML('beforeend', msg2)
               document.getElementById('clear-log').disabled = false;
+
+              // let j = dataCollection.indexOf(currentItem)
+              // dataCollection.splice(j, 1)
+
+              // let l = dataCollectionDetails.indexOf(currentItem)
+              // dataCollectionDetails.splice(l, 1)
+
+              // console.log('Current dataCollection array: ' + dataCollection.length)
+              // console.log('Current dataCollectionDetails array: ' + dataCollectionDetails.length)
+
               return
             }
 
@@ -194,6 +208,11 @@
               document.getElementById('total-painter-details').innerHTML = "Total items: " +  dataPainterDetails.length;
             })
 
+            if (dataCollection.length < 100) {
+              document.getElementById("result").innerHTML = JSON.stringify(dataCollection, undefined, 2);
+            }
+            document.getElementById('total-collection').innerHTML = "Total items: " + dataCollection.length;
+            document.getElementById('total-collection-details').innerHTML = "Total items: " +  dataCollectionDetails.length;
             document.getElementById('downloadPainterDetails').disabled = false;
           })
         }
