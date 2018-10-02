@@ -16,7 +16,7 @@ class Header extends Component {
       <header>
         <div id="header-container-primary">
           <div id="header-name">
-            <Link to="/">WEBSHOP NAME</Link>
+            <Link to="/">ARTIC</Link>
           </div>
           <div id="header-searchbar">
             <input id="search-bar-input" placeholder="Zoeken"></input>
