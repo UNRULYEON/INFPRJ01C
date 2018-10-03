@@ -23,6 +23,7 @@
     "concurrently": "^4.0.1",
     "express": "^4.16.3",
     "nodemon": "^1.18.4",
+    "pg-promise": "^8.4.6",
     "react-router-dom": "^4.3.1"
   }
 }
