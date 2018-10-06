@@ -50,7 +50,7 @@ class Schilderijen extends Component {
           src: 'https://picsum.photos/300/600/?image=' + (Math.floor(Math.random() * 100) + 1),
           width: 300,
           height: 600,
-          title: 'TITLE 3',
+          title: 'TITLE 4',
           id: '3',
           price: '12,345.67',
           createdAt: new Date(2018, 12, 4)
@@ -59,7 +59,7 @@ class Schilderijen extends Component {
           src: 'https://picsum.photos/450/300/?image=' + (Math.floor(Math.random() * 100) + 1),
           width: 450,
           height: 300,
-          title: 'TITLE 4',
+          title: 'TITLE 5',
           id: '4',
           price: '12,345.67',
           createdAt: new Date(2018, 1, 4)
@@ -68,7 +68,7 @@ class Schilderijen extends Component {
           src: 'https://picsum.photos/600/600/?image=' + (Math.floor(Math.random() * 100) + 1),
           width: 600,
           height: 600,
-          title: 'TITLE 5',
+          title: 'TITLE 6',
           id: '5',
           price: '12,345.67',
           createdAt: new Date(2017, 12, 4)
