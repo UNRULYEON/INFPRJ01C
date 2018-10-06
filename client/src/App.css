@@ -272,3 +272,25 @@ a {
 .y-center{
   justify-content: center;
 }
+
+/* ATTRIBUTES */
+
+.pointer{
+  cursor: pointer;
+}
+
+.header-button{
+  transition: .2s ease-in-out;
+  border-radius: 5px;
+  padding: 10px;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select:none;
+  user-select:none;
+  -o-user-select:none;
+}
+
+.header-button:hover{
+  background: #eeeeee;
+  transition: .2s ease-in-out;
+}

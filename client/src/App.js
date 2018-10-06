@@ -25,7 +25,7 @@ class App extends Component {
           <Route path="/schilderijen" component={Schilderijen}/>
           <Route path="/schilders" component={Schilders}/>
           {/* TODO: make a footer */}
-                <Footer />
+                {/* <Footer /> */}
                 {/* <Footer />  */}
                 {/* <Link */}
         </div>

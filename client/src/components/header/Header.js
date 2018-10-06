@@ -22,11 +22,11 @@ class Header extends Component {
             <input id="search-bar-input" placeholder="Zoeken"></input>
           </div>
           <div id="header-actions">
-            <span className="flex x-center mr-2">
+            <span className="flex x-center mr-2 pointer header-button">
               Inloggen
               <img src={arrow_down} alt="ad" width="24"/>
             </span>
-            <span><img src={cart} alt="Cart" width="44"/></span>
+            <span className="pointer header-button"><img src={cart} alt="Cart" width="32"/></span>
           </div>
         </div>
         <div id="header-container-secondary">
