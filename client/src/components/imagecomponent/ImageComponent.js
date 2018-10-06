@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import Img from 'react-image'
+import Loading from '../../components/loading/Loading'
+import './imageComponent.css'
 
 // Icons
 import cart from '../../icons/cart.svg';
@@ -7,7 +10,20 @@ class ImageComponent extends Component {
   render() {
     return(
       <div className="item-container" >
-        <img src={this.props.photo.src} alt="foo" className="item-image" width={this.props.photo.width} heigh={this.props.photo.height}/>
+      <Img
+        src={[
+          this.props.photo.src
+        ]}
+        width={
+          this.props.photo.width
+        }
+        height={
+          this.props.photo.height
+        }
+        key={this.props.photo.id}
+        loader={<Loading size={100} borderSize={10}/>}
+        unloader={<div className="error">It seems there was a problem<br/>loading this image.<br/>Reload the page</div>}
+      />
         <div className="item-details">
           <div className="item-details-text">
             <span className="item-details-title">{this.props.photo.title}</span>

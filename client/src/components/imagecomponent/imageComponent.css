@@ -1,0 +1,9 @@
+.error{
+  display: flex;
+  flex-flow: row nowrap;
+  height: calc(100% - 80px);
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border: 1px solid black;
+}
