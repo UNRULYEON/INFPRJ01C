@@ -31,8 +31,8 @@ class Header extends Component {
         </div>
         <div id="header-container-secondary">
           <ul id="header-nav-lu">
-            <li><NavLink to="/schilderijen" activeClassName="linkSelected">Schilderijen</NavLink></li>
-            <li><NavLink to="/schilders" activeClassName="linkSelected">Schilders</NavLink></li>
+            <li><NavLink exact to="/schilderijen" activeClassName="linkSelected">Schilderijen</NavLink></li>
+            <li><NavLink exact to="/schilders" activeClassName="linkSelected">Schilders</NavLink></li>
           </ul>
         </div>
       </header>
