@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { NavLink } from 'react-router-dom'
 import Img from 'react-image'
 import Loading from '../../components/loading/Loading'
 import './imageComponent.css'
@@ -12,8 +13,12 @@ class ImageComponent extends Component {
       width: this.props.photo.width - 60
     }
 
+    function getLocal(prop) {
+      return "schilderij/" + prop.photo.id;
+    }
+
     return(
-      <div className="item-container" width={this.props.photo.width}>
+      <NavLink exact to={getLocal(this.props)} className="item-container" width={this.props.photo.width}>
       <Img
         src={[
           this.props.photo.src
@@ -39,7 +44,7 @@ class ImageComponent extends Component {
             </button>
           </div>
         </div>
-      </div>
+      </NavLink>
     );
   }
 }

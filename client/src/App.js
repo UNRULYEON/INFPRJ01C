@@ -8,6 +8,7 @@ import './App.css';
 // Views
 import Home from './views/home/Home';
 import Schilderijen from './views/schilderijen/Schilderijen';
+import SchilderijDetails from './views/schilderijDetails/SchilderijDetails';
 import Schilders from './views/schilders/Schilders';
 
 // Components
@@ -15,7 +16,6 @@ import Header from './components/header/Header';
 import Footer from './components/footer/Footer';
 
 class App extends Component {
-
   render() {
     return (
       <Router>
@@ -23,6 +23,7 @@ class App extends Component {
           <Header/>
           <Route exact path="/" component={Home}/>
           <Route path="/schilderijen" component={Schilderijen}/>
+          <Route path="/schilderij/:id" component={SchilderijDetails}/>
           <Route path="/schilders" component={Schilders}/>
           {/* TODO: make a footer */}
                 {/* <Footer /> */}
