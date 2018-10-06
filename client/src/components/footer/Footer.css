@@ -15,21 +15,49 @@ footer-container {
     bottom: 0;
     right: 0;
 }
-
-#post{
+.footer-container {
+    text-align: center;
+    color: grey;
+}
+#post {
     float: left;
-    width: 30%;
-    margin-left: 10px;
+    width: 25%;
+}
+
+#betaalwijzen {
+    float: left;
+    width: 24%;
+    height: 150px;
+    border-left: solid black 1px;
+
+}
+
+#uno{
+    list-style: none;
+    float: left;
+}
+
+#dos{
+    list-style: none;
+    float: left;
 }
 
 #mos {
     float: left;
-    width: 30%;
-    margin-left: 10px;
+    width: 24%;
+    border-left: solid black 1px;
+    height: 150px;
+}
+
+#footerMosList{
+    text-align:left;
+    margin-left: 50px;
+    list-style: none;
+
 }
 
 #vs {
     float: left;
-    width: 30%;
-    margin-left: 10px;
+    width: 25%;
+    border-left: solid black 1px;
 }
