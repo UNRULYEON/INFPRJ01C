@@ -281,6 +281,11 @@ a {
   flex-flow: column nowrap;
 }
 
+.center{
+  align-items: center;
+  justify-content: center;
+}
+
 .x-center{
   align-items: center;
 }
