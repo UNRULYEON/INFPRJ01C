@@ -18,21 +18,23 @@ class ImageComponent extends Component {
     }
 
     return(
-      <NavLink exact to={getLocal(this.props)} className="item-container" width={this.props.photo.width}>
-      <Img
-        src={[
-          this.props.photo.src
-        ]}
-        width={
-          this.props.photo.width
-        }
-        height={
-          this.props.photo.height
-        }
-        key={this.props.photo.id}
-        loader={<Loading size={100} borderSize={10}/>}
-        unloader={<div className="error">It seems there was a problem<br/>loading this image.<br/>Reload the page</div>}
-      />
+      <div className="item-container" width={this.props.photo.width}>
+      <NavLink exact to={getLocal(this.props)}>
+        <Img
+          src={[
+            this.props.photo.src
+          ]}
+          width={
+            this.props.photo.width
+          }
+          height={
+            this.props.photo.height
+          }
+          key={this.props.photo.id}
+          loader={<Loading size={100} borderSize={10}/>}
+          unloader={<div className="error">It seems there was a problem<br/>loading this image.<br/>Reload the page</div>}
+        />
+      </NavLink>
         <div className="item-details" style={width}>
           <div className="item-details-text">
             <span className="item-details-title">{this.props.photo.title}</span>
@@ -44,7 +46,7 @@ class ImageComponent extends Component {
             </button>
           </div>
         </div>
-      </NavLink>
+      </div>
     );
   }
 }
