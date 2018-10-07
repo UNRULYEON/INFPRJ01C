@@ -315,3 +315,9 @@ a {
   background: #eeeeee;
   transition: .2s ease-in-out;
 }
+
+.divider{
+  width: 100%;
+  height: 2px;
+  background: #eeeeee;
+}
