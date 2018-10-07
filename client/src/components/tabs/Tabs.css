@@ -1,0 +1,24 @@
+.tab-ul{
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tab-li{
+  font-weight: normal;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.react-tabs__tab--disabled{
+}
+
+.react-tabs__tab--selected{
+  font-weight: bold;
+  background: #eeeeee;
+}
+
+.react-tabs__tab-panel--selected{
+  background: #eeeeee;
+  padding: 20px;
+}
