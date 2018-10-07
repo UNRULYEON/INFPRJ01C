@@ -22,8 +22,9 @@ class Header extends Component {
             <input id="search-bar-input" placeholder="Zoeken"></input>
           </div>
           <div id="header-actions">
-            <span>
-              Inloggen
+                    <span>
+                        <button onClick={() => alert("clicked")}>Inloggen</button>
+
               <img src={arrow_down} alt="ad" width="24"/>
             </span>
             <span><img src={cart} alt="Cart" width="44"/></span>
@@ -40,4 +41,9 @@ class Header extends Component {
   }
 }
 
+
+
 export default Header;
+
+
+
