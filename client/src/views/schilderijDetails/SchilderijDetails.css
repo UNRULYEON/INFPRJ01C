@@ -1,4 +1,41 @@
-.item-section{
-  display: flex;
-  flex-flow: row wrap;
+.image-container{
+  flex-basis: 100%;
+  background: #eeeeee;
+  min-height: 500px;
+}
+
+.details-container{
+  flex-basis: 100%;
+  margin-left: 50px;
+}
+
+.details-title{
+  font-size: 3em;
+}
+
+.details-author{
+  font-size: 1.5em;
+  color: grey;
+  margin-top: -10px;
+}
+
+.details-price{
+  font-size: 3em;
+  margin: 25px 0;
+}
+
+.details-info{
+  margin-bottom: 10px;
+}
+
+.details-info::before{
+  content: "✔️ ";
+}
+
+.info-container{
+  flex-basis: 100%;
+}
+
+.more-container{
+  flex-basis: 100%;
 }
