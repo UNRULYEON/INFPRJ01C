@@ -1,15 +1,13 @@
 # INFPRJ01C
 
-Commands to run upon download:
+```
+$ npm install
 
-npm install
+$ cd client
 
-npm install pg-promise
+$ npm install
 
-cd client
+$ cd ..
 
-npm install
-
-cd ..
-
-npm run dev
+$ npm run dev
+```
