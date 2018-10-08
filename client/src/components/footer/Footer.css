@@ -1,54 +1,28 @@
 footer {
-    background-color: #EEEEEE;
+    background-color: rgba(238, 238, 238, 0.7);
     width: 100%;
-    padding-top: 25px;
-    padding-bottom: 25px;
-    flex-shrink: 0;
+    min-height: 200px;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-content: stretch;
 }
 
-.footer-container {
-    text-align: center;
-    color: grey;
-    height: 150px;
+footer > div{
+    flex-grow: 1;
+    display: flex;
+    flex-flow: row nowrap;
+    max-width: 220px;
 }
 
-#post {
-    float: left;
-    width: 25%;
-}
-
-#betaalwijzen {
-    float: left;
-    width: 24%;
-    height: 150px;
-    border-left: solid black 1px;
-}
-
-#uno {
-    list-style: none;
-    float: left;
-}
-
-#dos {
-    list-style: none;
-    float: left;
-}
-
-#mos {
-    float: left;
-    width: 24%;
-    border-left: solid black 1px;
-    height: 150px;
-}
-
-#footerMosList {
+footer > div > span{
     text-align: left;
-    margin-left: 50px;
-    list-style: none;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-family: 'IBM Plex Sans', 'Roboto', sans-serif;
 }
 
-#vs {
-    float: left;
-    width: 25%;
-    border-left: solid black 1px;
+.y-divider{
+    max-width: 2px;
+    min-height: 100%;
 }
