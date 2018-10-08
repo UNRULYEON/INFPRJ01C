@@ -1,24 +1,17 @@
 footer {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    right: 0;
     background-color: #EEEEEE;
     width: 100%;
     padding-top: 25px;
     padding-bottom: 25px;
 }
 
-footer-container {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    right: 0;
-}
+
 .footer-container {
     text-align: center;
     color: grey;
+    height: 150px;
 }
+
 #post {
     float: left;
     width: 25%;
@@ -29,15 +22,14 @@ footer-container {
     width: 24%;
     height: 150px;
     border-left: solid black 1px;
-
 }
 
-#uno{
+#uno {
     list-style: none;
     float: left;
 }
 
-#dos{
+#dos {
     list-style: none;
     float: left;
 }
@@ -49,11 +41,10 @@ footer-container {
     height: 150px;
 }
 
-#footerMosList{
-    text-align:left;
+#footerMosList {
+    text-align: left;
     margin-left: 50px;
     list-style: none;
-
 }
 
 #vs {

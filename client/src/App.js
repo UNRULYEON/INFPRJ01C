@@ -30,7 +30,8 @@ class App extends Component {
             <Route path="/schilderij/:id" component={SchilderijDetails}/>
             <Route path="/schilders" component={Schilders}/>
             <Route component={NoMatch} />
-          </Switch>
+            </Switch>
+                <Footer/>
           {/* TODO: make a footer */}
                 {/* <Footer /> */}
                 {/* <Footer />  */}
