@@ -6,10 +6,10 @@ class Footer extends Component {
   render() {
     return (
       <footer>
-        <div className="footer-container" class="footer-container">
-         <div id="post">
-                    <p>Wij versturen met</p>
-                    <p>*img*</p>
+        <div className="footer-container">
+          <div id="post">
+            <p>Wij versturen met</p>
+            <p>*img*</p>
           </div>
 
           <div id="betaalwijzen">
@@ -31,15 +31,12 @@ class Footer extends Component {
                 <li>100 dagen retourrecht</li>
             </ul>
           </div>
-                <div id="vs">
-                    <p>Verified service</p>
-                    <p>*img*</p>
-                    <b>thuiswinkel</b>
-                    <p>waarborg</p>
+          <div id="vs">
+            <p>Verified service</p>
+            <p>*img*</p>
+            <b>thuiswinkel</b>
+            <p>waarborg</p>
           </div>
-                
-    
-    
         </div>
       </footer>
     );

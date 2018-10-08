@@ -3,8 +3,8 @@ footer {
     width: 100%;
     padding-top: 25px;
     padding-bottom: 25px;
+    flex-shrink: 0;
 }
-
 
 .footer-container {
     text-align: center;
