@@ -6,7 +6,7 @@ var pgp = require('pg-promise')(/*options*/)
 var db = pgp('postgres://projectc:pc@188.166.94.83:5432/project_dev')
 
 app.get('/collection', (req, res) => {
-  db.many('SELECT * from collection limit 10')
+  db.many('SELECT * from schilderijen')
   .then(function (data) {
     res.send(data)
   })
@@ -19,7 +19,7 @@ app.get('/schilderij/:id', (req, res) => {
 
   let id = req.params.id;
 
-  db.one('SELECT * from collectionDetails where id = $1', [id])
+  db.one('SELECT * from schilderijen where id = $1', [id])
   .then(function (data) {
     res.send(data)
   })
