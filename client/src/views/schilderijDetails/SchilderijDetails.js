@@ -31,6 +31,14 @@ class SchilderijDetails extends Component {
 
   componentDidMount() {
     // Get data from database
+    console.log(this.props.match.params.id)
+    fetch('/schilderij/' + this.props.match.params.id)
+      .then(res => res.json())
+      .then(res => {
+        this.setState({
+          imageData: res
+        })
+      })
     // setState(data from database)
   }
 
@@ -57,7 +65,7 @@ class SchilderijDetails extends Component {
           </div>
           <div className="details-container flex column-nowrap y-center">
             <span className="details-title">{this.state.imageData.title || "TITLE"}</span>
-            <span className="details-author">{this.state.imageData.author || "AUTHOR"}</span>
+            <span className="details-author">{this.state.imageData.principalorfirstmaker || "AUTHOR"}</span>
             <span className="details-price">{this.state.imageData.price || "€ PRICE"}</span>
             <div className="details-buttons flex row-nowrap">
               <button>Bestel nu</button>
