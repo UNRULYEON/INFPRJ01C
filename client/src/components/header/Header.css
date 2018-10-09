@@ -7,28 +7,36 @@ header{
   border-bottom: 1px solid #eeeeee;
 }
 
-#header-container-primary{
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  width: 100%;
-  max-width: 1300px;
-  height: 64px;
-  margin-top: 10px;
+#header-container-primary {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    width: 100%;
+    /*
+      max-width: 1300px;
+  */
+    height: 64px;
+    margin-top: 10px;
 }
 
-#header-name{
-  display: flex;
-  flex-flow: row nowrap;
-  align-self: center;
-  font-weight: bold;
-  min-width: 200px;
+#header-name {
+    display: flex;
+    flex-flow: row nowrap;
+    align-self: center;
+    font-weight: bold;
+    /*min-width: 200px;*/
+    max-width: 1300px;
+    text-align: left;
+    
 }
 
-#header-searchbar{
-  flex-grow: 1;
-  border-radius: 5px;
-  min-height: 50px;
+#header-searchbar {
+    flex-grow: 1;
+    border-radius: 5px;
+    min-height: 50px;
+    text-align: center;
+    margin-left: 25px;
+    min-width: 100px;
 }
 
 #search-bar-input{
