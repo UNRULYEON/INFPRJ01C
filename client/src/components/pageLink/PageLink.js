@@ -5,7 +5,10 @@ class PageLink extends Component {
 
   render() {
     return (
-      <h1>{this.props.title}</h1>
+      <div>
+        <h1>{this.props.title}</h1>
+        {this.props.subtitle ? (<h2>{this.props.subtitle}</h2>) : null}
+      </div>
     );
   }
 }

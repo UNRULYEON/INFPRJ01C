@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-// import setState from 'react-state-promise';
+import setState from 'react-state-promise';
 import './Schilderijen.css'
 
 // Components
@@ -83,7 +83,6 @@ class Schilderijen extends Component {
     fetch('/collection')
       .then(res => res.json())
       .then(res => {
-        console.log(res)
         this.setState({
           images: res
         })
