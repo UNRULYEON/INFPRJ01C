@@ -12,9 +12,6 @@ header{
     flex-flow: row nowrap;
     align-items: center;
     width: 100%;
-    /*
-      max-width: 1300px;
-  */
     height: 64px;
     margin-top: 10px;
 }
@@ -22,22 +19,33 @@ header{
 #header-name {
     display: flex;
     flex-flow: row nowrap;
-    align-self: center;
     font-weight: bold;
-    /*min-width: 200px;*/
-    max-width: 1300px;
+    margin-left: 25px;
+    align-items: center;
+    justify-content: flex-end;
     text-align: left;
-    
+    max-width: 200px;
 }
 
 #header-searchbar {
-    flex-grow: 1;
+    display: flex;
     border-radius: 5px;
     min-height: 50px;
     text-align: center;
     margin-left: 25px;
     min-width: 100px;
 }
+
+#header-searchIcon {
+    display: none;
+    margin-left: 50px;
+}
+
+#sign_in_icon {
+    display: none;
+}
+
+
 
 #search-bar-input{
   background: #eeeeee;
@@ -122,3 +130,35 @@ header{
   left: 0;
   height: 100%;
 }
+
+/*@media screen and (max-width: 1264px) */
+
+
+@media screen and (max-width: 600px) {
+    #header-container-primary {
+        justify-content: space-between;
+    }
+
+    #header-searchbar {
+        display: none;
+    }
+
+    #header-name {
+        margin-left: 0px;
+    }
+
+    #header-searchIcon {
+        display: flex;
+    }
+
+    #header-actions {
+        display: none;
+    }
+
+    #sign_in_icon {
+        display: flex;
+    }
+}
+
+
+
