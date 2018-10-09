@@ -14,6 +14,7 @@ header{
     width: 100%;
     height: 64px;
     margin-top: 10px;
+    justify-content: space-between;
 }
 
 #header-name {
@@ -22,7 +23,6 @@ header{
     font-weight: bold;
     margin-left: 25px;
     align-items: center;
-    justify-content: flex-end;
     text-align: left;
     max-width: 200px;
 }
@@ -31,9 +31,9 @@ header{
     display: flex;
     border-radius: 5px;
     min-height: 50px;
-    text-align: center;
     margin-left: 25px;
-    min-width: 100px;
+    margin-top: 10px;
+    min-width: 500px;
 }
 
 #header-searchIcon {
@@ -131,7 +131,31 @@ header{
   height: 100%;
 }
 
-/*@media screen and (max-width: 1264px) */
+@media screen and (max-width: 1264px) {
+    #header-container-primary {
+        justify-content: space-between;
+    }
+
+    #header-searchbar {
+        display: flex;
+    }
+
+    #header-name {
+        margin-left: 0px;
+    }
+
+    #header-searchIcon {
+        display: none;
+    }
+
+    #header-actions {
+        display: flex;
+    }
+
+    #sign_in_icon {
+        display: none;
+    }
+}
 
 
 @media screen and (max-width: 600px) {
@@ -149,6 +173,8 @@ header{
 
     #header-searchIcon {
         display: flex;
+        margin-left: auto;
+        margin-right: 10px;
     }
 
     #header-actions {
