@@ -1,7 +1,14 @@
 .image-container{
   flex-basis: 100%;
-  background: #eeeeee;
-  min-height: 500px;
+  /* background: #eeeeee; */
+}
+
+.image-container > img{
+  flex-basis: 100%;
+  /* background: #eeeeee; */
+  max-width: 100%;
+  max-height: 600px;
+  object-fit: contain;
 }
 
 .details-container{
@@ -11,16 +18,18 @@
 
 .details-title{
   font-size: 3em;
+  line-height: .9;
 }
 
 .details-author{
   font-size: 1.5em;
   color: grey;
-  margin-top: -10px;
+  margin-top: 5px;
+  text-transform: capitalize;
 }
 
 .details-price{
-  font-size: 3em;
+  font-size: 2.5em;
   margin: 25px 0;
 }
 

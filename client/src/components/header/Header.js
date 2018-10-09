@@ -27,15 +27,18 @@ class Header extends Component {
                         <img src={search_icon} alt="Search" width="32" />
                     </div>
                     <div id="header-actions">
-                        <span className="flex x-center mr-2 pointer header-button">
+                        <div id="inloggen" className="flex x-center mr-2 pointer header-button">
                             Inloggen
                             <img src={arrow_down} alt="ad" width="24" />
-                        </span>
-                        <span className="pointer header-button"><img src={cart} alt="Cart" width="32" /></span>
+                        </div>
+                        <div id="cart" className="pointer header-button"><img src={cart} alt="Cart" width="32" /></div>
                     </div>
                     <div id="sign_in_icon">
                         <img src={sign_in} alt="sign_in" width="32" />
                     </div>
+                        
+                    
+                    
                 </div>
                 <div id="header-container-secondary">
                     <ul id="header-nav-lu">
