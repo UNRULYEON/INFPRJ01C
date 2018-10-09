@@ -17,6 +17,18 @@ html, body, #root, .App{
   flex-grow: 1;
 }
 
+@media screen and (max-width: 960px){
+  .section-container{
+    display: block;
+    margin: 32px auto;
+    width: calc(100% - 30px);
+    max-width: 1300px;
+    padding: 0 15px;
+    font-family: 'IBM Plex Sans';
+    flex-grow: 1;
+  }
+}
+
 /* PADDING */
 .pt-1{
   padding-top: 4px;
