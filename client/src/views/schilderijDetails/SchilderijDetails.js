@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './SchilderijDetails.css'
 
 // Components
+import Img from 'react-image'
+import Loading from '../../components/loading/Loading'
 import Tabs from '../../components/tabs/Tabs';
 
 class SchilderijDetails extends Component {
@@ -35,6 +37,7 @@ class SchilderijDetails extends Component {
     fetch('/schilderij/' + this.props.match.params.id)
       .then(res => res.json())
       .then(res => {
+        console.log(res)
         this.setState({
           imageData: res
         })
@@ -62,10 +65,21 @@ class SchilderijDetails extends Component {
         {/* Image and details container */}
         <div className="flex row-nowrap">
           <div className="image-container flex center">
+            <Img
+              src={[
+                this.state.imageData.bigsrc
+              ]}
+              width={
+                this.state.imageData.width
+              }
+              key={this.state.imageData.id}
+              loader={<Loading size={100} borderSize={10}/>}
+              unloader={<div className="error">It seems there was a problem<br/>loading this image.<br/>Reload the page</div>}
+            />
           </div>
           <div className="details-container flex column-nowrap y-center">
             <span className="details-title">{this.state.imageData.title || "TITLE"}</span>
-            <span className="details-author">{this.state.imageData.principalorfirstmaker || "AUTHOR"}</span>
+            <span className="details-author">{this.state.imageData.principalmaker || "AUTHOR"}</span>
             <span className="details-price">{this.state.imageData.price || "€ PRICE"}</span>
             <div className="details-buttons flex row-nowrap">
               <button>Bestel nu</button>

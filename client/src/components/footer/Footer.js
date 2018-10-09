@@ -14,7 +14,7 @@ class Footer extends Component {
         <div className="footer-container">
           <div className="x-center">
             <span className="mt-4">Wij versturen met</span>
-            <img src={postnl} width="75px"/>
+            <img src={postnl} width="75px" alt="postnl"/>
           </div>
           <div className="x-center">
             <span className="mt-4">Betaalwijzen</span>
@@ -32,7 +32,7 @@ class Footer extends Component {
           </div>
           <div className="x-center">
             <span className="mt-4">Verified service</span>
-            <img src={tw} width="100px"/>
+            <img src={tw} width="100px" alt="tw"/>
           </div>
         </div>
       </footer>
