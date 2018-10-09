@@ -43,6 +43,7 @@ header{
 
 #sign_in_icon {
     display: none;
+    margin-left: 10px;
 }
 
 
@@ -66,7 +67,6 @@ header{
   align-items: center;
   justify-content: flex-end;
   text-align: right;
-  min-width: 200px;
 }
 
 #header-container-secondary{
@@ -131,6 +131,14 @@ header{
   height: 100%;
 }
 
+#inloggen {
+}
+
+#cart {
+    display:block;
+    margin-left: auto;
+}
+
 @media screen and (max-width: 1264px) {
     #header-container-primary {
         justify-content: space-between;
@@ -138,6 +146,7 @@ header{
 
     #header-searchbar {
         display: flex;
+        min-width: auto;
     }
 
     #header-name {
@@ -164,7 +173,6 @@ header{
 
     #header-searchbar {
         display: flex;
-        min-width: auto;
     }
 
     #header-name {
@@ -204,9 +212,15 @@ header{
         margin-right: 10px;
     }
 
-    #header-actions {
+    #head-action {
         display: none;
     }
+
+    #inloggen {
+        display: none;
+    }
+
+
 
     #sign_in_icon {
         display: flex;
