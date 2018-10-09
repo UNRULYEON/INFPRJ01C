@@ -21,6 +21,7 @@
   "homepage": "https://github.com/UNRULYEON/infprj01c_dev#readme",
   "dependencies": {
     "bluebird": "^3.5.2",
+    "body-parser": "^1.18.3",
     "concurrently": "^4.0.1",
     "express": "^4.16.3",
     "nodemon": "^1.18.4",

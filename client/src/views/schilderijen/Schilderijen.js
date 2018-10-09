@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-// import setState from 'react-state-promise';
+import setState from 'react-state-promise';
 import './Schilderijen.css'
 
 // Components

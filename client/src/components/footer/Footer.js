@@ -22,7 +22,7 @@ class Footer extends Component {
             <li>100 dagen retourrecht</li>
           </ul>
         </div>
-        <spa className="y-divider"></spa>
+        <span className="y-divider"></span>
         <div className="y-center">
           <span className="mt-4">Verified service</span>
         </div>
