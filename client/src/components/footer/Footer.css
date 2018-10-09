@@ -5,7 +5,7 @@ footer {
 }
 
 .footer-container{
-    min-height: 200px;
+    min-height: 250px;
     max-width: 1300px;
     display: flex;
     flex-flow: row wrap;
@@ -16,7 +16,7 @@ footer {
 
 .footer-container > div{
     min-width: 250px;
-    height: 160px;
+    height: 200px;
     flex-grow: 1;
     flex-basis: 0;
     display: flex;
@@ -29,12 +29,32 @@ footer {
     border-left: none;
 }
 
+.footer-container > div > ul{
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.footer-container > div > ul > li{
+    margin-bottom: 5px;
+}
+
+.footer-container > div > ul > li::before{
+    content: "✔️ ";
+}
+
 .footer-container > div > span{
+    margin-bottom: 20px;
     text-align: left;
     text-transform: uppercase;
     font-weight: bold;
     font-family: 'IBM Plex Sans', 'Roboto', sans-serif;
 }
 
-@media screen and (max-width: 1264px) {
+.payment-methods{
+    width: 60%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-content: space-between;
 }
