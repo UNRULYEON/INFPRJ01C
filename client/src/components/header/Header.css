@@ -157,6 +157,33 @@ header{
     }
 }
 
+@media screen and (max-width: 830px) {
+    #header-container-primary {
+        justify-content: space-between;
+    }
+
+    #header-searchbar {
+        display: flex;
+        min-width: auto;
+    }
+
+    #header-name {
+        margin-left: 0px;
+    }
+
+    #header-searchIcon {
+        display: none;
+    }
+
+    #header-actions {
+        display: flex;
+    }
+
+    #sign_in_icon {
+        display: none;
+    }
+}
+
 
 @media screen and (max-width: 600px) {
     #header-container-primary {
