@@ -27,7 +27,7 @@ class ImageComponent extends Component {
           width={
             this.props.photo.width
           }
-          height={
+          height={ 
             this.props.photo.height
           }
           key={this.props.photo.id}

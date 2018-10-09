@@ -26,7 +26,7 @@
 }
 
 .item-details-title{
-  font-size: 2em;
+  font-size: 1.5em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -36,7 +36,7 @@
 
 .item-details-price{
   font-family: 'Roboto', sans-serif;
-  font-size: 1.5em;
+  font-size: 1.25em;
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
