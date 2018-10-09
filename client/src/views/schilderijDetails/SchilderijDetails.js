@@ -48,16 +48,8 @@ class SchilderijDetails extends Component {
   render() {
     var tabData = [
       {
-        title: "Tab 1",
-        content: "Content tab 1"
-      },
-      {
-        title: "Tab 2",
-        content: "Content tab 2"
-      },
-      {
-        title: "Tab 3",
-        content: "Content tab 3"
+        title: "Beschrijving",
+        content: this.state.imageData.description
       }
     ]
     return (
@@ -95,6 +87,7 @@ class SchilderijDetails extends Component {
           <div className="info-container">
             <Tabs
               data={tabData}
+              key={this.state.imageData.id}
             />
           </div>
           <div className="more-container">
