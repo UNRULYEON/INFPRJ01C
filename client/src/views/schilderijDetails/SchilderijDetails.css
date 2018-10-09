@@ -5,8 +5,9 @@
 
 .image-container > img{
   flex-basis: 100%;
-  background: #eeeeee;
-  max-width: 500px;
+  /* background: #eeeeee; */
+  max-width: 100%;
+  max-height: 600px;
   object-fit: contain;
 }
 
