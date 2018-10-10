@@ -18,8 +18,8 @@ app.get('/collection', (req, res) => {
 app.get('/schilderij/:id', (req, res) => {
 
   let id = req.params.id;
-
-  db.one('SELECT * from schilderijen where id = $1', [id]) //query om id te vergelijken
+db.one('SELECT s.title,s.principalmaker,s.bigsrc,s.prijs_fk from schilderijen as s INTERSECT SELECT s.title,s.principalmaker,s.bigsrc,p.prijs from prijzen as p')
+  //db.one('SELECT * from schilderijen where id = $1', [id]) //query om id te vergelijken
   .then(function (data) {
     res.send(data)
   })
