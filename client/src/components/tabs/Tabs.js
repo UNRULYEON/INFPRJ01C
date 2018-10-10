@@ -21,11 +21,11 @@ class Tabbed extends Component {
           {this.state.data.map(d =>
             <Tab
               key={d.title}
-              className="tab-li"
               disabled={d.disabled}
+              className="tab-li"
             >{d.title}</Tab>)}
         </TabList>
-        {this.state.data.map(d => <TabPanel key={d.content}>{d.content}</TabPanel>)}
+        {this.state.data.map(d => <TabPanel key={d.title}>{d.content}</TabPanel>)}
       </Tabs>
     );
   }
