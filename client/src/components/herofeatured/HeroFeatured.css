@@ -1,0 +1,52 @@
+.hero-featured{
+  max-width: 100vw;
+  height: 60vh;
+}
+
+.hero-featured-image-container{
+  width: 100%;
+  height: 100%;
+  overflow: none;
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.hero-featured-image-container > img{
+  width: 100%;
+  object-fit: cover;
+  margin-right: 20px;
+}
+
+.hero-featured-image-container > img:last-child{
+  margin: 0;
+}
+
+.hero-featured-text-container{
+  display: flex;
+  flex-flow: column-reverse nowrap;
+  margin: 50px auto;
+  width: calc(100% - 100px);
+  max-width: 1300px;
+  height: calc(100% - 100px);
+  padding: 0 50px;
+  position: relative;
+  top: -60vh;
+}
+
+.hero-featured-text-container > div{
+  background: white;
+  padding: 20px;
+  width: 350px;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.hero-featured-title{
+  font-family: "IBM Plex Sans", 'Roboto', sans-serif;
+  font-size: 2em;
+}
+
+.hero-featured-link{
+  margin-top: 20px;
+  text-decoration-line: underline;
+}

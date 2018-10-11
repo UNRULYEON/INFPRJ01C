@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 // Components
 import PageTitle from '../../components/pageLink/PageLink'
 import Gallery from '../../components/gallery/Gallery'
+import HeroFeatured from '../../components/herofeatured/HeroFeatured'
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -30,7 +31,7 @@ class Home extends Component {
         <Gallery images={this.state.images}/>
       </section>
       <section>
-        
+        <HeroFeatured/>
       </section>
       <section className="section-container">
         <PageTitle title="Vind je favoriete schilderij ❤️" subtitle="Iets voor jou?"/>

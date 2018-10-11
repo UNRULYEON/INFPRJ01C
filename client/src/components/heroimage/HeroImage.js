@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import './HeroImage.css';
 
-// https://github.com/tsuyoshiwada/react-md-spinner
-
 class HeroImage extends Component {
   render() {
     return (

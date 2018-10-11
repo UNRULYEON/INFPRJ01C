@@ -6,7 +6,7 @@ var pgp = require('pg-promise')(/*options*/)
 var db = pgp('postgres://projectc:pc@188.166.94.83:5432/project_dev')
 
 app.get('/collection', (req, res) => {
-  db.many('SELECT * from schilderijen limit 15')
+  db.many('SELECT * from schilderijen limit 3')
     .then(function (data) {
       res.send(data)
     })
