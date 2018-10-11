@@ -38,7 +38,7 @@ class SchilderijDetails extends Component {
     }
 
     getMakerLink(maker) {
-        if (maker != "anoniem") {
+        if (maker !== "anoniem") {
             return (
                 <NavLink to={"/schilder/" + maker}>{maker}</NavLink>
             )
