@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { NavLink } from 'react-router-dom'
 import './SchilderijDetails.css'
 
 // Components
@@ -22,15 +23,6 @@ class SchilderijDetails extends Component {
         }
     }
 
-    change(event) {
-        let target = event.target;
-        let index = Array.prototype.indexOf.call(target.parentElement.children, target);
-
-        this.setState({
-            current: index
-        });
-    }
-
     componentDidMount() {
         // Get data from database
         console.log(this.props.match.params.id)
@@ -43,6 +35,18 @@ class SchilderijDetails extends Component {
                 })
             })
         // setState(data from database)
+    }
+
+    getMakerLink(maker) {
+        if (maker != "anoniem") {
+            return (
+                <NavLink to={"/schilder/" + maker}>{maker}</NavLink>
+            )
+        } else {
+            return (
+                "Anoniem"
+            )
+        }
     }
 
     render() {
@@ -80,7 +84,9 @@ class SchilderijDetails extends Component {
                     </div>
                     <div className="details-container flex column-nowrap y-center">
                         <span className="details-title">{this.state.imageData.title || "TITLE"}</span>
-                        <span className="details-author">{this.state.imageData.principalmaker || "AUTHOR"}</span>
+                        <span className="details-author">
+                            {this.getMakerLink(this.state.imageData.principalmaker)}
+                        </span>
                         <span className="details-price">{this.state.imageData.price || "€ PRICE"}</span>
                         <div className="details-buttons flex row-nowrap">
                             <button>Bestel nu</button>

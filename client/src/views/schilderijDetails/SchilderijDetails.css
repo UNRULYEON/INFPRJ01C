@@ -28,6 +28,13 @@
   text-transform: capitalize;
 }
 
+.details-author > a{
+  font-size: 1.5em;
+  color: grey;
+  margin-top: 5px;
+  text-transform: capitalize;
+}
+
 .details-price{
   font-size: 2.5em;
   margin: 25px 0;
