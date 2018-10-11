@@ -4,13 +4,10 @@ import Img from 'react-image'
 import Loading from '../../components/loading/Loading'
 import './ImageComponentNoDetails.css'
 
-// Icons
-import cart from '../../icons/cart.svg';
-
 class ImageComponentNoDetails extends Component {
   render() {
     function getLocal(prop) {
-      return "schilder/" + prop.photo.name;
+      return "/schilder/" + prop.photo.name;
     }
 
     return(

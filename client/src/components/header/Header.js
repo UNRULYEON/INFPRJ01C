@@ -19,7 +19,7 @@ class Header extends Component {
 			<header>
 				<div id="header-container-primary">
 					<div id="header-name">
-						<img src={logo} alt="Logo" height="32" />
+						<Link to="/"><img src={logo} alt="Logo" height="32" /></Link>
 						<Link to="/">ARTIC</Link>
 					</div>
 					<div id="header-searchbar">

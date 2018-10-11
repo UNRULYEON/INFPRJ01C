@@ -16,7 +16,6 @@ app.get('/collection', (req, res) => {
 });
 
 app.get('/schilderij/:id', (req, res) => {
-
   let id = req.params.id;
 
   db.one('SELECT * from schilderijen where id = $1', [id])
@@ -38,15 +37,28 @@ app.get('/schilders', (req, res) => {
     })
 });
 
-app.get('/schilders/:name', (req,res) =>{
-  let name = req.params.name;
-  db.one('SELECT * from schilder where name = $1',[name]) 
+app.get('/schilder/:name', (req,res) =>{
+  let name = req.params.name.replace(/_/g, ' ');
+
+  db.one('SELECT * from schilder where name = $1',[name])
   .then(function(data){
     res.send(data)
   })
   .catch(function(error){
     console.log('ERROR:', error)
   })
+});
+
+app.get('/werken-van/:name', (req,res) =>{
+  let name = req.params.name.replace(/_/g, ' ');
+
+  db.many('SELECT * from schilderijen where principalmaker = $1 limit 15', [name])
+    .then(function (data) {
+      res.send(data)
+    })
+    .catch(function (error) {
+      console.log('ERROR:', error)
+    })
 });
 
 app.listen(port, () => console.log(`Server started on port ${port}`));

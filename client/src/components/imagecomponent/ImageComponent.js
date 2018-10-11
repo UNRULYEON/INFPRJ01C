@@ -14,12 +14,12 @@ class ImageComponent extends Component {
     }
 
     function getLocal(prop) {
-      return "schilderij/" + prop.photo.id;
+      return "/schilderij/" + prop.photo.id;
     }
 
     return(
       <div className="item-container" width={this.props.photo.width} key={this.props.photo.id}>
-        <NavLink exact to={getLocal(this.props)}>
+        <NavLink to={getLocal(this.props)}>
           <Img
             src={[
               this.props.photo.src

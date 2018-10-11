@@ -1,24 +1,37 @@
 import React, { Component } from 'react';
-import './Schilderijen.css'
+import './SchilderDetails.css'
 
 // Components
-import PageTitle from '../../components/pageLink/PageLink'
-import Gallery from '../../components/galley/Gallery'
+import HeroImage from '../../components/heroimage/HeroImage'
+import PainterDescription from '../../components/painterDescription/PainterDescription'
+import Gallery from '../../components/gallery/Gallery'
 
 class SchilderDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      painters: [],
+      painter: [],
+      works: []
     };
   }
 
   componentDidMount(){
-    fetch('/schilder')
+    let painter = this.props.match.params.id.replace(/\s/g, '_');
+    console.log(painter)
+    fetch('/schilder/' + painter)
       .then(res => res.json())
       .then(res => {
+        console.log(res)
         this.setState({
-          painters: res
+          painter: res
+        })
+      })
+    fetch('/werken-van/'+ painter)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res)
+        this.setState({
+          works: res
         })
       })
   }
@@ -26,8 +39,13 @@ class SchilderDetails extends Component {
   render() {
     return (
       <section className="section-container">
-        <PageTitle title="Schilderijen"/>
-        <Gallery images={this.state.painters}/>
+      <HeroImage
+        src={this.state.painter.headerimage}
+        name={this.state.painter.name}
+      />
+      <PainterDescription content={this.state.painter.description}/>
+      <h1>Werken van {this.state.painter.name}</h1>
+      <Gallery images={this.state.works}/>
       </section>
     );
   }

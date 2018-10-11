@@ -1,0 +1,16 @@
+.hero-container{
+  margin-bottom: -62px;
+}
+.hero-image{
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+}
+
+.hero-name{
+  color: white;
+  position: relative;
+  top: -90px;
+  left: 30px;
+  font-size: 3em;
+}

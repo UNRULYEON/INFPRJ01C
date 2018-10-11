@@ -3,14 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "ajv": "^6.5.4",
     "animejs": "^2.2.0",
+    "keyframe": "^2.1.0",
     "react": "^16.5.2",
     "react-css-transition-replace": "^3.0.3",
     "react-dom": "^16.5.2",
     "react-image": "^1.5.1",
     "react-md-spinner": "^0.3.0",
-    "react-morph": "^0.3.6",
     "react-photo-gallery": "^6.2.1",
+    "react-pose": "^3.3.6",
     "react-scripts": "1.1.5",
     "react-state-promise": "^1.3.3",
     "react-tabs": "^2.3.0"
