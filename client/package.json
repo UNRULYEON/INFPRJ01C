@@ -5,6 +5,7 @@
   "dependencies": {
     "ajv": "^6.5.4",
     "animejs": "^2.2.0",
+    "google-map-react": "^1.0.9",
     "keyframe": "^2.1.0",
     "react": "^16.5.2",
     "react-css-transition-replace": "^3.0.3",

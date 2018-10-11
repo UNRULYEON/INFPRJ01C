@@ -1,0 +1,49 @@
+.contact-container{
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+
+.contact-details{
+  display: flex;
+  flex-flow: column nowrap;
+  border: 2px solid #eeeeee;
+  margin-right: 50px;
+  min-width: 300px;
+  height: min-content;
+}
+
+.contact-details-title{
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  margin: 15px 20px;
+  font-size: 1.5em;
+}
+
+.contact-details-title > img{
+  margin-right: 10px;
+}
+
+.contact-details-container{
+  font-family: 'Roboto', sans-serif;
+  display: flex;
+  flex-flow: row nowrap;
+  margin: 20px;
+}
+
+.contact-details-container > img{
+  margin-top: -1px;
+  margin-right: 20px;
+}
+
+.contact-maps{
+  width: 100%;
+  height: 500px;
+}
+
+.maps{
+  width: 100%;
+  height: 100%;
+  border: 0;
+}

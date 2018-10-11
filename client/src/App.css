@@ -9,7 +9,7 @@ html, body, #root, .App{
 
 .section-container{
   display: block;
-  margin: 32px auto;
+  margin: 0 auto 32px auto;
   width: calc(100% - 100px);
   max-width: 1300px;
   padding: 0 50px;

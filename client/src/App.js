@@ -12,6 +12,7 @@ import Schilderijen from './views/schilderijen/Schilderijen';
 import SchilderijDetails from './views/schilderijDetails/SchilderijDetails';
 import Schilders from './views/schilders/Schilders';
 import SchilderDetails from './views/schilderDetails/SchilderDetails';
+import Contact from './views/contact/Contact';
 import NoMatch from './views/404/404';
 
 // Components
@@ -30,6 +31,7 @@ class App extends Component {
             <Route path="/schilderij/:id" component={SchilderijDetails}/>
             <Route path="/schilders" component={Schilders}/>
             <Route path="/schilder/:id" component={SchilderDetails}/>
+            <Route path="/contact" component={Contact}/>
             <Route component={NoMatch} />
             </Switch>
                 <Footer/>
