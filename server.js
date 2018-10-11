@@ -19,7 +19,7 @@ app.get('/schilderij/:id', (req, res) => {
 
   let id = req.params.id;
 
-  db.one('SELECT * from schilderijen where id = $1', [id]) //query om id te vergelijken
+  db.one('SELECT * from schilderijen where id = $1', [id])
     .then(function (data) {
       res.send(data)
     })
@@ -36,6 +36,17 @@ app.get('/schilders', (req, res) => {
     .catch(function (error) {
       console.log('ERROR:', error)
     })
+});
+
+app.get('/schilders/:name', (req,res) =>{
+  let name = req.params.name;
+  db.one('SELECT * from schilder where name = $1',[name]) 
+  .then(function(data){
+    res.send(data)
+  })
+  .catch(function(error){
+    console.log('ERROR:', error)
+  })
 });
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
