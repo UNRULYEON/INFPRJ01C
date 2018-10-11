@@ -3,14 +3,18 @@ import GalleryReact from 'react-photo-gallery';
 
 // Components
 import ImageComponent from '../imagecomponent/ImageComponent'
+import ImageComponentNoDetails from '../imagecomponentnodetails/ImageComponentNoDetails'
 
 class Gallery extends Component {
   render() {
+
+    let ImageComponentType = this.props.noDetails ? ImageComponentNoDetails : ImageComponent;
+
     return(
       <GalleryReact
         photos={this.props.images}
         margin={10}
-        ImageComponent={ImageComponent}
+        ImageComponent={ImageComponentType}
       />
     )
   }

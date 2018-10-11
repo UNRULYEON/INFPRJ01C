@@ -3,22 +3,22 @@ import './Schilderijen.css'
 
 // Components
 import PageTitle from '../../components/pageLink/PageLink'
-import Gallery from '../../components/gallery/Gallery'
+import Gallery from '../../components/galley/Gallery'
 
-class Schilderijen extends Component {
+class SchilderDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      images: [],
+      painters: [],
     };
   }
 
   componentDidMount(){
-    fetch('/collection')
+    fetch('/schilder')
       .then(res => res.json())
       .then(res => {
         this.setState({
-          images: res
+          painters: res
         })
       })
   }
@@ -27,10 +27,10 @@ class Schilderijen extends Component {
     return (
       <section className="section-container">
         <PageTitle title="Schilderijen"/>
-        <Gallery images={this.state.images}/>
+        <Gallery images={this.state.painters}/>
       </section>
     );
   }
 }
 
-export default Schilderijen;
+export default SchilderDetails;

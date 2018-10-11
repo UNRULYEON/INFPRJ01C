@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 // Components
 import PageTitle from '../../components/pageLink/PageLink'
-import Gallery from '../../components/galley/Gallery'
+import Gallery from '../../components/gallery/Gallery'
 class Home extends Component {
   constructor(props) {
     super(props);

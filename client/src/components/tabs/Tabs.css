@@ -10,6 +10,10 @@
   cursor: pointer;
 }
 
+.tab-panel:first-letter{
+  text-transform: capitalize;
+}
+
 .react-tabs__tab--disabled{
 }
 

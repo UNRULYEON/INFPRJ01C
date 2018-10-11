@@ -28,7 +28,7 @@ app.get('/schilderij/:id', (req, res) => {
     })
 });
 
-app.get('/schilder', (req, res) => {
+app.get('/schilders', (req, res) => {
   db.many('SELECT * from schilder limit 15')
     .then(function (data) {
       res.send(data)
