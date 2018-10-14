@@ -69,7 +69,7 @@ class Header extends Component {
 						<Link to="/">ARTIC</Link>
 					</div>
 					<div id="header-searchbar">
-						<input id="search-bar-input" placeholder="Zoeken"></input>
+						<input id="search-bar-input" placeholder="Waar bent u naar opzoek?"></input>
 					</div>
 					<div id="header-actions">
 						<button onClick={this.toggleSearchBar} className="pointer header-button mr-2" id="search-icon"><img src={search} alt="Search" width="32" /></button>
