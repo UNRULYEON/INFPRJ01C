@@ -317,6 +317,7 @@ html, body, #root, .App{
 }
 
 .header-button{
+  height: 42px;
   border: 0;
   transition: .2s ease-in-out;
   border-radius: 5px;

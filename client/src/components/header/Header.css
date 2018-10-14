@@ -27,11 +27,10 @@ header{
 	margin-left: 10px;
 }
 
-#header-searchbar{
+.spacer{
   flex-grow: 1;
-  border-radius: 5px;
-  min-height: 50px;
 }
+
 #search-bar-input{
   background: #eeeeee;
   box-sizing: border-box;
@@ -54,18 +53,14 @@ header{
   height: 42px;
 }
 
-#account-btn-big{
-	visibility: visible;
-}
-
 #search-icon{
-	display: none;
-	visibility: hidden;
+  display: inline;
+  visibility: visible;
 }
 
 #account-icon{
-	display: none;
-	visibility: hidden;
+  display: inline;
+  visibility: visible;
 }
 
 #header-container-secondary{
@@ -181,20 +176,5 @@ header{
 
 	#header-actions{
 		min-width: 0;
-	}
-
-	#account-btn-big{
-		display: none;
-		visibility: none;
-	}
-
-	#search-icon{
-		display: inline;
-		visibility: visible;
-	}
-
-	#account-icon{
-		display: inline;
-		visibility: visible;
 	}
 }
