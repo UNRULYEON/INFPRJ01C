@@ -1,0 +1,56 @@
+.dropdown{
+  text-align: left;
+  display: none;
+  flex-flow: column nowrap;
+  position: relative;
+  width: 300px;
+  background: white;
+  border: 1px solid #eeeeee;
+  border-radius: 2px;
+  -webkit-box-shadow: 0px 5px 15px 0px rgba(50, 50, 50, 0.15);
+  -moz-box-shadow:    0px 5px 15px 0px rgba(50, 50, 50, 0.15);
+  box-shadow:         0px 5px 15px 0px rgba(50, 50, 50, 0.15);
+}
+
+.menu-title{
+  font-family: "IBM Plex Sans", 'Roboto', sans-serif;
+  font-size: 1.5em;
+  margin: 15px;
+}
+
+.dropdown-form{
+  display: flex;
+  flex-flow: column nowrap;
+  margin: 10px 15px 20px 15px;
+}
+
+.dropdown-form > input{
+  font-size: 1.2em;
+  margin-bottom: 10px;
+  border: #eeeeee solid 1px;
+  padding: 5px;
+}
+
+.dropdown-button{
+  border: none;
+  background: #53B534;
+  margin: 0 15px 15px 15px;
+  padding: 10px 0;
+  color: white;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.onboarding-container{
+  display: flex;
+  flex-flow: column nowrap;
+  text-align: center;
+  background: #eeeeee;
+  padding: 15px 0;
+  margin: 10px 0 0 0;
+}
+
+.onboarding-link{
+  font-weight: bold;
+  margin-top: 5px;
+}
