@@ -51,7 +51,7 @@ class SchilderDetails extends Component {
             <h1>Werken van {this.state.painter.name}</h1>
             <Gallery images={this.state.works} />
           </div> :
-          (<h1>No paintings</h1>)}
+          (<h1>Geen schilderijen beschikbaar</h1>)}
       </section>
     );
   }
