@@ -61,16 +61,24 @@ app.get('/werken-van/:name', (req,res) =>{
     })
 });
 
-// $('#demo').pagination({
-//   dataSource: [1, 2, 3, 4, 5, 6, 7, ... , 35],
-//   pageSize: 5,
-//   autoHidePrevious: true,
-//   autoHideNext: true,
-//   callback: function(data, pagination) {
-//       // template method of yourself
-//       var html = template(data);
-//       dataContainer.html(html);
-//   }
-// })
+app.get('/test',(req,res)=>{
+  db.many('select * from gebruiker limit 15')
+  .then(function(data){
+    res.send(data)
+  })
+  .catch(function(error){
+    console.log('ERROR:',error)
+  })
+})
 
+app.get('/test/:id',(req,res)=>{
+  let id = req.params.id;
+  db.one('select * from gebruiker where id = $1',[id])
+  .then(function(data){
+    res.send(data)
+  })
+  .catch(function(error){
+    console.log('ERROR:',error)
+  })
+})
 app.listen(port, () => console.log(`Server started on port ${port}`));
