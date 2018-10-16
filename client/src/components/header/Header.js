@@ -15,7 +15,6 @@ import logo from '../../icons/logo.svg';
 import cart from '../../icons/cart.svg';
 import account from '../../icons/account.svg';
 import search from '../../icons/search.svg';
-import arrow_down from '../../icons/arrow_down.svg';
 import close from '../../icons/close.svg';
 
 const SearchbarContainer = posed.div({
