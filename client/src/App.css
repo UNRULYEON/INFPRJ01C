@@ -317,6 +317,7 @@ html, body, #root, .App{
 }
 
 .header-button{
+  background: transparent;
   height: 42px;
   border: 0;
   transition: .2s ease-in-out;
@@ -330,7 +331,7 @@ html, body, #root, .App{
 }
 
 .header-button:hover{
-  background: #eeeeee;
+  background: rgba(0, 0, 0, 0.1);
   transition: .2s ease-in-out;
 }
 
