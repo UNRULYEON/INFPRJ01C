@@ -26,6 +26,7 @@
     "express": "^4.16.3",
     "nodemon": "^1.18.4",
     "pg-promise": "^5.9.7",
+    "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1"
   }
 }
