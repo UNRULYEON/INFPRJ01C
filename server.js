@@ -1,9 +1,13 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
 const port = 3001;
 
+app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.json());
 var pgp = require('pg-promise')(/*options*/)
 var db = pgp('postgres://projectc:pc@188.166.94.83:5432/project_dev')
+
 
 app.get('/collection', (req, res) => {
   db.many('SELECT * from schilderijen limit 3')
@@ -24,7 +28,7 @@ app.get('/schilderij/:id', (req, res) => {
     })
     .catch(function (error) {
       console.log('ERROR:', error)
-    })
+    }) 
 });
 
 app.get('/schilders', (req, res) => {
@@ -61,4 +65,24 @@ app.get('/werken-van/:name', (req,res) =>{
     })
 });
 
+app.get('/test',(req,res)=>{
+  db.many('select * from gebruiker limit 15')
+  .then(function(data){
+    res.send(data)
+  })
+  .catch(function(error){
+    console.log('ERROR:',error)
+  })
+});
+
+app.get('/test/:id',(req,res)=>{
+  let id = req.params.id;
+  db.one('select * from gebruiker where id = $1',[id])
+  .then(function(data){
+    res.send(data)
+  })
+  .catch(function(error){
+    console.log('ERROR:',error)
+  })
+});
 app.listen(port, () => console.log(`Server started on port ${port}`));
