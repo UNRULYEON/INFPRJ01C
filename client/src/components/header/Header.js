@@ -52,6 +52,7 @@ class Header extends Component {
 		this.toggleSearchBar = this.toggleSearchBar.bind(this);
 		this.toggleAccount = this.toggleAccount.bind(this);
 		this.toggleCart = this.toggleCart.bind(this);
+    this.searchbarInput = React.createRef();
 	}
 
 	toggleSearchBar() {
@@ -59,7 +60,8 @@ class Header extends Component {
 			searchBar: !state.searchBar,
 			cartMenuToggle: false,
 			accountMenuToggle: false
-		}))
+		}));
+		this.searchbarInput.current.focus();
 		console.log("Search bar is now: " + !this.state.searchBar);
 	}
 
@@ -86,7 +88,11 @@ class Header extends Component {
 					className="searchbar-container"
 					pose={this.state.searchBar ? 'open' : 'closed'}
 				>
-					<input id="searchbar-input" placeholder="Waar bent u naar opzoek?"></input>
+					<input
+						id="searchbar-input"
+						placeholder="Waar bent u naar opzoek?"
+						ref={this.searchbarInput}
+					></input>
 					<button id="searchbar-close" onClick={this.toggleSearchBar} className="pointer header-button ml-3"><img src={close} alt="Close" width="32" /></button>
 				</SearchbarContainer>
 				<div id="header-container-primary">
