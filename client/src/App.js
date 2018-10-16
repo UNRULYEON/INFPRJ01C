@@ -35,10 +35,6 @@ class App extends Component {
             <Route component={NoMatch} />
             </Switch>
                 <Footer/>
-          {/* TODO: make a footer */}
-                {/* <Footer /> */}
-                {/* <Footer />  */}
-                {/* <Link */}
         </div>
       </Router>
     );

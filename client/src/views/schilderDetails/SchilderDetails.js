@@ -15,7 +15,7 @@ class SchilderDetails extends Component {
     };
   }
 
-  componentDidMount(){
+  componentDidMount() {
     let painter = this.props.match.params.id.replace(/\s/g, '_');
     console.log(painter)
     fetch('/schilder/' + painter)
@@ -26,7 +26,7 @@ class SchilderDetails extends Component {
           painter: res
         })
       })
-    fetch('/werken-van/'+ painter)
+    fetch('/werken-van/' + painter)
       .then(res => res.json())
       .then(res => {
         console.log(res)
@@ -39,13 +39,19 @@ class SchilderDetails extends Component {
   render() {
     return (
       <section className="section-container">
-      <HeroImage
-        src={this.state.painter.headerimage}
-        name={this.state.painter.name}
-      />
-      <PainterDescription content={this.state.painter.description}/>
-      <h1>Werken van {this.state.painter.name}</h1>
-      <Gallery images={this.state.works}/>
+        <HeroImage
+          src={this.state.painter.headerimage}
+          name={this.state.painter.name}
+        />
+        <PainterDescription content={this.state.painter.description} />
+
+
+        {this.state.works.length ?
+          <div id="showGallery">
+            <h1>Werken van {this.state.painter.name}</h1>
+            <Gallery images={this.state.works} />
+          </div> :
+          (<h1>No paintings</h1>)}
       </section>
     );
   }
