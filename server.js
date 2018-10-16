@@ -8,6 +8,7 @@ app.use(bodyParser.json());
 var pgp = require('pg-promise')(/*options*/)
 var db = pgp('postgres://projectc:pc@188.166.94.83:5432/project_dev')
 
+
 app.get('/collection', (req, res) => {
   db.many('SELECT * from schilderijen limit 3')
     .then(function (data) {
@@ -72,7 +73,7 @@ app.get('/test',(req,res)=>{
   .catch(function(error){
     console.log('ERROR:',error)
   })
-})
+});
 
 app.get('/test/:id',(req,res)=>{
   let id = req.params.id;
@@ -83,7 +84,5 @@ app.get('/test/:id',(req,res)=>{
   .catch(function(error){
     console.log('ERROR:',error)
   })
-})
-
-app.post()
+});
 app.listen(port, () => console.log(`Server started on port ${port}`));
