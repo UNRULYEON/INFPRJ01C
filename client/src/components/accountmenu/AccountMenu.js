@@ -39,7 +39,7 @@ class AccountMenu extends Component {
         <button className="dropdown-button">Inloggen</button>
         <div className="onboarding-container">
           <span>Nieuw bij ARTIC?</span>
-          <span className="onboarding-link">Maak een account aan</span>
+          <Link to={"/registreren"} className="onboarding-link">Maak een account aan</Link>
         </div>
       </Menu>
 		);

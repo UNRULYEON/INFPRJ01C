@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import './Schilders.css'
+import './Schilders.css';
 
 // Components
-import PageTitle from '../../components/pageLink/PageLink'
-import Gallery from '../../components/gallery/Gallery'
+import PageTitle from '../../components/pageLink/PageLink';
+import Gallery from '../../components/gallery/Gallery';
 
 class Schilders extends Component {
   constructor(props) {
