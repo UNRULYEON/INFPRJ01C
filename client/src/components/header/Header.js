@@ -52,7 +52,7 @@ class Header extends Component {
 		this.toggleAccount = this.toggleAccount.bind(this);
 		this.toggleCart = this.toggleCart.bind(this);
     this.searchbarInput = React.createRef();
-	}
+  }
 
 	toggleSearchBar() {
 		this.setState(state => ({
@@ -78,7 +78,7 @@ class Header extends Component {
 			accountMenuToggle: false
 		}))
 		console.log("Cart menu is now: " + !this.state.cartMenuToggle);
-	}
+  }
 
 	render() {
 		return (
