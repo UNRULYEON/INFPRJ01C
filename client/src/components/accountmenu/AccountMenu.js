@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import {
-  Link,
-  NavLink
+<<<<<<< HEAD
+    Link,
+    NavLink
+>>>>>>> 35312afea1cd3c844a8a68f46efdd21f02d0822f
 } from 'react-router-dom';
 import posed from "react-pose";
 import './AccountMenu.css';
