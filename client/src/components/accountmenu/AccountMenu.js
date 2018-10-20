@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-// import {
-//     Link,
-//     NavLink
-// } from 'react-router-dom';
+import {
+  Link,
+  NavLink
+} from 'react-router-dom';
 import posed from "react-pose";
 import './AccountMenu.css';
 
@@ -12,7 +12,7 @@ const Menu = posed.div({
     transition: {
       duration: '200'
     },
-    applyAtStart: { display: 'flex', margin: '10px 0 0 -260px'}
+    applyAtStart: { display: 'flex', margin: '10px 0 0 -260px' }
   },
   closed: {
     opacity: 0,
@@ -25,8 +25,8 @@ const Menu = posed.div({
 
 
 class AccountMenu extends Component {
-	render() {
-		return (
+  render() {
+    return (
       <Menu
         pose={this.props.menu ? 'open' : 'closed'}
         className="dropdown"
@@ -42,8 +42,8 @@ class AccountMenu extends Component {
           <Link to={"/registreren"} className="onboarding-link">Maak een account aan</Link>
         </div>
       </Menu>
-		);
-	}
+    );
+  }
 }
 
 export default AccountMenu;
