@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 var pgp = require('pg-promise')(/*options*/)
 var db = pgp('postgres://projectc:pc@188.166.94.83:5432/project_dev')
 
-
+// Get all art
 app.get('/collection', (req, res) => {
   db.many('SELECT * from schilderijen limit 3')
     .then(function (data) {
@@ -19,6 +19,7 @@ app.get('/collection', (req, res) => {
     })
 });
 
+// Get specific art
 app.get('/schilderij/:id', (req, res) => {
   let id = req.params.id;
 
@@ -28,9 +29,10 @@ app.get('/schilderij/:id', (req, res) => {
     })
     .catch(function (error) {
       console.log('ERROR:', error)
-    }) 
+    })
 });
 
+// Get all painters
 app.get('/schilders', (req, res) => {
   db.many('SELECT * from schilder limit 15')
     .then(function (data) {
@@ -41,6 +43,7 @@ app.get('/schilders', (req, res) => {
     })
 });
 
+// Get specific painter
 app.get('/schilder/:name', (req,res) =>{
   let name = req.params.name.replace(/_/g, ' ');
 
@@ -53,6 +56,7 @@ app.get('/schilder/:name', (req,res) =>{
   })
 });
 
+// Get all art from specific painter
 app.get('/werken-van/:name', (req,res) =>{
   let name = req.params.name.replace(/_/g, ' ');
 
