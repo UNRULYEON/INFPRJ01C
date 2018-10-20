@@ -24,6 +24,7 @@
     "body-parser": "^1.18.3",
     "concurrently": "^4.0.1",
     "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0",
     "nodemon": "^1.18.4",
     "pg-promise": "^5.9.7",
     "react-router": "^4.3.1",
