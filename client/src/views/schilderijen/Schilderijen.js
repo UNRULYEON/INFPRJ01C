@@ -1,33 +1,40 @@
 import React, { Component } from 'react';
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
 import './Schilderijen.css'
 
 // Components
 import PageTitle from '../../components/pageLink/PageLink'
 import Gallery from '../../components/gallery/Gallery'
 
-class Schilderijen extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      images: [],
-    };
+const GET_ART = gql`
+  {
+    collection {
+      id_number
+      title
+      src
+      width
+      height
+    }
   }
+`;
 
-  componentDidMount(){
-    fetch('/collection')
-      .then(res => res.json())
-      .then(res => {
-        this.setState({
-          images: res
-        })
-      })
-  }
+class Schilderijen extends Component {
 
   render() {
     return (
       <section className="section-container">
         <PageTitle title="Schilderijen"/>
-        <Gallery images={this.state.images}/>
+        <Query query={GET_ART}>
+            {({ loading, error, data }) => {
+              if (loading) return <p>Loading...</p>;
+              if (error) return <p>Error :(</p>;
+
+              return (
+                <Gallery images={data.collection}/>
+              )
+            }}
+          </Query>
       </section>
     );
   }

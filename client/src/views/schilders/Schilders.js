@@ -1,33 +1,40 @@
 import React, { Component } from 'react';
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
 import './Schilders.css';
 
 // Components
 import PageTitle from '../../components/pageLink/PageLink';
 import Gallery from '../../components/gallery/Gallery';
 
+const GET_PAINTERS = gql`
+  {
+    painters {
+      id_number
+      name
+      headerimage
+    }
+  }
+`
+
 class Schilders extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      painters: [],
-    };
-  }
-
-  componentDidMount(){
-    fetch('/schilders')
-      .then(res => res.json())
-      .then(res => {
-        this.setState({
-          painters: res
-        })
-      })
-  }
-
   render() {
     return (
       <section className="section-container">
         <PageTitle title="Schilders"/>
-        <Gallery images={this.state.painters} noDetails={true} />
+        <Query
+          query={GET_PAINTERS}
+          pollInterval={500}
+        >
+          {({loading, error, data}) => {
+            if (loading) return <p>Loading...</p>;
+            if (error) return <p>Error :(</p>;
+
+            return (
+                <Gallery images={data.painters} noDetails={true} />
+            )
+          }}
+        </Query>
       </section>
     );
   }

@@ -1,13 +1,27 @@
 const express = require('express');
+const graphqlHTTP = require('express-graphql');
+const cors = require('cors')
+
+const { schema } = require('./schema/schema')
+const { root } = require('./query/query')
+
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken')
+
 const app = express();
 const port = 3001;
 
-app.use(bodyParser.urlencoded({extended:false}));
-app.use(bodyParser.json());
-var pgp = require('pg-promise')(/*options*/)
-var db = pgp('postgres://projectc:pc@188.166.94.83:5432/project_dev')
+// Generate JWT token
+function generateToken(user) {
+  var u = {
+    name: user.name + user.surname,
+    admin: user.admin
+  }
+
+  return token = jwt.sign(u, E28BA7D908327F1F8F08E396D60DC6FBCDB734387C2C08FCD2CF8E4C09B36AB7, {
+    expiresIn: 60 * 60 * 24 // Expires in 24 hours
+  })
+}
 
 // Get all art
 app.get('/collection', (req, res) => {
@@ -70,6 +84,21 @@ app.get('/werken-van/:name', (req,res) =>{
     })
 });
 
+// Signup new user
+app.post('/user/signup', (req, res) => {
+  var body = req.body
+
+  var hash = bcrypt.hashSync(body.password.trim(), 10)
+  var user = new user({
+    name: body.name,
+    surname: body.surname,
+    email: body.email,
+    password: hash
+  })
+
+  db.one()
+})
+
 app.get('/test',(req,res)=>{
   db.many('select * from gebruiker limit 15')
   .then(function(data){
@@ -90,4 +119,15 @@ app.get('/test/:id',(req,res)=>{
     console.log('ERROR:',error)
   })
 });
+
+app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.json());
+
+app.use(cors())
+app.use('/graphql', graphqlHTTP({
+  schema: schema,
+  rootValue: root,
+  graphiql: true
+}))
+
 app.listen(port, () => console.log(`Server started on port ${port}`));

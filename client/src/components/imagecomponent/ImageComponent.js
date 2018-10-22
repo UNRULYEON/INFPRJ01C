@@ -14,7 +14,7 @@ class ImageComponent extends Component {
     }
 
     function getLocal(prop) {
-      return "/schilderij/" + prop.photo.id;
+      return "/schilderij/" + prop.photo.id_number;
     }
 
     return(

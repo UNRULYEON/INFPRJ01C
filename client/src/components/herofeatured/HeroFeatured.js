@@ -3,31 +3,13 @@ import { NavLink } from 'react-router-dom'
 import './HeroFeatured.css';
 
 class HeroFeatured extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      featured: [],
-    };
-  }
-
-  componentDidMount(){
-    // fetch('/featured')
-    fetch('/collection')
-      .then(res => res.json())
-      .then(res => {
-        console.log(res)
-        this.setState({
-          featured: res
-        })
-      })
-  }
 
   render() {
     return (
       <div className="hero-featured">
         <NavLink to="">
           <div className="hero-featured-image-container flex row-nowrap">
-            {this.state.featured.map(d =>
+            {this.props.featured.map(d =>
               <img
                 className="hero-featured-image"
                 key={d.title}
