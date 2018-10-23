@@ -1,5 +1,5 @@
 {
-  "name": "infprj01c_dev",
+  "name": "INFPRJ01C",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/UNRULYEON/infprj01c_dev.git"
+    "url": "git+https://github.com/UNRULYEON/INFPRJ01C.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/UNRULYEON/infprj01c_dev/issues"
+    "url": "https://github.com/UNRULYEON/INFPRJ01C/issues"
   },
-  "homepage": "https://github.com/UNRULYEON/infprj01c_dev#readme",
+  "homepage": "https://github.com/UNRULYEON/INFPRJ01C#readme",
   "dependencies": {
     "apollo-boost": "^0.1.16",
     "bcrypt": "^2.0.1",
