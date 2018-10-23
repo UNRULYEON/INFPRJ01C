@@ -51,7 +51,7 @@ var schema = buildSchema(`
   },
   type Painter{
     name: String,
-    id_number: Int,
+    id: Int,
     city: String,
     dateofbirth: String,
     dateofdeath: String,
