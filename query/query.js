@@ -12,6 +12,12 @@ var root = {
     let query = 'SELECT * from schilderijen limit 3'
     return db.manyOrNone(query)
   },
+  paintingOrderedByPagination: ({ page }) => {
+    let offset = (page - 1) * 10
+    let query = (`SELECT * FROM schilderijen LIMIT 10 OFFSET ${offset}`) 
+    return db.manyOrNone(query)
+  },
+
   paintingByID: ({id}) => {
     let query = (`SELECT * from schilderijen where id_number = ${id}`)
     return db.manyOrNone(query)
@@ -28,6 +34,11 @@ var root = {
     let query = (`SELECT * from schilderijen where principalmaker = ${id}`)
     return db.manyOrNone(query)
   },
+  faq: () => {
+    let query = ('SELECT * from faq')
+    return db.manyOrNone(query)
+  },
+
   async me({root, args, context}) {
     console.log(root)
     console.log(args)

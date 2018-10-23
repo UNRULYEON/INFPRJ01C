@@ -121,6 +121,7 @@ class Header extends Component {
 						<li><NavLink exact to="/schilderijen" activeClassName="linkSelected">Schilderijen</NavLink></li>
 						<li><NavLink exact to="/schilders" activeClassName="linkSelected">Schilders</NavLink></li>
 						<li><NavLink exact to="/contact" activeClassName="linkSelected">Contact</NavLink></li>
+						<li><NavLink exact to="/faq" activeClassName="linkSelected">FAQ</NavLink></li>
 					</ul>
 				</div>
 			</header>

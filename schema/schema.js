@@ -4,11 +4,13 @@ var schema = buildSchema(`
   type Query {
     hello: String,
     collection: [Collection]
+    paintingOrderedByPagination(page: Int!): [Collection]
     paintingByID(id: String!): [Painting]
     painters: [Painter]
     painterByID(id: String!): [Painter]
     workByPainter(id: String!): [Painting]
     me: User,
+    faq: [FAQ],
     status: Int
   },
   type Mutation {
@@ -51,7 +53,7 @@ var schema = buildSchema(`
   },
   type Painter{
     name: String,
-    id_number: Int,
+    id: Int,
     city: String,
     dateofbirth: String,
     dateofdeath: String,
@@ -68,6 +70,11 @@ var schema = buildSchema(`
     surname: String,
     email: String,
     password: String
+  }
+  type FAQ{
+    id: Int,
+    title: String,
+    body: String
   }
 `)
 
