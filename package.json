@@ -21,7 +21,7 @@
   "homepage": "https://github.com/UNRULYEON/infprj01c_dev#readme",
   "dependencies": {
     "apollo-boost": "^0.1.16",
-    "bcrypt": "^3.0.2",
+    "bcrypt": "^2.0.1",
     "bluebird": "^3.5.2",
     "body-parser": "^1.18.3",
     "concurrently": "^4.0.1",
