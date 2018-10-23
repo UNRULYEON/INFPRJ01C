@@ -6,22 +6,10 @@ const { schema } = require('./schema/schema')
 const { root } = require('./query/query')
 
 const bodyParser = require('body-parser');
-const jwt = require('jsonwebtoken')
+const jwt = require('express-jwt')
 
 const app = express();
 const port = 3001;
-
-// Generate JWT token
-function generateToken(user) {
-  var u = {
-    name: user.name + user.surname,
-    admin: user.admin
-  }
-
-  return token = jwt.sign(u, E28BA7D908327F1F8F08E396D60DC6FBCDB734387C2C08FCD2CF8E4C09B36AB7, {
-    expiresIn: 60 * 60 * 24 // Expires in 24 hours
-  })
-}
 
 // Get all art
 app.get('/collection', (req, res) => {
@@ -123,11 +111,24 @@ app.get('/test/:id',(req,res)=>{
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 
+const auth = jwt({
+  secret: "E28BA7D908327F1F8F08E396D60DC6FBCDB734387C2C08FCD2CF8E4C09B36AB7",
+  credentialsRequired: false
+})
+
 app.use(cors())
-app.use('/graphql', graphqlHTTP({
+app.use('/graphql', auth, graphqlHTTP(req => ({
   schema: schema,
   rootValue: root,
-  graphiql: true
-}))
+  graphiql: true,
+  context: {
+    user: req.headers.authentication || ''
+  }
+})))
+// app.use('/graphql', graphqlHTTP({
+//   schema: schema,
+//   rootValue: root,
+//   graphiql: true
+// }))
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
