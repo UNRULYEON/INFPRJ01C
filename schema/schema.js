@@ -4,6 +4,7 @@ var schema = buildSchema(`
   type Query {
     hello: String,
     collection: [Collection]
+    paintingOrderedByPagination(page: Int!): [Collection]
     paintingByID(id: String!): [Painting]
     painters: [Painter]
     painterByID(id: String!): [Painter]
