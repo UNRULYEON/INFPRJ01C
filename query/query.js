@@ -28,6 +28,11 @@ var root = {
     let query = (`SELECT * from schilderijen where principalmaker = ${id}`)
     return db.manyOrNone(query)
   },
+  faq: () => {
+    let query = ('SELECT * from faq')
+    return db.manyOrNone(query)
+  },
+
   async me({root, args, context}) {
     console.log(root)
     console.log(args)

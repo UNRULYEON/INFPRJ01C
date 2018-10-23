@@ -69,6 +69,10 @@ var schema = buildSchema(`
     email: String,
     password: String
   }
+  type Faq{
+    id: Int,
+    information: String
+  }
 `)
 
 module.exports = {
