@@ -9,6 +9,7 @@ var schema = buildSchema(`
     painterByID(id: String!): [Painter]
     workByPainter(id: String!): [Painting]
     me: User,
+    faq: [FAQ],
     status: Int
   },
   type Mutation {
@@ -69,7 +70,7 @@ var schema = buildSchema(`
     email: String,
     password: String
   }
-  type Faq{
+  type FAQ{
     id: Int,
     information: String
   }
