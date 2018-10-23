@@ -1,5 +1,32 @@
-#Waarom{
-  margin: 50px 0px 0px 50px;
+#form{
+
+}
+
+#kech{
+  display:none;
+}
+
+#for{
+  float:left;
+  margin-left: 150px;
+}
+
+#email{
+  width:300px;
+  margin-left:15px;
+}
+
+#pas{
+  width:300px;
+  margin-left:15px;
+}
+
+#button{
+  width:310px;
+}
+
+#Waarom {
+  margin: 50px 0px 0px 550px;
   border-left: 1px solid grey;
-  padding-left:50px;
+  padding-left: 50px;
 }

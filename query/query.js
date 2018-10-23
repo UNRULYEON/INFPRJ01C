@@ -70,8 +70,8 @@ var root = {
       })
 
     // Return token to client
-    console.log(token)
-    return token
+    console.log(token);
+    return token;
   },
   async login ({email, password}) {
     const user = await db.manyOrNone('SELECT * from gebruiker where mail = $1',[email])
