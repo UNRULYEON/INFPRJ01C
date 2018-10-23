@@ -1,0 +1,30 @@
+.react-sanfona-item{
+  border: 1px solid #bdbdbd;
+  border-bottom: none;
+}
+
+.react-sanfona-item:first-child{
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+}
+
+.react-sanfona-item:last-child{
+  border-bottom: 1px solid #bdbdbd;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+
+.react-sanfona-item-title{
+  padding: 20px;
+  background: transparent;
+  transition: background-color .3s;
+}
+
+.react-sanfona-item-body-wrapper{
+  padding: 20px;
+}
+
+.react-sanfona-item-expanded .react-sanfona-item-title{
+  background: #eeeeee;
+  transition: background-color .3s;
+}

@@ -72,7 +72,8 @@ var schema = buildSchema(`
   }
   type FAQ{
     id: Int,
-    information: String
+    title: String,
+    body: String
   }
 `)
 
