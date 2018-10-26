@@ -7,7 +7,7 @@ import './ImageComponentNoDetails.css'
 class ImageComponentNoDetails extends Component {
   render() {
     function getLocal(prop) {
-      return "/schilder/" + prop.photo.id_number;
+      return "/schilder/" + prop.photo.id;
     }
 
     return(

@@ -25,6 +25,9 @@ const Menu = posed.div({
 
 
 class CartMenu extends Component {
+  constructor(props) {
+    super(props);
+  }
 	render() {
 		return (
       <Menu

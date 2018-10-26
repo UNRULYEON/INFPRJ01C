@@ -10,7 +10,7 @@ import Gallery from '../../components/gallery/Gallery';
 const GET_PAINTERS = gql`
   {
     painters {
-      id_number
+      id
       name
       headerimage
     }

@@ -12,12 +12,15 @@ var root = {
     let query = 'SELECT * from schilderijen limit 3'
     return db.manyOrNone(query)
   },
-  paintingOrderedByPagination: ({ page }) => {
-    let offset = (page - 1) * 10
-    let query = (`SELECT * FROM schilderijen LIMIT 10 OFFSET ${offset}`) 
+  collectionSearch: () => {
+    let query = 'SELECT * from schilderijen'
     return db.manyOrNone(query)
   },
-
+  paintingOrderedByPagination: ({ page }) => {
+    let offset = (page - 1) * 10
+    let query = (`SELECT * FROM schilderijen LIMIT 10 OFFSET ${offset}`)
+    return db.manyOrNone(query)
+  },
   paintingByID: ({id}) => {
     let query = (`SELECT * from schilderijen where id_number = ${id}`)
     return db.manyOrNone(query)
@@ -27,7 +30,7 @@ var root = {
     return db.manyOrNone(query)
   },
   painterByID: ({id}) => {
-    let query = (`SELECT * from schilder where id_number = ${id}`)
+    let query = (`SELECT * from schilder where id = ${id}`)
     return db.manyOrNone(query)
   },
   workByPainter: ({id}) => {

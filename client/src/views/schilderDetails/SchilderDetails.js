@@ -12,7 +12,7 @@ const GET_PAINTER_DETAILS = gql`
   query Painter($id: String!){
     painterByID(id: $id){
       name
-      id_number
+      id
       headerimage
       description
     }
@@ -23,7 +23,7 @@ const GET_PAINTER_WORKS = gql`
   query Paintings($id: String!){
     workByPainter(id: $id){
       name
-      id_number
+      id
       headerimage
       description
     }

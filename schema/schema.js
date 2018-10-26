@@ -2,8 +2,9 @@ const { buildSchema } = require('graphql');
 
 var schema = buildSchema(`
   type Query {
-    hello: String,
+    hello: String
     collection: [Collection]
+    collectionSearch: [Collection]
     paintingOrderedByPagination(page: Int!): [Collection]
     paintingByID(id: String!): [Painting]
     painters: [Painter]
@@ -35,8 +36,7 @@ var schema = buildSchema(`
     principalmaker: String
   },
   type Painting{
-    id: ID,
-    id_number: Int,
+    id: String,
     title: String,
     releasedate: Int,
     period: Int,

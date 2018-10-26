@@ -12,7 +12,7 @@ import Tabs from '../../components/tabs/Tabs';
 const GET_ART_DETAILS = gql`
 	query Painting($id: String!){
 		paintingByID(id: $id){
-			id_number
+			id
 			title
 			releasedate
 			period

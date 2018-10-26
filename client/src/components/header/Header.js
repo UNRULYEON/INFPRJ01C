@@ -4,6 +4,7 @@ import {
     NavLink
 } from 'react-router-dom';
 import posed from "react-pose";
+import OutsideClickHandler from 'react-outside-click-handler';
 import './Header.css';
 
 // Components
@@ -46,13 +47,13 @@ class Header extends Component {
 		this.state = {
 			searchBar: false,
 			accountMenuToggle: false,
-			cartMenuToggle: false
+			cartMenuToggle: false,
 		};
 		this.toggleSearchBar = this.toggleSearchBar.bind(this);
 		this.toggleAccount = this.toggleAccount.bind(this);
 		this.toggleCart = this.toggleCart.bind(this);
     this.searchbarInput = React.createRef();
-  }
+	}
 
 	toggleSearchBar() {
 		this.setState(state => ({
@@ -78,9 +79,10 @@ class Header extends Component {
 			accountMenuToggle: false
 		}))
 		console.log("Cart menu is now: " + !this.state.cartMenuToggle);
-  }
+	}
 
 	render() {
+
 		return (
 			<header>
 				<SearchbarContainer
@@ -92,7 +94,7 @@ class Header extends Component {
 						placeholder="Waar bent u naar opzoek?"
 						ref={this.searchbarInput}
 					></input>
-					<button id="searchbar-close" onClick={this.toggleSearchBar} className="pointer header-button ml-3"><img src={close} alt="Close" width="32" /></button>
+				<button id="searchbar-close" onClick={this.toggleSearchBar} className="pointer header-button ml-3"><img src={close} alt="Close" width="32" /></button>
 				</SearchbarContainer>
 				<div id="header-container-primary">
 					<div id="header-name">
@@ -104,15 +106,33 @@ class Header extends Component {
 						<button onClick={this.toggleSearchBar} className="pointer header-button mr-2" id="search-icon"><img src={search} alt="Search" width="32" /></button>
 						<div className="header-dropdownmenu-container">
 							<button onClick={this.toggleAccount} className="pointer header-button mr-2" id="account-icon"><img src={account} alt="Search" width="32" /></button>
-							<AccountMenu
-								menu={this.state.accountMenuToggle}
-							/>
+							<OutsideClickHandler
+								onOutsideClick={() => {
+									this.setState(state => ({
+										accountMenuToggle: false
+									}))
+									console.log("Clicked outside of account menu. State: " + !this.state.accountMenuToggle);
+								}}
+							>
+								<AccountMenu
+									menu={this.state.accountMenuToggle}
+								/>
+							</OutsideClickHandler>
 						</div>
 						<div className="header-dropdownmenu-container">
 							<button onClick={this.toggleCart} className="pointer header-button"><img src={cart} alt="Cart" width="32" /></button>
-							<CartMenu
-								menu={this.state.cartMenuToggle}
-							/>
+							<OutsideClickHandler
+								onOutsideClick={() => {
+									this.setState(state => ({
+										cartMenuToggle: false
+									}))
+									console.log("Clicked outside of cart menu. State: " + !this.state.cartMenuToggle);
+								}}
+							>
+								<CartMenu
+									menu={this.state.cartMenuToggle}
+								/>
+							</OutsideClickHandler>
 						</div>
 					</div>
 				</div>
