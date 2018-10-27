@@ -81,6 +81,16 @@ class Header extends Component {
 		console.log("Cart menu is now: " + !this.state.cartMenuToggle);
 	}
 
+  componentDidMount(){
+    document.addEventListener("keydown", () => {
+			this.setState(state => ({
+				searchBar: false,
+				cartMenuToggle: false,
+				accountMenuToggle: false
+			}))
+		}, false);
+  }
+
 	render() {
 
 		return (
@@ -108,9 +118,9 @@ class Header extends Component {
 							<button onClick={this.toggleAccount} className="pointer header-button mr-2" id="account-icon"><img src={account} alt="Search" width="32" /></button>
 							<OutsideClickHandler
 								onOutsideClick={() => {
-									this.setState(state => ({
+									this.setState({
 										accountMenuToggle: false
-									}))
+									})
 									console.log("Clicked outside of account menu. State: " + !this.state.accountMenuToggle);
 								}}
 							>
@@ -123,9 +133,9 @@ class Header extends Component {
 							<button onClick={this.toggleCart} className="pointer header-button"><img src={cart} alt="Cart" width="32" /></button>
 							<OutsideClickHandler
 								onOutsideClick={() => {
-									this.setState(state => ({
+									this.setState({
 										cartMenuToggle: false
-									}))
+									})
 									console.log("Clicked outside of cart menu. State: " + !this.state.cartMenuToggle);
 								}}
 							>
