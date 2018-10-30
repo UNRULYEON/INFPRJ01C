@@ -44,7 +44,7 @@ class Registreren extends Component {
       Aanhef: '',
       isHidden: false,
       isHidden2: true,
-      toggle: false
+      toggle: false,
     };
   }
 
@@ -54,7 +54,11 @@ class Registreren extends Component {
       isHidden2: !this.state.isHidden2,
       toggle: !this.state.toggle
     });
+  }
+
+  save() {
     console.log(this.state);
+    //show state in console log
   }
 
   onChange = (e) => {
@@ -182,6 +186,7 @@ class Registreren extends Component {
               </div>
 
               <button onClick={this.toggleHidden.bind(this)} className="dropdown-button" id="button" type="primary">Terug</button>
+              <button onClick={this.save.bind(this)} className="dropdown-button" id="button" type="primary">Save</button>
             </div>)}
           </FirstStepContainer>
         </div >
