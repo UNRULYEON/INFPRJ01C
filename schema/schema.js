@@ -10,7 +10,7 @@ var schema = buildSchema(`
     painters: [Painter]
     painterByID(id: String!): [Painter]
     workByPainter(id: String!): [Painting]
-    me: User,
+    me: [User],
     faq: [FAQ],
     status: Int
   },
@@ -65,12 +65,17 @@ var schema = buildSchema(`
     description: String
   },
   type User {
-    id: String,
+    id: Int,
     name: String,
     surname: String,
     email: String,
-    password: String
-  }
+    address: String,
+    city: String,
+    postalcode: String,
+    cellphone: String,
+    password: String,
+    aanhef: String
+  },
   type FAQ{
     id: Int,
     title: String,

@@ -6,7 +6,10 @@ import {
 } from 'react-router-dom';
 import './App.css';
 
-import ApolloClient from "apollo-boost";
+import { ApolloClient } from 'apollo-client';
+import { createHttpLink } from 'apollo-link-http';
+import { setContext } from 'apollo-link-context';
+import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloProvider } from "react-apollo";
 
 // Views
@@ -26,14 +29,44 @@ import NoMatch from './views/404/404';
 import Header from './components/header/Header';
 import Footer from './components/footer/Footer';
 
+const link = createHttpLink({
+  uri: 'http://localhost:3001/graphql',
+});
+
+const authLink = setContext((_, { headers }) => {
+  // get the authentication token from local storage if it exists
+  const token = localStorage.getItem('AUTH_TOKEN');
+  // return the headers to the context so httpLink can read them
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? (
+        `Bearer ${token}`
+      ) : (
+        ""
+      ),
+    }
+  }
+});
+
 const client = new ApolloClient({
-  uri: 'http://localhost:3001/graphql'
-})
+  link: authLink.concat(link),
+  cache: new InMemoryCache()
+});
 
 class App extends Component {
   constructor(props) {
     super(props);
   }
+
+  setLocalStorage(data) {
+    localStorage.setItem('AUTH_TOKEN', data)
+  }
+
+  componentWillMount() {
+    this.setLocalStorage("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OTIsImlhdCI6MTU0MDkzNDI5MCwiZXhwIjoxNTQxMDIwNjkwfQ.I1kzbHDBvatqJuj1n-d7jpA8uhJg4mg1Cpp_ZfuT5F0")
+  }
+
   render() {
     return (
       <ApolloProvider client={client}>

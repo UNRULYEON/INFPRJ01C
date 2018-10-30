@@ -5,6 +5,8 @@
   "dependencies": {
     "ajv": "^6.5.4",
     "animejs": "^2.2.0",
+    "apollo-link": "^1.2.3",
+    "apollo-link-context": "^1.0.9",
     "keyframe": "^2.1.0",
     "log4js": "^3.0.6",
     "react": "^16.5.2",

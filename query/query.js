@@ -3,9 +3,6 @@ const db = pgp('postgres://projectc:pc@188.166.94.83:5432/project_dev')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
-const log4js = require('log4js');
-const logger = log4js.getLogger();
-
 var root = {
   status: () => {
     return 200
@@ -25,6 +22,7 @@ var root = {
   },
   paintingByID: ({id}) => {
     let query = (`SELECT * from schilderijen where id_number = ${id}`)
+    console.log(query)
     return db.manyOrNone(query)
   },
   painters: () => {
@@ -44,18 +42,22 @@ var root = {
     return db.manyOrNone(query)
   },
 
-  async me(parentValues, args, context) {
-    logger.trace(`[context keys ] - ${object.keys(context)}`);
-    logger.trace(`[context header ] - ${(context.headers) ? Object.keys(context.jeaders) : null}`);
-    logger.trace(`[context header auth ] - ${(context.headers && context.headers.authorization) ? context.headers.authorization : null}`);;
+  async me (req, res, next) {
+    if (!res.headers.authorization) {
+      console.log(`\nUser not authenticated!\n`)
+      throw new Error('You are not authenticated!')
+    }
 
-    return 'GraphQL query OK';
-    // if (!user) {
-    //   throw new Error('You are not authenticated!')
-    // }
+    var decoded = jwt.verify(
+      String(res.headers.authorization).slice(7),
+      'E28BA7D908327F1F8F08E396D60DC6FBCDB734387C2C08FCD2CF8E4C09B36AB7'
+    );
 
-    // let query = ('SELECT * from gebruiker where id = $1', [user.id])
-    // return await db.manyOrNone(query)
+    console.log(`\nToken: ${String(res.headers.authorization).slice(7)}`)
+    console.log(`ID: ${decoded.id}\n`)
+
+    let query = (`SELECT * from gebruiker where id = ${decoded.id}`)
+    return await db.manyOrNone(query)
   },
 
   async signup ({ name, surname, email, password }) {
@@ -73,8 +75,7 @@ var root = {
     // Generate token when insertion is complete
     let token = await db.one('INSERT INTO gebruiker(name, surname, mail, password) VALUES($1, $2, $3, $4) RETURNING id', [name, surname, email, saltedPassword])
       .then( data => {
-        console.log()
-        console.log(`User ID: ${data.id}`)
+        console.log(`\nUser ID: ${data.id}`)
 
         return jwt.sign(
           { id: data.id },
@@ -87,7 +88,7 @@ var root = {
       })
 
     // Return token to client
-    console.log(token);
+    console.log(`Token: ${token}\n`)
     return token;
   },
   async login ({email, password}) {
@@ -100,16 +101,13 @@ var root = {
       throw new Error('No user with that email')
     }
 
-    console.log(user)
-
     const valid = await bcrypt.compare(password, user[0].password)
 
     if (!valid) {
       throw new Error('Incorrect password')
     }
 
-    console.log()
-    console.log(`User ID: ${user[0].id}`)
+    console.log(`\nUser ID: ${user[0].id}`)
 
     let token = jwt.sign(
       { id: user[0].id },
@@ -117,7 +115,7 @@ var root = {
       { expiresIn: '1d' }
     )
 
-    console.log(token)
+    console.log(`Token: ${token}\n`);
     return token
   }
 }

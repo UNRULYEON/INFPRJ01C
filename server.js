@@ -124,18 +124,10 @@ const auth = jwt({
 })
 
 app.use(cors())
-app.use('/graphql', auth, graphqlHTTP(req => ({
+app.use('/graphql', graphqlHTTP({
   schema: schema,
   rootValue: root,
-  graphiql: true,
-  context: req => ({
-    ...req
-  })
-})))
-// app.use('/graphql', graphqlHTTP({
-//   schema: schema,
-//   rootValue: root,
-//   graphiql: true
-// }))
+  graphiql: true
+}))
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
