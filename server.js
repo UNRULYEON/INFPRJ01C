@@ -11,6 +11,7 @@ const jwt = require('express-jwt')
 const app = express();
 const port = 3001;
 
+//#region Get Data
 // Get all art
 app.get('/collection', (req, res) => {
   db.many('SELECT * from schilderijen limit 3')
@@ -71,7 +72,9 @@ app.get('/werken-van/:name', (req,res) =>{
       console.log('ERROR:', error)
     })
 });
+//#endregion
 
+//#region Post data
 // Signup new user
 app.post('/user/signup', (req, res) => {
   var body = req.body
@@ -86,7 +89,10 @@ app.post('/user/signup', (req, res) => {
 
   db.one()
 })
+//#endregion
 
+
+//#region Testing
 app.get('/test',(req,res)=>{
   db.many('select * from gebruiker limit 15')
   .then(function(data){
@@ -108,6 +114,7 @@ app.get('/test/:id',(req,res)=>{
   })
 });
 
+//#endregion
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 
