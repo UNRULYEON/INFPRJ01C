@@ -19,27 +19,27 @@ import search from '../../icons/search.svg';
 import close from '../../icons/close.svg';
 
 const SearchbarContainer = posed.div({
-	open: {
-		y: '0%',
-		transition: {
-			y: {
-				type: 'tween',
-				ease: 'easeOut',
-				duration: '250'
-			}
-		}
-	},
-	closed: {
-		y: '-100%',
-		transition: {
-			y: {
-				type: 'tween',
-				ease: 'easeIn',
-				duration: '200'
-			}
-		}
-	}
-})
+  open: {
+    y: '0%',
+    transition: {
+      y: {
+        type: 'tween',
+        ease: 'easeOut',
+        duration: '250'
+      }
+    }
+  },
+  closed: {
+    y: '-100%',
+    transition: {
+      y: {
+        type: 'tween',
+        ease: 'easeIn',
+        duration: '200'
+      }
+    }
+  }
+});
 
 class Header extends Component {
 	constructor(props){
@@ -121,7 +121,7 @@ class Header extends Component {
 									this.setState({
 										accountMenuToggle: false
 									})
-									console.log("Clicked outside of account menu. State: " + !this.state.accountMenuToggle);
+									//console.log("Clicked outside of account menu. State: " + !this.state.accountMenuToggle);
 								}}
 							>
 								<AccountMenu
@@ -136,7 +136,7 @@ class Header extends Component {
 									this.setState({
 										cartMenuToggle: false
 									})
-									console.log("Clicked outside of cart menu. State: " + !this.state.cartMenuToggle);
+									//console.log("Clicked outside of cart menu. State: " + !this.state.cartMenuToggle);
 								}}
 							>
 								<CartMenu

@@ -1,14 +1,96 @@
-#form{
-
+#een{
+  display: block;
 }
 
-#kech{
-  display:none;
+#twee{
+  margin: 50px 0px 50px 350px;
+  display: block;
+  width: 700px;
+  float: left;
+}
+
+#naam{
+  width: 300px;
+  float: left;
+}
+
+#adres{
+  width: 300px;
+  float: left;
+}
+
+
+
+#stappen{
+  margin: 10px 0px 50px -50px;
+  float: left;
+}
+
+#voornaam{
+  margin-top:51px;
+}
+
+#uno {
+  border: 0px solid black;
+  border-radius: 50%;
+  width: 30px;
+  height: 25px;
+  text-align: center;
+  float: left;
+  margin: 0px 10px 0px 0px;
+  padding-top: 5px;
+  background-color: #53B534;
+  color: white;
+}
+
+#unoText {
+  float: left;
+  margin: 0px 10px 0px 0px;
+  padding-top: 5px;
+}
+
+#dos {
+  border: 1px solid black;
+  border-radius: 50%;
+  width: 30px;
+  height: 25px;
+  text-align: center;
+  float: left;
+  margin: 0px 10px 0px 10px;
+  padding-top: 5px;
+}
+
+#dosText {
+  float: left;
+  margin: 0px 10px 0px 0px;
+  padding-top: 5px;
+}
+
+#tres {
+  border: 1px solid black;
+  border-radius: 50%;
+  width: 30px;
+  height: 25px;
+  text-align: center;
+  float: left;
+  margin: 0px 10px 0px 10px;
+  padding-top: 5px;
+}
+
+#tresText {
+  float: left;
+  margin: 0px 10px 0px 0px;
+  padding-top: 5px;
+}
+
+#form{
+
 }
 
 #for{
   float:left;
   margin-left: 150px;
+  margin-top: -10px;
 }
 
 #email{
