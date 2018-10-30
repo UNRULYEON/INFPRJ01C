@@ -121,9 +121,9 @@ app.use('/graphql', auth, graphqlHTTP(req => ({
   schema: schema,
   rootValue: root,
   graphiql: true,
-  context: {
-    user: req.headers.authentication || ''
-  }
+  context: req => ({
+    ...req
+  })
 })))
 // app.use('/graphql', graphqlHTTP({
 //   schema: schema,

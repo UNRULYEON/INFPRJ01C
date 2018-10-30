@@ -2,7 +2,9 @@ const pgp = require('pg-promise')(/*options*/)
 const db = pgp('postgres://projectc:pc@188.166.94.83:5432/project_dev')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const { User } = require('../schema/schema')
+
+const log4js = require('log4js');
+const logger = log4js.getLogger();
 
 var root = {
   status: () => {
@@ -42,22 +44,20 @@ var root = {
     return db.manyOrNone(query)
   },
 
-  async me({root, args, context}) {
-    console.log(root)
-    console.log(args)
-    console.log(context)
+  async me(parentValues, args, context) {
+    logger.trace(`[context keys ] - ${object.keys(context)}`);
+    logger.trace(`[context header ] - ${(context.headers) ? Object.keys(context.jeaders) : null}`);
+    logger.trace(`[context header auth ] - ${(context.headers && context.headers.authorization) ? context.headers.authorization : null}`);;
 
-    if (!context.user) {
-      return null;
-    }
+    return 'GraphQL query OK';
+    // if (!user) {
+    //   throw new Error('You are not authenticated!')
+    // }
 
-    if (!token) {
-      throw new Error('You are not authenticated!')
-    }
-
-    let query = ('SELECT * from gebruiker where id = $1', [user.id])
-    return await db.manyOrNone(query)
+    // let query = ('SELECT * from gebruiker where id = $1', [user.id])
+    // return await db.manyOrNone(query)
   },
+
   async signup ({ name, surname, email, password }) {
     // Salt password
     const saltedPassword =  await bcrypt.hash(password, 10)
@@ -73,10 +73,13 @@ var root = {
     // Generate token when insertion is complete
     let token = await db.one('INSERT INTO gebruiker(name, surname, mail, password) VALUES($1, $2, $3, $4) RETURNING id', [name, surname, email, saltedPassword])
       .then( data => {
+        console.log()
+        console.log(`User ID: ${data.id}`)
+
         return jwt.sign(
           { id: data.id },
           "E28BA7D908327F1F8F08E396D60DC6FBCDB734387C2C08FCD2CF8E4C09B36AB7",
-          { expiresIn: '1y' }
+          { expiresIn: '1d' }
         )
       })
       .catch( err => {
@@ -97,17 +100,25 @@ var root = {
       throw new Error('No user with that email')
     }
 
+    console.log(user)
+
     const valid = await bcrypt.compare(password, user[0].password)
 
     if (!valid) {
       throw new Error('Incorrect password')
     }
 
-    return jwt.sign(
+    console.log()
+    console.log(`User ID: ${user[0].id}`)
+
+    let token = jwt.sign(
       { id: user[0].id },
       "E28BA7D908327F1F8F08E396D60DC6FBCDB734387C2C08FCD2CF8E4C09B36AB7",
       { expiresIn: '1d' }
     )
+
+    console.log(token)
+    return token
   }
 }
 

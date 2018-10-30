@@ -6,6 +6,7 @@
     "ajv": "^6.5.4",
     "animejs": "^2.2.0",
     "keyframe": "^2.1.0",
+    "log4js": "^3.0.6",
     "react": "^16.5.2",
     "react-autosuggest": "^9.4.2",
     "react-css-transition-replace": "^3.0.3",

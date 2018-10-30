@@ -18,6 +18,7 @@ import SchilderDetails from './views/schilderDetails/SchilderDetails';
 import Search from './views/search/Search';
 import Contact from './views/contact/Contact';
 import FAQ from './views/faq/FAQ';
+import Login from './views/login/Login';
 import Registreren from './views/registreren/Registreren';
 import NoMatch from './views/404/404';
 
@@ -48,6 +49,7 @@ class App extends Component {
               <Route path="/zoeken" component={Search} />
               <Route path="/contact" component={Contact} />
               <Route path="/faq" component={FAQ} />
+              <Route path="/login" component={Login} />
               <Route path="/registreren" component={Registreren} />
               <Route component={NoMatch} />
             </Switch>

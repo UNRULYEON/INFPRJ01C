@@ -15,8 +15,8 @@ var schema = buildSchema(`
     status: Int
   },
   type Mutation {
-    signup(name: String!, surname: String!, email: String!, password: String!): String
-    login(email: String!, password: String!): String
+    signup(name: String!, surname: String!, email: String!, password: String!): String!
+    login(email: String!, password: String!): String!
   },
   type Collection {
     id: ID,
