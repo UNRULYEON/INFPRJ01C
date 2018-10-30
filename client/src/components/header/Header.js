@@ -82,12 +82,14 @@ class Header extends Component {
 	}
 
   componentDidMount(){
-    document.addEventListener("keydown", () => {
-			this.setState(state => ({
-				searchBar: false,
-				cartMenuToggle: false,
-				accountMenuToggle: false
-			}))
+    document.addEventListener("keydown", (event) => {
+			if (event.keyCode === 27) {
+				this.setState(state => ({
+					searchBar: false,
+					cartMenuToggle: false,
+					accountMenuToggle: false
+				}))
+			}
 		}, false);
   }
 
