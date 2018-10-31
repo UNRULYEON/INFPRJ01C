@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 
+import { BrowserRouter as Router } from 'react-router-dom'
+
 import './Login.css'
 
 // Components
@@ -38,11 +40,6 @@ class Login extends Component {
     }
   }
 
-  signIn () {
-    console.log('Email: ' + this.state.email)
-    console.log('Password: ' + this.state.password)
-  }
-
   render() {
     return (
       <section className="section-container">
@@ -52,10 +49,31 @@ class Login extends Component {
             <input placeholder="Email" type="email" value={this.state.email} onChange={this.updateState.bind(this, 'email')}></input>
             <input placeholder="Wachtwoord" type="password" value={this.state.password}  onChange={this.updateState.bind(this, 'password')}></input>
           </form>
-          <button
-            className="dropdown-button-login"
-            onClick={this.signIn}
-          >Inloggen</button>
+          <Mutation
+            mutation={LOGIN}
+            ignoreResults={false}
+            onCompleted={(data) => {
+              console.log(`Query completed: ${data.login}`)
+              localStorage.setItem('AUTH_TOKEN', data.login)
+              this.props.history.push("/")
+            }}
+            onError={(error) => {
+              console.log(error)
+            }}
+          >
+            {(login) => (
+              <button
+                className="dropdown-button-login"
+                onClick={e => {
+                  e.preventDefault();
+                  login({ variables: {
+                    email: this.state.email,
+                    password: this.state.password
+                   }});
+                }}
+              >Inloggen</button>
+            )}
+          </Mutation>
           <button className="dropdown-button-create-account">Maak een account aan</button>
         </div>
       </section>

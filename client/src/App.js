@@ -64,7 +64,7 @@ class App extends Component {
   }
 
   componentWillMount() {
-    this.setLocalStorage("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OTIsImlhdCI6MTU0MDkzNDI5MCwiZXhwIjoxNTQxMDIwNjkwfQ.I1kzbHDBvatqJuj1n-d7jpA8uhJg4mg1Cpp_ZfuT5F0")
+    // this.setLocalStorage("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OTIsImlhdCI6MTU0MDkzNDI5MCwiZXhwIjoxNTQxMDIwNjkwfQ.I1kzbHDBvatqJuj1n-d7jpA8uhJg4mg1Cpp_ZfuT5F0")
   }
 
   render() {
