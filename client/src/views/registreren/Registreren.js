@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import './Registreren.css';
+import { Mutation } from "react-apollo";
+import gql from "graphql-tag";
 
 // Components
 import PageTitle from '../../components/pageLink/PageLink';
@@ -29,14 +31,35 @@ const FirstStepContainer = posed.div({
   }
 });
 
+const SIGNUP = gql`
+  mutation Signup($name: String!, $surname: String!, $email: String!, $password: String!) {
+  signup(name: $name, surname: $surname, email: $email, password: $password)
+  }
+`;
+
+
+
+/*
+const CreateReviewForEpisode = gql`
+	query user($name: String!, $surname: String!, $mail: String!, $password: String!){
+		createReview(name: $name, surname: $surname, mail: $mail, password: $password){
+			name
+      surname
+      mail
+      password
+		}
+	}
+`;
+*/
+
 class Registreren extends Component {
   constructor() {
     super();
     this.state = {
-      Email: '',
-      Wachtwoord: '',
-      Voornaam: '',
-      Achternaam: '',
+      mail: '',
+      password: '',
+      name: '',
+      surname: '',
       Straat: '',
       Huisnummer: '',
       Postcode: '',
@@ -44,7 +67,7 @@ class Registreren extends Component {
       Aanhef: '',
       isHidden: false,
       isHidden2: true,
-      toggle: false,
+      toggle: false
     };
   }
 
@@ -57,14 +80,16 @@ class Registreren extends Component {
   }
 
   save() {
+    //const data = JSON.stringify(this.state.user);
+    //fetch("postgres://projectc:pc@188.166.94.83:5432/project_dev", { method: "POST", body: data });
     console.log(this.state);
-    //show state in console log
+
   }
 
   onChange = (e) => {
     console.log(e.target.checked);
     this.setState({
-      [e.target.placeholder]: e.target.value
+      [e.target.name]: e.target.value
     });
   }
 
@@ -79,16 +104,18 @@ class Registreren extends Component {
               <input
                 id="email"
                 placeholder="Email"
+                name="mail"
                 type="email"
                 onChange={e => this.onChange(e)}
-                value={this.state.Email}
+                value={this.state.mail}
               />
               <input
                 id="pas"
                 placeholder="Wachtwoord"
+                name="password"
                 type="password"
                 onChange={e => this.onChange(e)}
-                value={this.state.Wachtwoord}
+                value={this.state.password}
               />
               <button
                 onClick={this.toggleHidden.bind(this)}
@@ -133,17 +160,19 @@ class Registreren extends Component {
                 <p id="voornaam">Voornaam <b>*</b></p>
                 <input
                   type="text"
-                  placeholder="Voornaam"
+                  placeholder="Naam"
+                  name="name"
                   onChange={e => this.onChange(e)}
-                  value={this.state.Voornaam}
+                  value={this.state.name}
                 />
 
                 <p>Achternaam <b>*</b></p>
                 <input
                   type="text"
                   placeholder="Achternaam"
+                  name="surname"
                   onChange={e => this.onChange(e)}
-                  value={this.state.Achternaam}
+                  value={this.state.surname}
                 />
 
               </div>
@@ -187,6 +216,29 @@ class Registreren extends Component {
 
               <button onClick={this.toggleHidden.bind(this)} className="dropdown-button" id="button" type="primary">Terug</button>
               <button onClick={this.save.bind(this)} className="dropdown-button" id="button" type="primary">Save</button>
+
+              <Mutation mutation={SIGNUP}>
+                {(signup, { data }) => (
+                  <button
+                    className="dropdown-button"
+                    id="button"
+                    type="primary"
+                    onClick={e => {
+                      e.preventDefault();
+                      signup({
+                        variables: {
+                          name: this.state.name,
+                          surname: this.state.surname,
+                          email: this.state.mail,
+                          password: this.state.password
+                        }
+                      });
+                      console.log("kech is gelukt");
+                    }}
+                  >registreren</button>
+                )}
+              </Mutation>
+
             </div>)}
           </FirstStepContainer>
         </div >

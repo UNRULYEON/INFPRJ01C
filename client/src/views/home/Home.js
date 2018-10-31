@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
+import { ApolloConsumer } from 'react-apollo';
 
 // Components
 import PageTitle from '../../components/pageLink/PageLink'
