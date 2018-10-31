@@ -5,7 +5,7 @@ const cors = require('cors')
 const { schema } = require('./schema/schema')
 const { root } = require('./query/query')
 
-const bodyParser = require('body-parser');g
+const bodyParser = require('body-parser');
 
 const app = express();
 const port = 3001;
