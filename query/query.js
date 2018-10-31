@@ -60,12 +60,12 @@ var root = {
     return await db.manyOrNone(query)
   },
 
-  async signup ({ name, surname, email, password }) {
+  async signup ({ name, surname, mail, password, aanhef, adres, city, postalcode, cellphone}) {
     // Salt password
     const saltedPassword =  await bcrypt.hash(password, 10)
-
+    
     // Check if a user with the same email exists
-    const user = await db.manyOrNone('SELECT mail from gebruiker where mail = $1', [email])
+    const user = await db.manyOrNone('SELECT mail from gebruiker where mail = $1', [mail])
 
     // Throw an error when a user with the same email exists
     if (user.length) {
@@ -73,7 +73,7 @@ var root = {
     }
 
     // Generate token when insertion is complete
-    let token = await db.one('INSERT INTO gebruiker(name, surname, mail, password) VALUES($1, $2, $3, $4) RETURNING id', [name, surname, email, saltedPassword])
+    let token = await db.one('INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, cellphone) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id', [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, cellphone])
       .then( data => {
         console.log(`\nUser ID: ${data.id}`)
 
