@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^3.3.2",
     "ajv": "^6.5.4",
     "animejs": "^2.2.0",
     "apollo-link": "^1.2.3",
