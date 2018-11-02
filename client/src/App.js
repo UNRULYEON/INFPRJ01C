@@ -12,6 +12,9 @@ import { setContext } from 'apollo-link-context';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloProvider } from "react-apollo";
 
+// Material-UI
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+
 // Views
 import Home from './views/home/Home';
 import Schilderijen from './views/schilderijen/Schilderijen';
@@ -54,17 +57,27 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 });
 
+const theme = new createMuiTheme({
+  palette: {
+    primary: {
+      main: '#212121',
+      light: '#484848',
+      dark: '#000000'
+    },
+    secondary: {
+      main: '#fafafa',
+      light: '#ffffff',
+      dark: '#c7c7c7'
+    }
+  },
+  typography: {
+    useNextVariants: true,
+  },
+});
+
 class App extends Component {
   constructor(props) {
     super(props);
-  }
-
-  setLocalStorage(data) {
-    localStorage.setItem('AUTH_TOKEN', data)
-  }
-
-  componentWillMount() {
-    // this.setLocalStorage("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OTIsImlhdCI6MTU0MDkzNDI5MCwiZXhwIjoxNTQxMDIwNjkwfQ.I1kzbHDBvatqJuj1n-d7jpA8uhJg4mg1Cpp_ZfuT5F0")
   }
 
   render() {
@@ -72,21 +85,23 @@ class App extends Component {
       <ApolloProvider client={client}>
         <Router>
           <div className="App">
-            <Header />
-            <Switch>
-              <Route exact path="/" component={Home}/>
-              <Route path="/schilderijen" component={Schilderijen}/>
-              <Route path="/schilderij/:id" component={SchilderijDetails}/>
-              <Route path="/schilders" component={Schilders}/>
-              <Route path="/schilder/:id" component={SchilderDetails}/>
-              <Route path="/zoeken" component={Search} />
-              <Route path="/contact" component={Contact} />
-              <Route path="/faq" component={FAQ} />
-              <Route path="/login" component={Login} />
-              <Route path="/registreren" component={Registreren} />
-              <Route component={NoMatch} />
-            </Switch>
-            <Footer/>
+            <MuiThemeProvider theme={theme}>
+              <Header />
+              <Switch>
+                <Route exact path="/" component={Home}/>
+                <Route path="/schilderijen" component={Schilderijen}/>
+                <Route path="/schilderij/:id" component={SchilderijDetails}/>
+                <Route path="/schilders" component={Schilders}/>
+                <Route path="/schilder/:id" component={SchilderDetails}/>
+                <Route path="/zoeken" component={Search} />
+                <Route path="/contact" component={Contact} />
+                <Route path="/faq" component={FAQ} />
+                <Route path="/login" component={Login} />
+                <Route path="/registreren" component={Registreren} />
+                <Route component={NoMatch} />
+              </Switch>
+              <Footer/>
+            </MuiThemeProvider>
           </div>
         </Router>
       </ApolloProvider>

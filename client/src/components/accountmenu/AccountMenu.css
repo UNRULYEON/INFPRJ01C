@@ -21,15 +21,13 @@
 .dropdown-form{
   display: flex;
   flex-flow: column nowrap;
-  margin: 10px 15px 20px 15px;
+  margin: 0px 15px 20px 15px;
 }
 
-.dropdown-form > input{
-  font-size: 1.2em;
-  margin-bottom: 10px;
-  border: #eeeeee solid 1px;
-  padding: 5px;
+.login-input{
+  margin-bottom: 15px !important;
 }
+
 
 .dropdown-button{
   border: none;

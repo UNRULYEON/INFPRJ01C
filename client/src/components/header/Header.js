@@ -7,6 +7,7 @@ import posed from "react-pose";
 import OutsideClickHandler from 'react-outside-click-handler';
 import './Header.css';
 
+
 // Components
 import CartMenu from '../cartmenu/CartMenu';
 import AccountMenu from '../accountmenu/AccountMenu';
@@ -117,7 +118,7 @@ class Header extends Component {
 					<div id="header-actions">
 						<button onClick={this.toggleSearchBar} className="pointer header-button mr-2" id="search-icon"><img src={search} alt="Search" width="32" /></button>
 						<div className="header-dropdownmenu-container">
-							<button onClick={this.toggleAccount} className="pointer header-button mr-2" id="account-icon"><img src={account} alt="Search" width="32" /></button>
+							<button onClick={this.toggleAccount} className="pointer header-button mr-2" id="account-icon"><img src={account} alt="Account" width="32" /></button>
 							<OutsideClickHandler
 								onOutsideClick={() => {
 									this.setState({
@@ -128,6 +129,11 @@ class Header extends Component {
 							>
 								<AccountMenu
 									menu={this.state.accountMenuToggle}
+									closeModal={() => {
+										this.setState({
+											accountMenuToggle: false
+										})
+									}}
 								/>
 							</OutsideClickHandler>
 						</div>

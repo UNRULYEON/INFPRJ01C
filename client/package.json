@@ -4,10 +4,12 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^3.3.2",
+    "@material-ui/icons": "^3.0.1",
     "ajv": "^6.5.4",
     "animejs": "^2.2.0",
     "apollo-link": "^1.2.3",
     "apollo-link-context": "^1.0.9",
+    "connected-react-router": "^4.5.0",
     "keyframe": "^2.1.0",
     "log4js": "^3.0.6",
     "react": "^16.5.2",

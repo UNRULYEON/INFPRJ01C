@@ -19,31 +19,10 @@
   margin: 10px 15px 10px 15px;
 }
 
-.login-form > input{
-  font-size: 1.2em;
-  height: 30px;
+.login-form > .login-input{
   margin-bottom: 15px;
-  border: #eeeeee solid 1px;
-  padding: 5px;
 }
 
-.dropdown-button-login{
-  border: none;
-  background: #53B534;
-  margin: 0 15px 15px 15px;
-  padding: 10px 0;
-  color: white;
-  font-size: 1.2em;
-  font-weight: bold;
-}
-
-.dropdown-button-create-account{
-  border: none;
-  background: white;
-  margin: 0 15px 15px 15px;
-  padding: 10px 0;
-  color: #53B534;
-  font-size: 1.2em;
-  font-weight: bold;
-  border: 1px solid #53B534;
+.login-button{
+  margin: 0 15px 15px 15px !important;
 }

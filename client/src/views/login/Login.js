@@ -3,7 +3,21 @@ import React, { Component } from 'react';
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 
-import { BrowserRouter as Router } from 'react-router-dom'
+// Material-UI
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 import './Login.css'
 
@@ -16,28 +30,60 @@ const LOGIN = gql`
   }
 `;
 
+const theme = new createMuiTheme({
+  palette: {
+    primary: {
+      main: '#43a047'
+    },
+  },
+  typography: {
+    useNextVariants: true,
+  },
+  overrides: {
+    MuiButton: { // Name of the component ⚛️ / style sheet
+      root: { // Name of the rule
+        color: 'white', // Some CSS
+      },
+    },
+  },
+});
+
 class Login extends Component {
   constructor(props){
     super(props);
     this.state = {
       email: '',
-      password: ''
+      password: '',
+      showPassword: false,
+      buttonState: false,
+      snackbar: false,
     }
   }
 
-  updateState(type, evt) {
-    switch(type) {
-      case 'email':
-        this.setState({
-          email: evt.target.value
-        })
-        break;
-      case 'password':
-        this.setState({
-          password: evt.target.value
-        })
-        break;
+  handleChange = name => event => {
+    this.setState({
+      [name]: event.target.value,
+    });
+  };
+
+  handleSnackbarClick = () => {
+    this.setState({
+      snackbar: true
+    });
+  };
+
+  handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
     }
+
+    this.setState({
+      snackbar: false,
+    });
+  };
+
+  handleClickShowPassword = () => {
+    this.setState(state => ({ showPassword: !state.showPassword }));
   }
 
   render() {
@@ -46,36 +92,113 @@ class Login extends Component {
         <PageTitle title="Login" center={true}/>
         <div className="login-container">
           <form className="login-form">
-            <input placeholder="Email" type="email" value={this.state.email} onChange={this.updateState.bind(this, 'email')}></input>
-            <input placeholder="Wachtwoord" type="password" value={this.state.password}  onChange={this.updateState.bind(this, 'password')}></input>
-          </form>
-          <Mutation
-            mutation={LOGIN}
-            ignoreResults={false}
-            onCompleted={(data) => {
-              console.log(`Query completed: ${data.login}`)
-              localStorage.setItem('AUTH_TOKEN', data.login)
-              this.props.history.push("/")
-            }}
-            onError={(error) => {
-              console.log(error)
-            }}
-          >
-            {(login) => (
-              <button
-                className="dropdown-button-login"
-                onClick={e => {
-                  e.preventDefault();
-                  login({ variables: {
-                    email: this.state.email,
-                    password: this.state.password
-                   }});
+            <TextField
+              id="input-email"
+              className="login-input"
+              label="Email"
+              value={this.state.email}
+              onChange={this.handleChange('email')}
+              type="email"
+              inputProps={{
+                'aria-label': 'Email'
+              }}
+            />
+            <FormControl className="login-input">
+              <InputLabel htmlFor="adornment-password">Wachtwoord</InputLabel>
+              <Input
+                id="adornment-password"
+                type={this.state.showPassword ? 'text' : 'password'}
+                value={this.state.password}
+                onChange={this.handleChange('password')}
+                inputProps={{
+                  'aria-label': 'Wachtwoord'
                 }}
-              >Inloggen</button>
-            )}
-          </Mutation>
-          <button className="dropdown-button-create-account">Maak een account aan</button>
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="Toggle password visibility"
+                      onClick={this.handleClickShowPassword}
+                    >
+                      {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+            </FormControl>
+          </form>
+          <MuiThemeProvider theme={theme}>
+            <Mutation
+              mutation={LOGIN}
+              ignoreResults={false}
+              onCompleted={(data) => {
+                console.log(`Query completed: ${data.login}`)
+                localStorage.setItem('AUTH_TOKEN', data.login)
+                this.props.history.push("/")
+              }}
+              onError={(error) => {
+                console.error(`Query failed: ${error}`)
+                this.handleSnackbarClick()
+                this.setState({
+                  buttonState: false
+                });
+              }}
+            >
+              {(login) => (
+                <Button
+                  color="primary"
+                  className="login-button"
+                  variant="contained"
+                  disabled={this.state.buttonState}
+                  onClick={e => {
+                    e.preventDefault();
+                    // Set buttons to disabled
+                    this.setState({
+                      buttonState: true,
+                    });
+
+                    // Check email and password
+                    if(!(/\S+@\S+\.\S+/).test(this.state.email)) {
+                      this.handleSnackbarClick()
+                      this.setState({
+                        buttonState: false,
+                      });
+                      return
+                    }
+
+                    // Mutate
+                    login({ variables: {
+                      email: this.state.email,
+                      password: this.state.password
+                    }});
+                  }}
+                >
+                  Inloggen
+                </Button>
+              )}
+            </Mutation>
+            <Button
+              color="primary"
+              className="login-button"
+              variant="outlined"
+              disabled={this.state.buttonState}
+            >
+              Maak een account aan
+            </Button>
+          </MuiThemeProvider>
         </div>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          open={this.state.snackbar}
+          autoHideDuration={6000}
+          onClose={this.handleSnackbarClose}
+          ContentProps={{
+            'aria-describedby': 'message-id',
+          }}
+          message={<span id="message-id">Het email en/of het wachtwoord is onjuist.<br/>Probeer het opnieuw.</span>}
+        />
       </section>
     );
   }
