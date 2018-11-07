@@ -48,6 +48,7 @@ const theme = new createMuiTheme({
     primary: {
       main: '#43a047'
     },
+    type: 'dark'
   },
   typography: {
     useNextVariants: true,
