@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import {
+    Link
+} from 'react-router-dom';
 
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
@@ -180,6 +183,8 @@ class Login extends Component {
                 </Button>
               )}
             </Mutation>
+
+          <Link to={"/registreren"} className="onboarding-link-login">
             <Button
               color="primary"
               className="login-button"
@@ -188,6 +193,7 @@ class Login extends Component {
             >
               Maak een account aan
             </Button>
+          </Link>
           </MuiThemeProvider>
         </div>
         <Snackbar

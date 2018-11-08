@@ -25,4 +25,9 @@
 
 .login-button{
   margin: 0 15px 15px 15px !important;
+  width: calc(100% - 30px);
+}
+
+.onboarding-link-login{
+  width: 100%;
 }
