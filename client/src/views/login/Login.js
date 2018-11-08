@@ -96,6 +96,9 @@ class Login extends Component {
               id="input-email"
               className="login-input"
               label="Email"
+              type="email"
+              name="email"
+              autoComplete="email"
               value={this.state.email}
               onChange={this.handleChange('email')}
               type="email"
@@ -109,6 +112,7 @@ class Login extends Component {
                 id="adornment-password"
                 type={this.state.showPassword ? 'text' : 'password'}
                 value={this.state.password}
+                autoComplete="current-password"
                 onChange={this.handleChange('password')}
                 inputProps={{
                   'aria-label': 'Wachtwoord'
