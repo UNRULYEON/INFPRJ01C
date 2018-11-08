@@ -114,9 +114,22 @@ var root = {
       "E28BA7D908327F1F8F08E396D60DC6FBCDB734387C2C08FCD2CF8E4C09B36AB7",
       { expiresIn: '1d' }
     )
+    console.log(`Token: ${token}`)
 
-    console.log(`Token: ${token}\n`);
-    return token
+    const userWithToken = {
+      id: user[0].id,
+      aanhef: user[0].aanhef,
+      name: user[0].name,
+      surname: user[0].surname,
+      email: user[0].mail,
+      address: user[0].adres,
+      city: user[0].city,
+      postalcode: user[0].postalcode,
+      cellphone: user[0].cellphone,
+      token: token
+    }
+
+    return userWithToken
   }
 }
 

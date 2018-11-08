@@ -64,7 +64,18 @@ const theme = new createMuiTheme({
 
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password)
+    login(email: $email, password: $password) {
+      id
+      aanhef
+      name
+      surname
+      email
+      address
+      city
+      postalcode
+      cellphone
+      token
+    }
   }
 `;
 
@@ -120,120 +131,177 @@ class AccountMenu extends Component {
     });
   }
 
+  setUserApp(user, isLoggedIn) {
+    this.props.setUser(user, isLoggedIn)
+  }
+
+  getTime() {
+    let t = new Date().getHours()
+
+    if (t >= 0 & t < 6) {
+      return "Goedenavond"
+    } else if (t >= 6 && t < 12) {
+      return "Goedemorgen"
+    } else if (t >= 12 && t < 18) {
+      return "Goedemiddag"
+    } else {
+      return "Goedenavond"
+    }
+  }
+
   render() {
+    const emptyUser = {
+      id: '',
+      aanhef: '',
+      name: '',
+      surname: '',
+      email: '',
+      address: '',
+      city: '',
+      postalcode: '',
+      cellphone: ''
+    }
+
     return (
       <Menu
         pose={this.props.menu ? 'open' : 'closed'}
         className="dropdown"
       >
-        <span className="menu-title">Account</span>
-        <form className="dropdown-form">
-          <TextField
-            id="account-menu-input-email"
-            className="login-input"
-            label="Email"
-            type="email"
-            name="email"
-            autoComplete="email"
-            value={this.state.email}
-            onChange={this.handleChange('email')}
-            autoFocus={this.props.menu}
-            inputProps={{
-              'aria-label': 'Email'
-            }}
-          />
-          <FormControl className="login-input">
-            <InputLabel htmlFor="adornment-password">Wachtwoord</InputLabel>
-            <Input
-              id="account-menu-adornment-password"
-              type={this.state.showPassword ? 'text' : 'password'}
-              value={this.state.password}
-              autoComplete="current-password"
-              onChange={this.handleChange('password')}
-              inputProps={{
-                'aria-label': 'Wachtwoord'
-              }}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="Toggle password visibility"
-                    onClick={this.handleClickShowPassword}
-                  >
-                    {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
-          </FormControl>
-        </form>
-        <MuiThemeProvider theme={theme}>
-          <Mutation
-            mutation={LOGIN}
-            ignoreResults={false}
-            onCompleted={(data) => {
-              console.log(`Query completed: ${data.login}`)
-              localStorage.setItem('AUTH_TOKEN', data.login)
-              this.closeModal()
-            }}
-            onError={(error) => {
-              console.error(`Query failed: ${error}`)
-              this.handleSnackbarClick()
-              this.setState({
-                buttonDisabled: false
-              });
-            }}
+      {this.props.loggedIn ? (
+        <div className="dropdown-account">
+          <p className="menu-title-greeting">{this.getTime()}</p>
+          <p className="menu-title-account">{this.props.user.name}</p>
+          <Link to={"/"} className="menu-account-link">Mijn gegevens</Link>
+          <Link to={"/"} className="menu-account-link">Mijn bestellijst</Link>
+          <Link to={"/"} className="menu-account-link">Mijn huurlijst</Link>
+
+          <Button
+            color="primary"
+            className="logout-button"
+            variant="outlined"
+            onClick={() => this.setUserApp(emptyUser, false)}
+            disabled={this.state.buttonState}
           >
-            {(login) => (
-              <Button
-                color="primary"
-                className="login-button"
-                variant="contained"
-                disabled={this.state.buttonDisabled}
-                onClick={e => {
-                  e.preventDefault();
-                  // Set buttons to disabled
-                  this.setState({
-                    buttonDisabled: true,
-                  });
-
-                  // Check email and password
-                  if(!(/\S+@\S+\.\S+/).test(this.state.email)) {
-                    this.handleSnackbarClick()
-                    this.setState({
-                      buttonDisabled: false,
-                    });
-                    return
-                  }
-
-                  // Mutate
-                  login({ variables: {
-                    email: this.state.email,
-                    password: this.state.password
-                  }});
-                }}
-              >
-                Inloggen
-              </Button>
-            )}
-          </Mutation>
-        </MuiThemeProvider>
-        <div className="onboarding-container">
-          <span>Nieuw bij ARTIC?</span>
-          <Link to={"/registreren"} className="onboarding-link">Maak een account aan</Link>
+            Log uit
+          </Button>
         </div>
-        <Snackbar
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          open={this.state.snackbar}
-          autoHideDuration={6000}
-          onClose={this.handleSnackbarClose}
-          ContentProps={{
-            'aria-describedby': 'message-id',
-          }}
-          message={<span id="message-id">Het email en/of het wachtwoord is onjuist.<br/>Probeer het opnieuw.</span>}
-        />
+      ) : (
+        <div className="dropdown-login">
+          <p className="menu-title">Account</p>
+          <form className="dropdown-form">
+            <TextField
+              id="account-menu-input-email"
+              className="login-input"
+              label="Email"
+              type="email"
+              name="email"
+              autoComplete="email"
+              value={this.state.email}
+              onChange={this.handleChange('email')}
+              autoFocus={this.props.menu}
+              inputProps={{
+                'aria-label': 'Email'
+              }}
+            />
+            <FormControl className="login-input">
+              <InputLabel htmlFor="adornment-password">Wachtwoord</InputLabel>
+              <Input
+                id="account-menu-adornment-password"
+                type={this.state.showPassword ? 'text' : 'password'}
+                value={this.state.password}
+                autoComplete="current-password"
+                onChange={this.handleChange('password')}
+                inputProps={{
+                  'aria-label': 'Wachtwoord'
+                }}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="Toggle password visibility"
+                      onClick={this.handleClickShowPassword}
+                    >
+                      {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+            </FormControl>
+          </form>
+          <MuiThemeProvider theme={theme}>
+            <Mutation
+              mutation={LOGIN}
+              ignoreResults={false}
+              onCompleted={(data) => {
+                console.log(`Query completed:`)
+                this.setUserApp(data.login, true)
+                this.setState({
+                  email: '',
+                  password: ''
+                })
+                localStorage.setItem('AUTH_TOKEN', data.login.token)
+                this.closeModal()
+              }}
+              onError={(error) => {
+                console.error(`Query failed: ${error}`)
+                this.handleSnackbarClick()
+                this.setState({
+                  buttonDisabled: false
+                });
+              }}
+            >
+              {(login) => (
+                <Button
+                  color="primary"
+                  className="login-button"
+                  variant="contained"
+                  disabled={this.state.buttonDisabled}
+                  onClick={e => {
+                    e.preventDefault();
+                    // Set buttons to disabled
+                    this.setState({
+                      buttonDisabled: true,
+                    });
+
+                    // Check email and password
+                    if(!(/\S+@\S+\.\S+/).test(this.state.email)) {
+                      this.handleSnackbarClick()
+                      this.setState({
+                        buttonDisabled: false,
+                      });
+                      return
+                    }
+
+                    // Mutate
+                    login({ variables: {
+                      email: this.state.email,
+                      password: this.state.password
+                    }});
+                  }}
+                >
+                  Inloggen
+                </Button>
+              )}
+            </Mutation>
+          </MuiThemeProvider>
+          <div className="onboarding-container">
+            <span>Nieuw bij ARTIC?</span>
+            <Link to={"/registreren"} className="onboarding-link">Maak een account aan</Link>
+          </div>
+          <Snackbar
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            open={this.state.snackbar}
+            autoHideDuration={6000}
+            onClose={this.handleSnackbarClose}
+            ContentProps={{
+              'aria-describedby': 'message-id',
+            }}
+            message={<span id="message-id">Het email en/of het wachtwoord is onjuist.<br/>Probeer het opnieuw.</span>}
+          />
+        </div>
+      )}
       </Menu>
     );
   }

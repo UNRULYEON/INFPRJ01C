@@ -10,14 +10,14 @@ var schema = buildSchema(`
     painters: [Painter]
     painterByID(id: String!): [Painter]
     workByPainter(id: String!): [Painting]
-    me: [User],
+    me: User,
     faq: [FAQ],
     status: Int
   },
   type Mutation {
     signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String, adres: String, city: String, 
       postalcode: String, cellphone: String): String!
-    login(email: String!, password: String!): String!
+    login(email: String!, password: String!): UserWithToken!
   },
   type Collection {
     id: ID,
@@ -76,6 +76,19 @@ var schema = buildSchema(`
     cellphone: String,
     password: String,
     aanhef: String
+  },
+  type UserWithToken {
+    id: Int,
+    name: String,
+    surname: String,
+    email: String,
+    address: String,
+    city: String,
+    postalcode: String,
+    cellphone: String,
+    password: String,
+    aanhef: String,
+    token: String
   },
   type FAQ{
     id: Int,

@@ -145,6 +145,9 @@ class Header extends Component {
 							>
 								<AccountMenu
 									menu={this.state.accountMenuToggle}
+									setUser={this.props.setUser}
+									user={this.props.user}
+									loggedIn={this.props.loggedIn}
 									closeModal={() => {
 										this.setState({
 											accountMenuToggle: false

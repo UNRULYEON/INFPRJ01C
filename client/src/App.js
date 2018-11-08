@@ -36,9 +36,10 @@ const link = createHttpLink({
   uri: 'http://localhost:3001/graphql',
 });
 
+const token = localStorage.getItem('AUTH_TOKEN');
+
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
-  const token = localStorage.getItem('AUTH_TOKEN');
   // return the headers to the context so httpLink can read them
   return {
     headers: {
@@ -78,6 +79,75 @@ const theme = new createMuiTheme({
 class App extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      user: {
+        id: '',
+        aanhef: '',
+        name: '',
+        surname: '',
+        email: '',
+        address: '',
+        city: '',
+        postalcode: '',
+        cellphone: ''
+      },
+      loggedIn: false
+    }
+  }
+
+  componentWillMount() {
+    if (localStorage.getItem('USER')) {
+      const localUser = JSON.parse(localStorage.getItem('USER'));
+
+      this.setState({
+        user: {
+          id: localUser.id,
+          aanhef: localUser.aanhef,
+          name: localUser.name,
+          surname: localUser.surname,
+          email: localUser.email,
+          address: localUser.address,
+          city: localUser.city,
+          postalcode: localUser.postalcode,
+          cellphone: localUser.cellphone
+        },
+        loggedIn: true
+      })
+    }
+  }
+
+  setUser = (data, isLoggedIn) => {
+    this.setState({
+      user: {
+        id: data.id,
+        aanhef: data.aanhef,
+        name: data.name,
+        surname: data.surname,
+        email: data.email,
+        address: data.address,
+        city: data.city,
+        postalcode: data.postalcode,
+        cellphone: data.cellphone
+      },
+      loggedIn: isLoggedIn
+    });
+
+    if (isLoggedIn) {
+      localStorage.setItem("USER", JSON.stringify({
+        id: data.id,
+        aanhef: data.aanhef,
+        name: data.name,
+        surname: data.surname,
+        email: data.email,
+        address: data.address,
+        city: data.city,
+        postalcode: data.postalcode,
+        cellphone: data.cellphone
+      }))
+    } else {
+      localStorage.removeItem('AUTH_TOKEN')
+      localStorage.removeItem('USER')
+    }
   }
 
   render() {
@@ -86,7 +156,11 @@ class App extends Component {
         <Router>
           <div className="App">
             <MuiThemeProvider theme={theme}>
-              <Header />
+              <Header
+                setUser={this.setUser}
+                user={this.state.user}
+                loggedIn={this.state.loggedIn}
+              />
               <Switch>
                 <Route exact path="/" component={Home}/>
                 <Route path="/schilderijen" component={Schilderijen}/>
