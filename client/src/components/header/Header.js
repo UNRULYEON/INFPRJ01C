@@ -7,6 +7,8 @@ import posed from "react-pose";
 import OutsideClickHandler from 'react-outside-click-handler';
 import './Header.css';
 
+// Material-UI
+import TextField from '@material-ui/core/TextField';
 
 // Components
 import CartMenu from '../cartmenu/CartMenu';
@@ -96,17 +98,31 @@ class Header extends Component {
 
 	render() {
 
+		const searchInputProps = {
+			ref: this.searchbarInput
+		}
+
 		return (
 			<header>
 				<SearchbarContainer
 					className="searchbar-container"
 					pose={this.state.searchBar ? 'open' : 'closed'}
 				>
-					<input
+					<TextField
+						id="searchbar-input"
+						label="Waar bent u naar opzoek?"
+						// placeholder="Waar bent u naar opzoek?"
+						inputProps={searchInputProps}
+						fullWidth
+						type="search"
+						margin="normal"
+						variant="outlined"
+					/>
+					{/* <input
 						id="searchbar-input"
 						placeholder="Waar bent u naar opzoek?"
 						ref={this.searchbarInput}
-					></input>
+					></input> */}
 				<button id="searchbar-close" onClick={this.toggleSearchBar} className="pointer header-button ml-3"><img src={close} alt="Close" width="32" /></button>
 				</SearchbarContainer>
 				<div id="header-container-primary">
