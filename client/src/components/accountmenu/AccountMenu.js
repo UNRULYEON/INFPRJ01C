@@ -236,10 +236,10 @@ class AccountMenu extends Component {
                 this.setUserApp(data.login, true)
                 this.setState({
                   email: '',
-                  password: ''
+                  password: '',
+                  buttonDisabled: false
                 })
                 localStorage.setItem('AUTH_TOKEN', data.login.token)
-                this.closeModal()
               }}
               onError={(error) => {
                 console.error(`Query failed: ${error}`)
