@@ -15,10 +15,24 @@ var root = {
     let query = 'SELECT * from schilderijen'
     return db.manyOrNone(query)
   },
-  paintingOrderedByPagination: ({ page }) => {
+  async paintingOrderedByPagination ({ page }) {
     let offset = (page - 1) * 10
-    let query = (`SELECT * FROM schilderijen LIMIT 10 OFFSET ${offset}`)
-    return db.manyOrNone(query)
+    // let query = (`SELECT * FROM schilderijen LIMIT 10 OFFSET ${offset}`)
+
+    const total = await db.manyOrNone('SELECT COUNT(*) from schilderijen')
+                        .then( data => {
+                          return data
+                        })
+
+    const preQuery = await db.manyOrNone(`SELECT * FROM schilderijen LIMIT 10 OFFSET ${offset}`)
+                        .then( data => {
+                          return data
+                        })
+
+    return {
+      total: total[0].count,
+      collection: preQuery
+    }
   },
   paintingByID: ({id}) => {
     let query = (`SELECT * from schilderijen where id_number = ${id}`)

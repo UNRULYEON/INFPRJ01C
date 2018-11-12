@@ -5,7 +5,7 @@ var schema = buildSchema(`
     hello: String
     collection: [Collection]
     collectionSearch: [Collection]
-    paintingOrderedByPagination(page: Int!): [Collection]
+    paintingOrderedByPagination(page: Int!): CollectionWithTotal
     paintingByID(id: String!): [Painting]
     painters: [Painter]
     painterByID(id: String!): [Painter]
@@ -36,6 +36,10 @@ var schema = buildSchema(`
     height: Int,
     principalmaker: String
   },
+  type CollectionWithTotal{
+    total: Int,
+    collection: [Collection]
+  }
   type Painting{
     id: String,
     title: String,

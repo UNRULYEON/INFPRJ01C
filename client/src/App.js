@@ -165,7 +165,7 @@ class App extends Component {
               />
               <Switch>
                 <Route exact path="/" component={Home}/>
-                <Route path="/schilderijen" component={Schilderijen}/>
+                <Route path="/schilderijen/" component={Schilderijen}/>
                 <Route path="/schilderij/:id" component={SchilderijDetails}/>
                 <Route path="/schilders" component={Schilders}/>
                 <Route path="/schilder/:id" component={SchilderDetails}/>
