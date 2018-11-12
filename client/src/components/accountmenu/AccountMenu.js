@@ -73,7 +73,6 @@ const LOGIN = gql`
       address
       city
       postalcode
-      cellphone
       token
     }
   }
