@@ -196,7 +196,7 @@ class Login extends Component {
 
                     // Mutate
                     login({ variables: {
-                      email: this.state.email,
+                      email: this.state.email.toLowerCase(),
                       password: this.state.password
                     }});
                   }}

@@ -1,0 +1,18 @@
+
+.account-title-greeting{
+  color: #808080;
+  margin: -20px 0;
+  font-size: 1.25em;
+}
+
+.account-title-account{
+  text-transform: capitalize;
+  font-family: "IBM Plex Sans", 'Roboto', sans-serif;
+  font-size: 1.5em;
+  margin-top: 15px;
+}
+
+.account-list{
+  display: flex;
+  flex-flow: column nowrap;
+}

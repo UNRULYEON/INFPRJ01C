@@ -63,7 +63,7 @@ var root = {
   async signup ({ name, surname, mail, password, aanhef, adres, city, postalcode, cellphone}) {
     // Salt password
     const saltedPassword =  await bcrypt.hash(password, 10)
-    
+
     // Check if a user with the same email exists
     const user = await db.manyOrNone('SELECT mail from gebruiker where mail = $1', [mail])
 

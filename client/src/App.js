@@ -25,7 +25,9 @@ import Search from './views/search/Search';
 import Contact from './views/contact/Contact';
 import FAQ from './views/faq/FAQ';
 import Login from './views/login/Login';
+import Cart from './views/cart/Cart';
 import Registreren from './views/registreren/Registreren';
+import Account from './views/account/Account';
 import NoMatch from './views/404/404';
 
 // Components
@@ -176,6 +178,22 @@ class App extends Component {
                     {...props}
                     loggedIn={this.state.loggedIn}
                     setUser={this.setUser}
+                  />} />
+                  <Route
+                    path="/account"
+                    render={(props) => <Account
+                      {...props}
+                      user={this.state.user}
+                      setUser={this.setUser}
+                      loggedIn={this.state.loggedIn}
+                  />} />
+                  <Route
+                    path="/winkelwagen"
+                    render={(props) => <Cart
+                      {...props}
+                      user={this.state.user}
+                      setUser={this.setUser}
+                      loggedIn={this.state.loggedIn}
                   />} />
                 <Route path="/registreren" component={Registreren} />
                 <Route component={NoMatch} />
