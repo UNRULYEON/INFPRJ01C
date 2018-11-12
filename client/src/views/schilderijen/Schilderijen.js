@@ -4,7 +4,6 @@ import {
     Redirect
 } from 'react-router-dom';
 import Pagination from 'rc-pagination';
-import 'rc-pagination/assets/index.css';
 import gql from "graphql-tag";
 import './Schilderijen.css'
 
@@ -36,7 +35,6 @@ class Schilderijen extends Component {
   }
 
   onChange = (page) => {
-    console.log(page);
     this.setState({
       page: page,
     });
