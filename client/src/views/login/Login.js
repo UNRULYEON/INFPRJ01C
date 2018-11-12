@@ -29,7 +29,18 @@ import PageTitle from '../../components/pageLink/PageLink'
 
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password)
+    login(email: $email, password: $password) {
+      id
+      aanhef
+      name
+      surname
+      email
+      address
+      city
+      postalcode
+      cellphone
+      token
+    }
   }
 `;
 
@@ -89,6 +100,16 @@ class Login extends Component {
     this.setState(state => ({ showPassword: !state.showPassword }));
   }
 
+  setUserApp(user, isLoggedIn) {
+    this.props.setUser(user, isLoggedIn)
+  }
+
+  // componentDidMount = () => {
+  //   if (this.props.loggedIn) {
+  //     console.log(`User is logged in, directing to account page`)
+  //   }
+  // }
+
   render() {
     return (
       <section className="section-container">
@@ -139,7 +160,8 @@ class Login extends Component {
               ignoreResults={false}
               onCompleted={(data) => {
                 console.log(`Query completed: ${data.login}`)
-                localStorage.setItem('AUTH_TOKEN', data.login)
+                localStorage.setItem('AUTH_TOKEN', data.login.token)
+                this.setUserApp(data.login, true)
                 this.props.history.push("/")
               }}
               onError={(error) => {

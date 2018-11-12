@@ -170,7 +170,13 @@ class App extends Component {
                 <Route path="/zoeken" component={Search} />
                 <Route path="/contact" component={Contact} />
                 <Route path="/faq" component={FAQ} />
-                <Route path="/login" component={Login} />
+                <Route
+                  path="/login"
+                  render={(props) => <Login
+                    {...props}
+                    loggedIn={this.state.loggedIn}
+                    setUser={this.setUser}
+                  />} />
                 <Route path="/registreren" component={Registreren} />
                 <Route component={NoMatch} />
               </Switch>

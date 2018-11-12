@@ -63,6 +63,21 @@ header{
   visibility: visible;
 }
 
+#account-icon-mobile{
+  display: none;
+  visibility: hidden;
+}
+
+#cart-icon{
+  display: inline-block;
+  visibility: visible;
+}
+
+#cart-icon-mobile{
+  display: none;
+  visibility: hidden;
+}
+
 .account-icon-svg-loggedOut{
   fill: black;
   transition: .5s all ease-in-out;
@@ -188,4 +203,35 @@ header{
 	#header-actions{
 		min-width: 0;
 	}
+}
+
+@media screen and (max-width: 400px){
+  .searchbar-container > div > label{
+    font-size: 1em;
+  }
+  #searchbar-input{
+    font-size: 1.25em;
+  }
+}
+
+@media screen and (max-width: 500px){
+  #account-icon{
+    display: none;
+    visibility: hidden;
+  }
+
+  #account-icon-mobile{
+    display: inline-block;
+    visibility: visible;
+  }
+
+  #cart-icon{
+    display: none;
+    visibility: hidden;
+  }
+
+  #cart-icon-mobile{
+    display: inline-block;
+    visibility: visible;
+  }
 }
