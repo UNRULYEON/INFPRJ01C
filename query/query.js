@@ -60,7 +60,7 @@ var root = {
     return await db.manyOrNone(query)
   },
 
-  async signup ({ name, surname, mail, password, aanhef, adres, city, postalcode, cellphone}) {
+  async signup ({ name, surname, mail, password, aanhef, adres, city, postalcode}) {
     // Salt password
     const saltedPassword =  await bcrypt.hash(password, 10)
     
@@ -73,7 +73,9 @@ var root = {
     }
 
     // Generate token when insertion is complete
-    let token = await db.one('INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, cellphone) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id', [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, cellphone])
+    let token = await db.one('INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode) \
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id', 
+    [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode])
       .then( data => {
         console.log(`\nUser ID: ${data.id}`)
 
