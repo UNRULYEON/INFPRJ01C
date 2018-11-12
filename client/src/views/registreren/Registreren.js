@@ -6,6 +6,19 @@ import gql from "graphql-tag";
 // Components
 import PageTitle from '../../components/pageLink/PageLink';
 
+// Material-UI
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import FormControl from '@material-ui/core/FormControl';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+
 import posed from "react-pose";
 
 const FirstStepContainer = posed.div({
@@ -31,42 +44,62 @@ const FirstStepContainer = posed.div({
   }
 });
 
-const SIGNUP = gql`
-  mutation Signup($name: String!, $surname: String!, $email: String!, $password: String!) {
-  signup(name: $name, surname: $surname, email: $email, password: $password)
+const theme = new createMuiTheme({
+  palette: {
+    primary: {
+      main: '#43a047'
+    },
+  },
+  typography: {
+    useNextVariants: true,
+  },
+  overrides: {
+    MuiButton: { // Name of the component ⚛️ / style sheet
+      root: { // Name of the rule
+        color: 'white', // Some CSS
+      },
+    },
+  },
+});
+
+// const SIGNUP = gql`
+//   mutation Signup($name: String!, $surname: String!, $mail: String!, $password: String!, $aanhef: String!, $adres: String!, $city: String!, $postalcode: String!) {
+//   signup(name: $name, surname: $surname, mail: $mail, password: $password, aanhef: $aanhef, adres: $adres, city: $city, postalcode: $postalcode)
+//   }
+// `;
+
+const SIGNUP = gql `
+mutation Signup($name: String!, $surname: String!, $mail: String!, $password: String!, $aanhef: String!, $adres: String!, $city: String, $postalcode: String!) {
+  signup(name: $name, surname: $surname, mail: $mail, password: $password, aanhef: $aanhef, adres: $adres, city: $city, postalcode: $postalcode) {
+    id
+    name
+    surname
+    email
+    address
+    city
+    postalcode
+    password
+    aanhef
+    token
   }
-`;
-
-
-
-/*
-const CreateReviewForEpisode = gql`
-	query user($name: String!, $surname: String!, $mail: String!, $password: String!){
-		createReview(name: $name, surname: $surname, mail: $mail, password: $password){
-			name
-      surname
-      mail
-      password
-		}
-	}
-`;
-*/
+}
+  `;
 
 class Registreren extends Component {
   constructor() {
     super();
     this.state = {
-      mail: '',
-      password: '',
       name: '',
       surname: '',
-      Straat: '',
-      Huisnummer: '',
-      Postcode: '',
-      Stad: '',
-      Aanhef: '',
+      mail: '',
+      password: '',
+      aanhef: 'Dhr',
+      adres: '',
+      city: '',
+      postalcode: '',
       isHidden: false,
       isHidden2: true,
+      isHidden3: false,
       toggle: false
     };
   }
@@ -79,6 +112,15 @@ class Registreren extends Component {
     });
   }
 
+  toggleHiddenAgain() {
+    this.setState({
+      isHidden2: !this.state.isHidden2,
+      isHidden3: !this.state.isHidden3,
+      toggle: !this.state.toggle
+    });
+    this.save();
+  }
+
   save() {
     //const data = JSON.stringify(this.state.user);
     //fetch("postgres://projectc:pc@188.166.94.83:5432/project_dev", { method: "POST", body: data });
@@ -87,7 +129,7 @@ class Registreren extends Component {
   }
 
   onChange = (e) => {
-    console.log(e.target.checked);
+  //   console.log(e.target.checked);
     this.setState({
       [e.target.name]: e.target.value
     });
@@ -108,14 +150,16 @@ class Registreren extends Component {
                 type="email"
                 onChange={e => this.onChange(e)}
                 value={this.state.mail}
+                className="login-input"
               />
-              <input
+              <input                
                 id="pas"
                 placeholder="Wachtwoord"
                 name="password"
                 type="password"
                 onChange={e => this.onChange(e)}
                 value={this.state.password}
+                className="login-input"
               />
               <button
                 onClick={this.toggleHidden.bind(this)}
@@ -154,8 +198,8 @@ class Registreren extends Component {
 
                 <p>Aanhef</p>
 
-                <p><input type="radio" name="gender" placeholder="Aanhef" value="Dhr" onChange={e => this.onChange(e)} />Dhr.</p>
-                <p><input type="radio" name="gender" placeholder="Aanhef" value="Mevr" onChange={e => this.onChange(e)} />Mevr.</p>
+                <p><input type="radio" name="aanhef"  value={this.state.aanhef} onChange={e => this.onChange(e)} />Dhr.</p>
+                <p><input type="radio" name="aanhef"  value={this.state.aanhef} onChange={e => this.onChange(e)} />Mevr.</p>
 
                 <p id="voornaam">Voornaam <b>*</b></p>
                 <input
@@ -184,40 +228,70 @@ class Registreren extends Component {
                 <input
                   type="text"
                   placeholder="Straat"
+                  name="adres"
                   onChange={e => this.onChange(e)}
-                  value={this.state.Straat}
+                  value={this.state.adres}
                 />
 
                 <p>Huisnummer</p>
                 <input
                   type="text"
                   placeholder="Huisnummer"
-                  onChange={e => this.onChange(e)}
-                  value={this.state.Huisnummer}
                 />
 
                 <p>Postcode</p>
                 <input
                   type="text"
                   placeholder="Postcode"
+                  name="postalcode"
                   onChange={e => this.onChange(e)}
-                  value={this.state.Postcode}
+                  value={this.state.postalcode}
                 />
 
                 <p>Stad</p>
                 <input
                   type="text"
                   placeholder="Stad"
+                  name="city"
                   onChange={e => this.onChange(e)}
-                  value={this.state.Stad}
+                  value={this.state.city}
                 />
 
               </div>
 
               <button onClick={this.toggleHidden.bind(this)} className="dropdown-button" id="button" type="primary">Terug</button>
-              <button onClick={this.save.bind(this)} className="dropdown-button" id="button" type="primary">Save</button>
+              <button onClick={this.toggleHiddenAgain.bind(this)} className="dropdown-button" id="button" type="primary">Doorgaan</button>
 
-              <Mutation mutation={SIGNUP}>
+              </div>)}
+              </FirstStepContainer>
+
+              <FirstStepContainer pose={!this.state.toggle ? 'open' : 'closed'}>
+              {this.state.isHidden3 && (<div id="drie">
+              <div id="stappen">
+                <p id="uno"><b>1</b></p>
+                <h3 id="unoText">Email en wachtwoord</h3>
+                <p id="dosTwee"><b>2</b></p>
+                <h3 id="dosText">Naam en adres</h3>
+                <p id="tres"><b>3</b></p>
+                <h3 id="tresText">Betaalwijze</h3>
+              </div>
+
+              <div id="betalen">
+                <h1>Betaalwijze</h1>
+                <p>Betaalmethode</p>
+                <form>
+                  <select name="Betaalmethode">
+                    <option value="IDEAL">IDEAL</option>
+                    <option value="Achteraf">Achteraf betalen</option>
+                    <option value="Creditcard">Creditcard</option>
+                    <option value="Paypal">Paypal</option>
+                  </select>
+                </form>
+              </div>
+
+              <button onClick={this.toggleHiddenAgain.bind(this)} className="dropdown-button" id="button" type="primary">Terug</button>
+
+                <Mutation mutation={SIGNUP}>
                 {(signup, { data }) => (
                   <button
                     className="dropdown-button"
@@ -229,16 +303,18 @@ class Registreren extends Component {
                         variables: {
                           name: this.state.name,
                           surname: this.state.surname,
-                          email: this.state.mail,
-                          password: this.state.password
+                          mail: this.state.mail,
+                          password: this.state.password,
+                          aanhef: this.state.aanhef,
+                          adres: this.state.adres,
+                          city: this.state.city,
+                          postalcode: this.state.postalcode
                         }
                       });
-                      console.log("kech is gelukt");
                     }}
                   >registreren</button>
                 )}
               </Mutation>
-
             </div>)}
           </FirstStepContainer>
         </div >

@@ -16,7 +16,11 @@ var schema = buildSchema(`
   },
   type Mutation {
     signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String, adres: String, city: String, 
+<<<<<<< Updated upstream
       postalcode: String): String!
+=======
+      postalcode: String): UserWithToken!
+>>>>>>> Stashed changes
     login(email: String!, password: String!): UserWithToken!
   },
   type Collection {
