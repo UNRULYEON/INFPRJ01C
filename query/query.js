@@ -60,7 +60,9 @@ var root = {
     return await db.manyOrNone(query)
   },
 
-  async signup ({ name, surname, mail, password, aanhef, adres, city, postalcode, cellphone}) {
+
+  //user signup
+  async signup ({ name, surname, mail, password, aanhef, adres, city, postalcode}) {
     // Salt password
     const saltedPassword =  await bcrypt.hash(password, 10)
 
@@ -73,24 +75,65 @@ var root = {
     }
 
     // Generate token when insertion is complete
-    let token = await db.one('INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, cellphone) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id', [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, cellphone])
+
+    return await db.one('INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode) \
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id', 
+    [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode])
       .then( data => {
         console.log(`\nUser ID: ${data.id}`)
+        let tokens = jwt.sign(
+              { id: data.id },
+              "E28BA7D908327F1F8F08E396D60DC6FBCDB734387C2C08FCD2CF8E4C09B36AB7",
+              { expiresIn: '1d' }
+            )
 
-        return jwt.sign(
-          { id: data.id },
-          "E28BA7D908327F1F8F08E396D60DC6FBCDB734387C2C08FCD2CF8E4C09B36AB7",
-          { expiresIn: '1d' }
-        )
+        return {
+          id: data.id,
+          aanhef: aanhef,
+          name: name,
+          surname: surname,
+          email: mail,
+          address: adres,
+          city: city,
+          postalcode: postalcode,
+          token: tokens
+        }
+
+        // return {
+        //   token: jwt.sign(
+        //     { id: user[0].id },
+        //     "E28BA7D908327F1F8F08E396D60DC6FBCDB734387C2C08FCD2CF8E4C09B36AB7",
+        //     { expiresIn: '1d' }
+        //   ),
+        //   id: data.id
+        // }
       })
       .catch( err => {
         throw new Error(err)
+        console.log(err)
       })
 
     // Return token to client
-    console.log(`Token: ${token}\n`)
-    return token;
+    console.log("Token" + tokenWithId.token);
+
+    const userWithToken = {
+      id: 11111,
+      aanhef: aanhef,
+      name: name,
+      surname: surname,
+      email: mail,
+      address: adres,
+      city: city,
+      postalcode: postalcode,
+      token: tokenWithId.token
+    }
+
+    console.log(`User: ${userWithToken}\n`)
+
+    return userWithToken
   },
+
+  //user login
   async login ({email, password}) {
     const user = await db.manyOrNone('SELECT * from gebruiker where mail = $1',[email])
                         .then( data => {
@@ -125,7 +168,6 @@ var root = {
       address: user[0].adres,
       city: user[0].city,
       postalcode: user[0].postalcode,
-      cellphone: user[0].cellphone,
       token: token
     }
 

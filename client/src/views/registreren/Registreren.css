@@ -9,25 +9,35 @@
   float: left;
 }
 
-#naam{
+#drie {
+  margin: 50px 0px 50px 350px;
+  display: block;
+  width: 700px;
+  float: left;
+}
+
+#naam {
   width: 300px;
   float: left;
 }
 
-#adres{
+#adres {
   width: 300px;
   float: left;
 }
 
-
+#betalen{
+  margin: 0px 0px 50px 0px;
+}
 
 #stappen{
-  margin: 10px 0px 50px -50px;
+  margin: 10px 0px 50px 0px;
   float: left;
 }
 
 #voornaam{
   margin-top:51px;
+  
 }
 
 #uno {
@@ -64,6 +74,19 @@
   float: left;
   margin: 0px 10px 0px 0px;
   padding-top: 5px;
+}
+
+#dosTwee {
+  border: 0px solid black;
+  border-radius: 50%;
+  width: 30px;
+  height: 25px;
+  text-align: center;
+  float: left;
+  margin: 0px 10px 0px 0px;
+  padding-top: 5px;
+  background-color: #53B534;
+  color: white;
 }
 
 #tres {
