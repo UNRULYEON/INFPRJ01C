@@ -1,5 +1,6 @@
 #een{
   display: block;
+  float: left;
 }
 
 #twee{
@@ -24,6 +25,7 @@
 #adres {
   width: 300px;
   float: left;
+  margin-bottom: 100px;
 }
 
 #betalen{
@@ -106,10 +108,6 @@
   padding-top: 5px;
 }
 
-#form{
-
-}
-
 #for{
   float:left;
   margin-left: 150px;
@@ -128,6 +126,7 @@
 
 #button{
   width:300px;
+  margin: 0px 10px 0px 10px;
 }
 
 #Waarom {
