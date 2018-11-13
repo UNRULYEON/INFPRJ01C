@@ -51,7 +51,7 @@ class Home extends Component {
             }}
           </Query>
         </section>
-        <section>
+        {/* <section>
         <Query query={GET_ART}>
             {({ loading, error, data }) => {
               if (loading) return <p>Loading...</p>;
@@ -62,7 +62,7 @@ class Home extends Component {
               )
             }}
           </Query>
-        </section>
+        </section> */}
         <section className="section-container">
           <PageTitle title="Vind je favoriete schilderij ❤️" subtitle="Iets voor jou?"/>
           <Query query={GET_ART}>

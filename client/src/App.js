@@ -25,7 +25,9 @@ import Search from './views/search/Search';
 import Contact from './views/contact/Contact';
 import FAQ from './views/faq/FAQ';
 import Login from './views/login/Login';
+import Cart from './views/cart/Cart';
 import Registreren from './views/registreren/Registreren';
+import Account from './views/account/Account';
 import NoMatch from './views/404/404';
 
 // Components
@@ -163,14 +165,36 @@ class App extends Component {
               />
               <Switch>
                 <Route exact path="/" component={Home}/>
-                <Route path="/schilderijen" component={Schilderijen}/>
+                <Route path="/schilderijen/" component={Schilderijen}/>
                 <Route path="/schilderij/:id" component={SchilderijDetails}/>
                 <Route path="/schilders" component={Schilders}/>
                 <Route path="/schilder/:id" component={SchilderDetails}/>
                 <Route path="/zoeken" component={Search} />
                 <Route path="/contact" component={Contact} />
                 <Route path="/faq" component={FAQ} />
-                <Route path="/login" component={Login} />
+                <Route
+                  path="/login"
+                  render={(props) => <Login
+                    {...props}
+                    loggedIn={this.state.loggedIn}
+                    setUser={this.setUser}
+                  />} />
+                  <Route
+                    path="/account"
+                    render={(props) => <Account
+                      {...props}
+                      user={this.state.user}
+                      setUser={this.setUser}
+                      loggedIn={this.state.loggedIn}
+                  />} />
+                  <Route
+                    path="/winkelwagen"
+                    render={(props) => <Cart
+                      {...props}
+                      user={this.state.user}
+                      setUser={this.setUser}
+                      loggedIn={this.state.loggedIn}
+                  />} />
                 <Route path="/registreren" component={Registreren} />
                 <Route component={NoMatch} />
               </Switch>

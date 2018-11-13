@@ -5,7 +5,7 @@ var schema = buildSchema(`
     hello: String
     collection: [Collection]
     collectionSearch: [Collection]
-    paintingOrderedByPagination(page: Int!): [Collection]
+    paintingOrderedByPagination(page: Int!): CollectionWithTotal
     paintingByID(id: String!): [Painting]
     paintersAll: [Painter]
     PaintingsByPainter(id: Int!): ret
@@ -18,7 +18,7 @@ var schema = buildSchema(`
   },
   type Mutation {
     signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String, adres: String, city: String, 
-      postalcode: String): String!
+      postalcode: String): UserWithToken!
     login(email: String!, password: String!): UserWithToken!
   },
   type ret{
@@ -66,6 +66,10 @@ var schema = buildSchema(`
     height: Int,
     principalmaker: String
   },
+  type CollectionWithTotal{
+    total: Int,
+    collection: [Collection]
+  }
   type Painting{
     id: String,
     title: String,
