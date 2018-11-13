@@ -22,32 +22,11 @@ var schema = buildSchema(`
     login(email: String!, password: String!): UserWithToken!
   },
   type ret{
-    PaintingId: ID,
     id_number: Int,
     title: String,
-    releasedate: Int,
-    period: Int,
-    PaintingDescription: String,
-    physicalmedium: String,
-    amountofpaintings: Int,
-    src: String,
-    bigsrc: String,
-    plaquedescriptiondutch: String,
-    principalmakersproductionplaces: String,
-    width: Int,
-    height: Int,
     principalmaker: String,
     name: String,
-    PainterId: Int,
-    city: String,
-    dateofbirth: String,
-    dateofdeath: String,
-    placeofbirth: String,
-    occupation: String,
-    nationality: String,
-    headerimage: String,
-    thumbnail: String,
-    PainterDescription: String
+    id: Int,
   }
   type Collection {
     id: ID,

@@ -40,17 +40,18 @@ var root = {
   },
 // select * from schilderijen, schilder WHERE schilderijen.id_number = 1 AND principalmaker = name;
   PaintingsByPainter: ({id}) => {
+    // let query = (`SELECT schilderijen.id_number as PaintingId, schilder.id as PainterId from schilderijen, schilder\
+    //  WHERE schilderijen.id_number = ${id} AND schilderijen.principalmaker = schilder.name`)
     let query = (`SELECT * from schilderijen, schilder WHERE schilderijen.id_number = ${id} AND schilderijen.principalmaker = schilder.name`)
-    console.log(id)
     console.log(query)
     return db.manyOrNone(query)
   },
   paintersAll: ()=>{
-    let query = 'SELECT * from schilder'
+    let query = `SELECT * from schilder`
     return db.manyOrNone(query)
   },
   painters: () => {
-    let query = 'SELECT * from schilder limit 15'
+    let query = `SELECT * from schilder limit 15`
     return db.manyOrNone(query)
   },
   painterByID: ({id}) => {
