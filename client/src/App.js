@@ -180,7 +180,7 @@ class App extends Component {
                     setUser={this.setUser}
                   />} />
                   <Route
-                    path="/account"
+                    path="/:user"
                     render={(props) => <Account
                       {...props}
                       user={this.state.user}
