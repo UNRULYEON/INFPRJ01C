@@ -7,6 +7,7 @@ var root = {
   status: () => {
     return 200
   },
+  //#region Painting
   collection: () => {
     let query = 'SELECT * from schilderijen limit 15'
     return db.manyOrNone(query)
@@ -38,6 +39,13 @@ var root = {
     console.log(query)
     return db.manyOrNone(query)
   },
+  PaintingsByPainter: ({id}) => {
+    let query = (`SELECT * from schilderijen, schilder WHERE schilderijen.id_number = ${id} AND schilderijen.principalmaker = schilder.name`)
+    console.log(query)
+    return db.manyOrNone(query)
+  },
+  //#endregion
+  //#region Painters
   paintersAll: ()=>{
     let query = `SELECT * from schilder`
     return db.manyOrNone(query)
@@ -54,17 +62,16 @@ var root = {
     let query = (`SELECT * from schilderijen where principalmaker = ${id}`)
     return db.manyOrNone(query)
   },
+  //#endregion
   faq: () => {
     let query = ('SELECT * from faq')
     return db.manyOrNone(query)
   },
-  PaintingsByPainter: ({id}) => {
-    let query = (`SELECT * from schilderijen, schilder WHERE schilderijen.id_number = ${id} AND schilderijen.principalmaker = schilder.name`)
-    console.log(query)
-    return db.manyOrNone(query)
+  //#region Admin
+  async AdminAlter(){
+    
   },
-
-  
+  //#endregion
   async me (req, res, next) {
     if (!res.headers.authorization) {
       console.log(`\nUser not authenticated!\n`)
@@ -82,6 +89,7 @@ var root = {
     let query = (`SELECT * from gebruiker where id = ${decoded.id}`)
     return await db.manyOrNone(query)
   },
+  //#region Merging Painter & Paintings
   //Merge schilder met schilderij 1 at a time
   async merge({id_number,id}){
     console.log(`schilderijen = ${id_number} & schilder = ${id}`)
@@ -103,6 +111,8 @@ var root = {
       console.log("Commented for safety reasons, only uncomment when the entire collection of painters is to be inserted")
     }
   },
+  //#endregion
+  //#region User
   //user signup
   async signup ({ name, surname, mail, password, aanhef, adres, city, postalcode}) {
     // Salt password
@@ -212,6 +222,7 @@ var root = {
 
     return userWithToken
   }
+  //#endregion
 }
 
 module.exports = {
