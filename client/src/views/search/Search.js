@@ -20,13 +20,13 @@ const GET_ART = gql`
   }
 `;
 
-const GET_ART_PAGE = gql`
-  query Pagination($page: Int!){
-    paintingOrderedByPagination(page: $page){
-      title
-    }
-  }
-`;
+// const GET_ART_PAGE = gql`
+//   query Pagination($page: Int!){
+//     paintingOrderedByPagination(page: $page){
+//       title
+//     }
+//   }
+// `;
 
 
 

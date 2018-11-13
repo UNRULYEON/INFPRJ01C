@@ -3,8 +3,8 @@ import './Registreren.css';
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 
-// Components
-import PageTitle from '../../components/pageLink/PageLink';
+// // Components
+// import PageTitle from '../../components/pageLink/PageLink';
 
 // Material-UI
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';

@@ -62,9 +62,9 @@ class Account extends Component {
         <p className="account-title-greeting">{this.getTime()}</p>
         <p className="account-title-account">{this.props.user.name}</p>
         <div className="account-list">
-          <Link to={"/"} className="account-account-link">Mijn gegevens</Link>
-          <Link to={"/"} className="account-account-link">Mijn bestellijst</Link>
-          <Link to={"/"} className="account-account-link">Mijn huurlijst</Link>
+          <Link to={`/${this.props.user.name}/gegevens`} className="account-account-link">Mijn gegevens</Link>
+          <Link to={`/${this.props.user.name}/bestellijst`} className="account-account-link">Mijn bestellijst</Link>
+          <Link to={`/${this.props.user.name}/huurlijst`} className="account-account-link">Mijn huurlijst</Link>
         </div>
         <Button
           color="primary"

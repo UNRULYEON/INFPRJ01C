@@ -10,8 +10,6 @@ import posed from "react-pose";
 
 // Material-UI
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -19,7 +17,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
@@ -170,9 +167,9 @@ class AccountMenu extends Component {
         <div className="dropdown-account">
           <p className="menu-title-greeting">{this.getTime()}</p>
           <p className="menu-title-account">{this.props.user.name}</p>
-          <Link to={"/"} className="menu-account-link">Mijn gegevens</Link>
-          <Link to={"/"} className="menu-account-link">Mijn bestellijst</Link>
-          <Link to={"/"} className="menu-account-link">Mijn huurlijst</Link>
+          <Link to={`/${this.props.user.name}/gegevens`} onClick={this.props.closeModal} className="menu-account-link">Mijn gegevens</Link>
+          <Link to={`/${this.props.user.name}/bestellijst`} onClick={this.props.closeModal} className="menu-account-link">Mijn bestellijst</Link>
+          <Link to={`/${this.props.user.name}/huurlijst`} onClick={this.props.closeModal} className="menu-account-link">Mijn huurlijst</Link>
 
           <Button
             color="primary"
