@@ -7,6 +7,8 @@ var schema = buildSchema(`
     collectionSearch: [Collection]
     paintingOrderedByPagination(page: Int!): [Collection]
     paintingByID(id: String!): [Painting]
+    paintersAll: [Painter]
+    PaintingsByPainter(id: Int!): ret
     painters: [Painter]
     painterByID(id: String!): [Painter]
     workByPainter(id: String!): [Painting]
@@ -19,6 +21,34 @@ var schema = buildSchema(`
       postalcode: String): String!
     login(email: String!, password: String!): UserWithToken!
   },
+  type ret{
+    PaintingId: ID,
+    id_number: Int,
+    title: String,
+    releasedate: Int,
+    period: Int,
+    PaintingDescription: String,
+    physicalmedium: String,
+    amountofpaintings: Int,
+    src: String,
+    bigsrc: String,
+    plaquedescriptiondutch: String,
+    principalmakersproductionplaces: String,
+    width: Int,
+    height: Int,
+    principalmaker: String,
+    name: String,
+    PainterId: Int,
+    city: String,
+    dateofbirth: String,
+    dateofdeath: String,
+    placeofbirth: String,
+    occupation: String,
+    nationality: String,
+    headerimage: String,
+    thumbnail: String,
+    PainterDescription: String
+  }
   type Collection {
     id: ID,
     id_number: Int,
