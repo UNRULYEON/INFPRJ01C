@@ -88,6 +88,19 @@ var root = {
        return await db.one(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${id}, ${id_number})`)
     }
   },
+  async merging(){
+    let amount = await db.manyOrNone('SELECT COUNT(*) from schilderijen').then( data => {return data})
+    console.log(amount[0].count)
+    for (let i = 1; i <= amount[0].count; i++){
+      console.log(i)
+      let schilderNum = await db.manyOrNone(`SELECT schilder.id from schilderijen, schilder WHERE schilderijen.id_number = ${i} AND schilderijen.principalmaker = schilder.name`).then( data => {return data})
+      console.log(schilderNum[0].id)
+      // Commented for safety reasons, only uncomment when the entire collection of painters is to be inserted
+      // await db.one(`INSERT INTO schilderschilderij (schilder, schilderij) values(${schilderNum[0].id}, ${i}) RETURNING id`).then(data => {return data})  
+      // console.log(`Insert executed`)  
+      console.log("Commented for safety reasons, only uncomment when the entire collection of painters is to be inserted")
+    }
+  },
   //user signup
   async signup ({ name, surname, mail, password, aanhef, adres, city, postalcode}) {
     // Salt password

@@ -21,6 +21,7 @@ var schema = buildSchema(`
       postalcode: String): UserWithToken!
     login(email: String!, password: String!): UserWithToken!
     merge(id_number: Int!, id: Int!): String
+    merging:String
   },
   type ret{
     id_number: Int,
