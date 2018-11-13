@@ -58,12 +58,13 @@ var root = {
     let query = ('SELECT * from faq')
     return db.manyOrNone(query)
   },
-  // select * from schilderijen, schilder WHERE schilderijen.id_number = 1 AND principalmaker = name;
   PaintingsByPainter: ({id}) => {
     let query = (`SELECT * from schilderijen, schilder WHERE schilderijen.id_number = ${id} AND schilderijen.principalmaker = schilder.name`)
     console.log(query)
     return db.manyOrNone(query)
   },
+
+  
   async me (req, res, next) {
     if (!res.headers.authorization) {
       console.log(`\nUser not authenticated!\n`)
@@ -81,13 +82,14 @@ var root = {
     let query = (`SELECT * from gebruiker where id = ${decoded.id}`)
     return await db.manyOrNone(query)
   },
-  //Merge schilder met schilderij
+  //Merge schilder met schilderij 1 at a time
   async merge({id_number,id}){
     console.log(`schilderijen = ${id_number} & schilder = ${id}`)
     if(id_number != null != id || id_number != 0 != id){
        return await db.one(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${id}, ${id_number})`)
     }
   },
+  //Merge all
   async merging(){
     let amount = await db.manyOrNone('SELECT COUNT(*) from schilderijen').then( data => {return data})
     console.log(amount[0].count)
@@ -170,7 +172,6 @@ var root = {
 
     return userWithToken
   },
-
   //user login
   async login ({email, password}) {
     const user = await db.manyOrNone('SELECT * from gebruiker where mail = $1',[email])
