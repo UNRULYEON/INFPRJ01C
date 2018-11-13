@@ -8,7 +8,7 @@ var schema = buildSchema(`
     paintingOrderedByPagination(page: Int!): CollectionWithTotal
     paintingByID(id: String!): [Painting]
     paintersAll: [Painter]
-    PaintingsByPainter(id: Int!): ret
+    PaintingsByPainter(id: String!): [ret]
     painters: [Painter]
     painterByID(id: String!): [Painter]
     workByPainter(id: String!): [Painting]
@@ -108,9 +108,10 @@ var schema = buildSchema(`
     city: String,
     postalcode: String,
     password: String,
-    aanhef: String
+    aanhef: String,
+    housenumber: String
   },
-  type UserWithToken {
+  type UserWithToken { 
     id: Int,
     name: String,
     surname: String,
@@ -120,7 +121,8 @@ var schema = buildSchema(`
     postalcode: String,
     password: String,
     aanhef: String,
-    token: String
+    token: String,
+    housenumber: String
   },
   type FAQ{
     id: Int,
