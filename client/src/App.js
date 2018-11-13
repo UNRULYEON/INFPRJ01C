@@ -28,6 +28,9 @@ import Login from './views/login/Login';
 import Cart from './views/cart/Cart';
 import Registreren from './views/registreren/Registreren';
 import Account from './views/account/Account';
+import Details from './views/details/Details';
+import Orders from './views/orders/Orders';
+import Rentals from './views/rentals/Rentals';
 import NoMatch from './views/404/404';
 
 // Components
@@ -180,8 +183,33 @@ class App extends Component {
                     setUser={this.setUser}
                   />} />
                   <Route
+                    exact
                     path="/:user"
                     render={(props) => <Account
+                      {...props}
+                      user={this.state.user}
+                      setUser={this.setUser}
+                      loggedIn={this.state.loggedIn}
+                  />} />
+                  <Route
+                    path="/:user/gegevens"
+                    render={(props) => <Details
+                      {...props}
+                      user={this.state.user}
+                      setUser={this.setUser}
+                      loggedIn={this.state.loggedIn}
+                  />} />
+                  <Route
+                    path="/:user/bestellijst"
+                    render={(props) => <Orders
+                      {...props}
+                      user={this.state.user}
+                      setUser={this.setUser}
+                      loggedIn={this.state.loggedIn}
+                  />} />
+                  <Route
+                    path="/:user/huurlijst"
+                    render={(props) => <Rentals
                       {...props}
                       user={this.state.user}
                       setUser={this.setUser}

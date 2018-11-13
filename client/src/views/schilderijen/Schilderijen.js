@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
 import { Query } from "react-apollo";
-import {
-    Redirect
-} from 'react-router-dom';
 import Pagination from 'rc-pagination';
-import * as Scroll from 'react-scroll';
-import { Link, Element , Events, animateScroll as scroll, scrollSpy, scroller } from 'react-scroll'
 import gql from "graphql-tag";
 import './Schilderijen.css'
 

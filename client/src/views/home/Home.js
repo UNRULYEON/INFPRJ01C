@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
-import { ApolloConsumer } from 'react-apollo';
 
 // Components
 import PageTitle from '../../components/pageLink/PageLink'
 import Gallery from '../../components/gallery/Gallery'
-import HeroFeatured from '../../components/herofeatured/HeroFeatured'
+// import HeroFeatured from '../../components/herofeatured/HeroFeatured'
 
 const GET_ART = gql`
   {

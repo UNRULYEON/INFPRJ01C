@@ -3,15 +3,16 @@ import React, { Component } from 'react';
 //     Link,
 //     Redirect
 // } from 'react-router-dom';
-import './Cart.css'
+import './Rentals.css'
 
 // Components
 import PageTitle from '../../components/pageLink/PageLink'
 
-class Cart extends Component {
+class Rentals extends Component {
   constructor(props){
     super(props);
     this.state = {
+      redirect: false
     }
   }
 
@@ -25,10 +26,10 @@ class Cart extends Component {
   render() {
     return (
       <section className="section-container">
-        <PageTitle title="Winkelwagen"/>
+        <PageTitle title="Huurlijst"/>
       </section>
     );
   }
 }
 
-export default Cart;
+export default Rentals;
