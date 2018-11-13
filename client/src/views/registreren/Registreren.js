@@ -18,9 +18,25 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import green from '@material-ui/core/colors/green';
+import Radio from '@material-ui/core/Radio';
+import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormLabel from '@material-ui/core/FormLabel';
 
 // Pose Animation
 import posed from "react-pose";
+
+//steppers
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import Stepper from '@material-ui/core/Stepper';
+import Step from '@material-ui/core/Step';
+import StepLabel from '@material-ui/core/StepLabel';
+import Typography from '@material-ui/core/Typography';
+import { RadioGroup } from '@material-ui/core';
 
 // animation const
 const FirstStepContainer = posed.div({
@@ -46,6 +62,15 @@ const FirstStepContainer = posed.div({
   }
 });
 
+const styles = {
+  root: {
+    color: green[600],
+    '&$checked': {
+      color: green[500],
+    },
+  },
+  checked: {},
+};
 
 // theme const
 const theme = new createMuiTheme({
@@ -62,6 +87,9 @@ const theme = new createMuiTheme({
       root: { // Name of the rule
         color: 'white', // Some CSS
       },
+    },
+    TextField: {
+      width: 200,
     },
   },
 });
@@ -85,7 +113,6 @@ mutation Signup($name: String!, $surname: String!, $mail: String!, $password: St
 }
   `;
 
-
 // Constructor
 class Registreren extends Component {
   constructor() {
@@ -95,7 +122,7 @@ class Registreren extends Component {
       surname: '',
       mail: '',
       password: '',
-      aanhef: 'Dhr',
+      aanhef: 'Dhr.',
       adres: '',
       city: '',
       postalcode: '',
@@ -107,25 +134,68 @@ class Registreren extends Component {
 
       buttonState: false,
       snackbar: false,
-      showPassword: false
+      showPassword: false,
+
+      activeStep: 0,
+      buttonText: 'Next',
+      buttonNext: true,
     };
   }
 
-  toggleHidden() {
-    this.setState({
-      isHidden: !this.state.isHidden,
-      isHidden2: !this.state.isHidden2,
-      toggle: !this.state.toggle
-    });
+  //stepper get methods
+  getSteps() {
+    return ['Email en wachtwoord', 'Naam en adres', 'Betaalwijze'];
   }
 
-  toggleHiddenAgain() {
+  getStepContent(stepIndex) {
+    switch (stepIndex) {
+      case 0:
+        console.log("show register")
+        return this.showRegister();
+      case 1:
+        console.log("Show naam en adres")
+        return this.showNaamAdres();
+      case 2:
+        console.log("show betaalinfo")
+        return this.showBetaalInfo();
+      default:
+        return 'Uknown stepIndex';
+    }
+  }
+
+  //stepper methods
+  handleNext = () => {
+    this.setState(state => ({
+      activeStep: state.activeStep + 1,
+    }));
+  };
+
+  handleBack = () => {
+    this.setState(state => ({
+      activeStep: state.activeStep - 1,
+    }));
+  };
+
+  handleReset = () => {
     this.setState({
-      isHidden2: !this.state.isHidden2,
-      isHidden3: !this.state.isHidden3,
-      toggle: !this.state.toggle
+      activeStep: 0,
+      name: '',
+      surname: '',
+      mail: '',
+      password: '',
+      aanhef: 'Dhr.',
+      adres: '',
+      city: '',
+      postalcode: '',
     });
-    console.log(this.state);
+  };
+
+  //handle change for radio button
+  handleChangeRadio = event => {
+    this.setState({
+      aanhef: event.target.value
+    });
+    console.log("state changed")
   }
 
   // snackbar methods
@@ -154,6 +224,7 @@ class Registreren extends Component {
     this.setState(state => ({ showPassword: !state.showPassword }));
   }
 
+
   // adds input to state
   onChange = (e) => {
     this.setState({
@@ -161,270 +232,277 @@ class Registreren extends Component {
     });
   }
 
+
+
+
+  //method shows case 0 of stepper
+  showRegister() {
+    return (
+      <div id="showRegister">
+        <div id="emailWachtwoordForm">
+
+          <h1>Account</h1>
+          <TextField
+            name="mail"
+            label="Email"
+            onChange={this.handleChange('mail')}
+            value={this.state.mail}
+          />
+          <br></br>
+
+          <FormControl className="login-input">
+            <InputLabel htmlFor="adornment-password">Wachtwoord</InputLabel>
+            <Input
+              name="password"
+              type={this.state.showPassword ? 'text' : 'password'}
+              onChange={this.handleChange('password')}
+              value={this.state.password}
+
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton onClick={this.handleClickShowPassword}>
+                    {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              }
+
+            />
+          </FormControl>
+        </div>
+
+        <div id="lijn"></div>
+
+        <div id="Waarom">
+          <h1>Waarom een account?</h1>
+          <p className="details-info">Beheer al je bestellingen en retouren op een plek</p>
+          <p className="details-info">Bestel sneller met je bewaarde gegevens</p>
+          <p className="details-info">Je winkelmandje altijd en overal opgeslagen</p>
+        </div>
+      </div>
+    )
+  }
+
+  //Shows case 1 of stepper
+  showNaamAdres() {
+    return (
+      <div id="showNaamAdres">
+        <div id="naam" >
+          <h1>Naam</h1>
+
+          <p>Aanhef</p>
+              Dhr.
+              <Radio
+                color="primary"
+                value="Dhr."
+                checked={this.state.aanhef === 'Dhr.'}
+                onChange={this.handleChangeRadio}
+              />
+              Mevr.
+              <Radio
+                color="primary"
+                value="Mevr."
+                checked={this.state.aanhef === 'Mevr.'}
+                onChange={this.handleChangeRadio}
+              />
+
+
+          <TextField id="textFieldName"
+            name="name"
+            label="Naam"
+            onChange={e => this.onChange(e)}
+            value={this.state.name}
+          />
+
+
+          <TextField
+            name="surname"
+            label="Achternaam"
+            onChange={e => this.onChange(e)}
+            value={this.state.surname}
+          />
+        </div>
+
+        <div id="lijn"></div>
+
+        <div id="adres">
+          <h1>Adres</h1>
+
+          <TextField
+            name="adres"
+            label="Adres"
+            onChange={e => this.onChange(e)}
+            value={this.state.adres}
+          />
+
+
+          <TextField
+            name="Huisnummer"
+            label="Huisnummer"
+          />
+
+          <TextField
+            name="postalcode"
+            label="Postcode"
+            onChange={e => this.onChange(e)}
+            value={this.state.postalcode}
+          />
+
+          <TextField
+            name="city"
+            label="Stad"
+            onChange={e => this.onChange(e)}
+            value={this.state.city}
+          />
+
+        </div>
+
+      </div>
+    )
+  }
+
+  //method that shows case 2 of stepper
+  showBetaalInfo() {
+    return (
+        <div id="showBetaalInfo">
+          <h1>Betaalwijze</h1>
+          <p>Betaalmethode</p>
+          <form>
+            <select name="Betaalmethode">
+              <option value="IDEAL">IDEAL</option>
+              <option value="Achteraf">Achteraf betalen</option>
+              <option value="Creditcard">Creditcard</option>
+              <option value="Paypal">Paypal</option>
+            </select>
+          </form>
+        </div>
+    )
+  }
+
+
   //return html objects
   render() {
+    const { activeStep } = this.state;
     return (
 
       <section className="section-container">
+        <Stepper activeStep={activeStep} alternativeLabel>
+          {this.getSteps().map(label => {
+            return (
+              <Step key={label}>
+                <StepLabel>
+                  {label}
+                </StepLabel>
+              </Step>
+            );
+          })}
+        </Stepper>
 
-        {!this.state.isHidden && (<div id="een">
-          <div id="for" className="dropdown-form">
 
-            <h1>Account</h1>
-            <TextField
-              name="mail"
-              label="Email"
-              onChange={this.handleChange('mail')}
-              value={this.state.mail}
-            />
-
-            <FormControl className="login-input">
-              <InputLabel htmlFor="adornment-password">Wachtwoord</InputLabel>
-              <Input
-                name="password"
-                type={this.state.showPassword ? 'text' : 'password'}
-                onChange={this.handleChange('password')}
-                value={this.state.password}
-
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton onClick={this.handleClickShowPassword}>
-                      {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-
-              />
-            </FormControl>
-
-            <MuiThemeProvider theme={theme}>
+        <div>
+          {activeStep === this.getSteps().length ? (
+            <div id="getStepsDone">
+              Done!
               <Button
-                color="primary"
-                className="login-button"
-                variant="contained"
-                disabled={this.state.buttonState}
-                onClick={e => {
-                  this.setState({
-                    buttonState: true,
-                  });
-
-                  if (!(/\S+@\S+\.\S+/).test(this.state.mail)) {
-                    this.handleSnackbarClick()
-                    this.setState({
-                      buttonState: false,
-                    });
-                    return
-                  }
-                  //go to next step here
-                  this.toggleHidden()
-                }}
+              // TODO: edit this to insta login with the given info instead of resetting the register page
+                onClick={this.handleReset}
               >
-                Doorgaan
+                Opnieuw registreren
               </Button>
-            </MuiThemeProvider>
-
-
-            {//temporary button to skip entering data
-            }
-            <button
-              onClick={this.toggleHidden.bind(this)}
-              className="dropdown-button"
-              id="button"
-              type="primary">Doorgaan
-            </button>
-
-          </div>
-
-
-          <div id="Waarom">
-            <h1>Waarom een account?</h1>
-            <p className="details-info">Beheer al je bestellingen en retouren op een plek</p>
-            <p className="details-info">Bestel sneller met je bewaarde gegevens</p>
-            <p className="details-info">Je winkelmandje altijd en overal opgeslagen</p>
-          </div>
-
-        </div>)}
-
-
-        <FirstStepContainer pose={this.state.toggle ? 'open' : 'closed'}>
-          {!this.state.isHidden2 && (<div id="twee">
-
-            <div id="stappen">
-              <p id="uno"><b>1</b></p>
-              <h3 id="unoText">Email en wachtwoord</h3>
-              <p id="dos"><b>2</b></p>
-              <h3 id="dosText">Naam en adres</h3>
-              <p id="tres"><b>3</b></p>
-              <h3 id="tresText">Betaalwijze</h3>
             </div>
+          )
+            //else
+            : (
+              <div>
+                {this.getStepContent(activeStep)}
+                <div id="buttonsBackNext">
+                  <MuiThemeProvider theme={theme}>
+                    <Button
+                      id="button"
+                      className="login-button"
+                      variant="contained"
+                      type="primary"
+                      color="default"
+                      disabled={activeStep === 0}
+                      onClick={e => {
+                        this.handleBack()
+                      }}
+                    >
+                      Terug
+                    </Button>
 
+                    {/* display button 'Next'  */}
+                    {activeStep != 2 ?
+                      <Button
+                        id="button"
+                        color="primary"
+                        className="login-button"
+                        variant="contained"
+                        onClick={e => {
+                          this.setState({
+                            buttonState: true,
+                          });
 
-            <div id="naam" className="dropdown-form">
-              <h1>Naam</h1>
-
-              <p>Aanhef</p>
-              <p><input type="radio" name="aanhef" value={this.state.aanhef} onChange={e => this.onChange(e)} />Dhr.</p>
-              <p><input type="radio" name="aanhef" value={this.state.aanhef} onChange={e => this.onChange(e)} />Mevr.</p>
-
-
-              <TextField
-                name="name"
-                label="Naam"
-                onChange={e => this.onChange(e)}
-                value={this.state.name}
-              />
-
-
-              <TextField
-                name="surname"
-                label="Achternaam"
-                onChange={e => this.onChange(e)}
-                value={this.state.surname}
-              />
-            </div>
-
-            <div id="adres" className="dropdown-form">
-              <h1>Adres</h1>
-
-              <TextField
-                name="adres"
-                label="Adres"
-                onChange={e => this.onChange(e)}
-                value={this.state.adres}
-              />
-
-              <TextField
-                name="Huisnummer"
-                label="Huisnummer"
-              />
-
-              <TextField
-                name="postalcode"
-                label="Postcode"
-                onChange={e => this.onChange(e)}
-                value={this.state.postalcode}
-              />
-
-              <TextField
-                name="city"
-                label="Stad"
-                onChange={e => this.onChange(e)}
-                value={this.state.city}
-              />
-
-            </div>
-
-
-            <MuiThemeProvider theme={theme}>
-              <Button
-                id="button"
-                className="login-button"
-                variant="contained"
-                type="primary"
-                color="default"
-                onClick={this.toggleHidden.bind(this)}
-              >
-
-                Terug
-              </Button>
-
-              <Button
-                id="button"
-                className="login-button"
-                variant="contained"
-                type="primary"
-                color="primary"
-                onClick={this.toggleHiddenAgain.bind(this)}
-              >
-                Doorgaan
-              </Button>
-            </MuiThemeProvider>
-
-          </div>)}
-        </FirstStepContainer>
-
-
-        <FirstStepContainer pose={!this.state.toggle ? 'open' : 'closed'}>
-          {this.state.isHidden3 && (<div id="drie">
-
-            <div id="stappen">
-              <p id="uno"><b>1</b></p>
-              <h3 id="unoText">Email en wachtwoord</h3>
-              <p id="dosTwee"><b>2</b></p>
-              <h3 id="dosText">Naam en adres</h3>
-              <p id="tres"><b>3</b></p>
-              <h3 id="tresText">Betaalwijze</h3>
-            </div>
-
-            <div id="betalen">
-              <h1>Betaalwijze</h1>
-              <p>Betaalmethode</p>
-              <form>
-                <select name="Betaalmethode">
-                  <option value="IDEAL">IDEAL</option>
-                  <option value="Achteraf">Achteraf betalen</option>
-                  <option value="Creditcard">Creditcard</option>
-                  <option value="Paypal">Paypal</option>
-                </select>
-              </form>
-            </div>
-
-            
-            <MuiThemeProvider theme={theme}>
-              <Button 
-                id="button"                
-                className="login-button" 
-                variant="contained"                 
-                type="primary"
-                color="default"
-                onClick={this.toggleHiddenAgain.bind(this)} 
-              >
-                Terug
-              </Button>
-
-              <Mutation mutation={SIGNUP}>
-                {(signup, { data }) => (
-                  <Button
-                    id="button"
-                    className="login-button"
-                    variant="contained"
-                    type="primary"
-                    color="primary"
-                    onClick={
-                      e => {
-                        this.setState({
-                          buttonState: true,
-                        });
-
-                        //Mutate
-                        e.preventDefault();
-                        signup({
-                          variables: {
-                            name: this.state.name,
-                            surname: this.state.surname,
-                            mail: this.state.mail.toLowerCase(),
-                            password: this.state.password,
-                            aanhef: this.state.aanhef,
-                            adres: this.state.adres,
-                            city: this.state.city,
-                            postalcode: this.state.postalcode
+                          if (!(/\S+@\S+\.\S+/).test(this.state.mail)) {
+                            this.handleSnackbarClick()
+                            return
                           }
-                        });
+                          //go to next step here
+                          this.handleNext()
+                          console.log(this.state)
+                        }}
+                      >
+                        Next
+                      </Button>
 
-                      }
-                    }
-                  >
-                    registreren
-                  </Button>
-                )}
-              </Mutation>
-            </MuiThemeProvider>
+                      :
+                      // Display button 'Registreren'
+                      <Mutation mutation={SIGNUP}>
+                        {(signup, { data }) => (
+                          <Button
+                            id="button"
+                            className="login-button"
+                            variant="contained"
+                            type="primary"
+                            color="primary"
+                            onClick={
+                              e => {
+                                this.setState({
+                                  buttonState: true,
+                                });
 
-          </div>)}
-        </FirstStepContainer>
+                                //Mutate
+                                e.preventDefault();
+                                signup({
+                                  variables: {
+                                    name: this.state.name,
+                                    surname: this.state.surname,
+                                    mail: this.state.mail.toLowerCase(),
+                                    password: this.state.password,
+                                    aanhef: this.state.aanhef,
+                                    adres: this.state.adres,
+                                    city: this.state.city,
+                                    postalcode: this.state.postalcode
+                                  }
+                                });
+                                this.handleNext()
+                              }
+                            }
+                          >
+                            registreren
+                          </Button>
+                        )}
+                      </Mutation>}
+                  </MuiThemeProvider>
+                </div>
+              </div>
+            )}
+        </div>
 
-        {//Snackbar is for the error message when the input email and/or password is invalid        
-        }           
+
+
+
+        {//Snackbar is for the error message when the input email and/or password is invalid     
+        }
         <Snackbar
           anchorOrigin={{
             vertical: 'bottom',

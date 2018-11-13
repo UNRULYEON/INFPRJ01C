@@ -1,3 +1,94 @@
+
+/* first step page */
+#showRegister{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+#emailWachtwoordForm{
+  align-items: flex-start;
+  max-width: 415px;
+  margin: 0px 75px 0px 120px;
+}
+
+#Waarom {
+  flex: 1;
+  max-width: 415px;
+}
+
+#lijn{
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  border: 1px solid rgb(231, 231, 231);
+  max-width: 1px;
+  flex: 1;
+  height: 350px;
+  margin: 0px 15px 0px 15px;
+
+}
+
+/* second step page */
+#showNaamAdres{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#naam{
+  align-items: center;
+  max-width: 300px;
+  height: 350px;
+}
+
+#adres{
+  flex: 1;
+  max-width: 300px;
+  height: 350px;
+}
+
+#textFieldName{
+  margin-top:12px;
+}
+
+/* last step page */
+#showBetaalInfo{
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 0px 0px 34px 0px;
+}
+
+/* done with steps */
+#getStepsDone{
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 0px 0px 34px 0px;
+}
+
+/* Buttons */
+#button{
+  width:300px;
+}
+
+
+#buttonsBackNext{
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+
+
+
+
 #een{
   display: block;
   float: left;
@@ -15,17 +106,6 @@
   display: block;
   width: 700px;
   float: left;
-}
-
-#naam {
-  width: 300px;
-  float: left;
-}
-
-#adres {
-  width: 300px;
-  float: left;
-  margin-bottom: 100px;
 }
 
 #betalen{
@@ -124,13 +204,10 @@
   margin-left:15px;
 }
 
-#button{
+
+#buttonNext{
   width:300px;
   margin: 0px 10px 0px 10px;
+  display: none;
 }
 
-#Waarom {
-  margin: 50px 0px 0px 550px;
-  border-left: 1px solid grey;
-  padding-left: 50px;
-}
