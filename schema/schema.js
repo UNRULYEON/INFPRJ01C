@@ -8,7 +8,7 @@ var schema = buildSchema(`
     paintingOrderedByPagination(page: Int!): CollectionWithTotal
     paintingByID(id: String!): [Painting]
     paintersAll: [Painter]
-    PaintingsByPainter(id: Int!): ret
+    PaintingsByPainter(id: String!): [ret]
     painters: [Painter]
     painterByID(id: String!): [Painter]
     workByPainter(id: String!): [Painting]

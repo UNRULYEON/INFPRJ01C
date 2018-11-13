@@ -3,7 +3,6 @@ const db = pgp('postgres://projectc:pc@188.166.94.83:5432/project_dev')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
-// select * from schilderijen, schilder WHERE schilderijen.id_number = 1 AND principalmaker = name;
 var root = {
   status: () => {
     return 200
@@ -29,7 +28,6 @@ var root = {
                         .then( data => {
                           return data
                         })
-
     return {
       total: total[0].count,
       collection: preQuery
@@ -40,6 +38,7 @@ var root = {
     console.log(query)
     return db.manyOrNone(query)
   },
+// select * from schilderijen, schilder WHERE schilderijen.id_number = 1 AND principalmaker = name;
   PaintingsByPainter: ({id}) => {
     let query = (`SELECT * from schilderijen, schilder WHERE schilderijen.id_number = ${id} AND schilderijen.principalmaker = schilder.name`)
     console.log(id)
