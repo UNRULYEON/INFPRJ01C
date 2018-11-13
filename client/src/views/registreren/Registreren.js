@@ -22,6 +22,14 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 // Pose Animation
 import posed from "react-pose";
 
+//steppers
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import Stepper from '@material-ui/core/Stepper';
+import Step from '@material-ui/core/Step';
+import StepLabel from '@material-ui/core/StepLabel';
+import Typography from '@material-ui/core/Typography';
+
 // animation const
 const FirstStepContainer = posed.div({
   open: {
@@ -46,6 +54,19 @@ const FirstStepContainer = posed.div({
   }
 });
 
+//stepper const
+const styles = theme => ({
+  root: {
+    width: '90%',
+  },
+  backButton: {
+    marginRight: theme.spacing.unit,
+  },
+  instructions: {
+    marginTop: theme.spacing.unit,
+    marginBottom: theme.spacing.unit,
+  },
+});
 
 // theme const
 const theme = new createMuiTheme({
@@ -85,6 +106,34 @@ mutation Signup($name: String!, $surname: String!, $mail: String!, $password: St
 }
   `;
 
+function showHtml() {
+  return (
+    <div>
+
+    show HTML
+
+    </div>
+  )
+}
+
+//stepper get methods
+function getSteps() {
+  return ['Email en wachtwoord', 'Naam en adres', 'Betaalwijze'];
+}
+
+function getStepContent(stepIndex) {
+  switch (stepIndex) {
+    case 0:
+      return 'div een';
+    case 1:
+      console.log("case one")
+      return showHtml();
+    case 2:
+      return 'div drie';
+    default:
+      return 'Uknown stepIndex';
+  }
+}
 
 // Constructor
 class Registreren extends Component {
@@ -107,15 +156,40 @@ class Registreren extends Component {
 
       buttonState: false,
       snackbar: false,
-      showPassword: false
+      showPassword: false,
+
+      activeStep: 0
     };
   }
 
+
+
+  //stepper methods
+  handleNext = () => {
+    this.setState(state => ({
+      activeStep: state.activeStep + 1,
+    }));
+  };
+
+  handleBack = () => {
+    this.setState(state => ({
+      activeStep: state.activeStep - 1,
+    }));
+  };
+
+  handleReset = () => {
+    this.setState({
+      activeStep: 0,
+    });
+  };
+
+  //animation
   toggleHidden() {
     this.setState({
       isHidden: !this.state.isHidden,
       isHidden2: !this.state.isHidden2,
-      toggle: !this.state.toggle
+      toggle: !this.state.toggle,
+      activeStep: this.state.activeStep + 1,
     });
   }
 
@@ -123,7 +197,8 @@ class Registreren extends Component {
     this.setState({
       isHidden2: !this.state.isHidden2,
       isHidden3: !this.state.isHidden3,
-      toggle: !this.state.toggle
+      toggle: !this.state.toggle,
+      activeStep: this.state.activeStep + 1,
     });
     console.log(this.state);
   }
@@ -163,9 +238,41 @@ class Registreren extends Component {
 
   //return html objects
   render() {
+
+    const { classes } = this.props;
+    const steps = getSteps();
+    const { activeStep } = this.state;
+
     return (
 
       <section className="section-container">
+
+      <div>
+          {this.state.activeStep === steps.length ? (
+            <div>
+              All steps completed
+              <Button onClick={this.handleReset}>Reset</Button>
+            </div>
+          ) : (
+            <div>
+              {getStepContent(activeStep)}            
+              <div>
+                <Button
+                  disabled={activeStep === 0}
+                  onClick={this.handleBack}
+                >
+                  Back
+                </Button>
+                <Button variant="contained" color="primary" onClick={this.handleNext}>
+                  {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+
+
+
 
         {!this.state.isHidden && (<div id="een">
           <div id="for" className="dropdown-form">
@@ -248,6 +355,18 @@ class Registreren extends Component {
 
         <FirstStepContainer pose={this.state.toggle ? 'open' : 'closed'}>
           {!this.state.isHidden2 && (<div id="twee">
+
+            <Stepper activeStep={activeStep} alternativeLabel>
+              {steps.map(label => {
+                return (
+                  <Step key={label}>
+                    <StepLabel>
+                      {label}
+                    </StepLabel>
+                  </Step>
+                );
+              })}
+            </Stepper>
 
             <div id="stappen">
               <p id="uno"><b>1</b></p>
@@ -347,6 +466,20 @@ class Registreren extends Component {
         <FirstStepContainer pose={!this.state.toggle ? 'open' : 'closed'}>
           {this.state.isHidden3 && (<div id="drie">
 
+
+            <Stepper activeStep={activeStep} alternativeLabel>
+              {steps.map(label => {
+                return (
+                  <Step key={label}>
+                    <StepLabel>
+                      {label}
+                    </StepLabel>
+                  </Step>
+                );
+              })}
+            </Stepper>
+
+
             <div id="stappen">
               <p id="uno"><b>1</b></p>
               <h3 id="unoText">Email en wachtwoord</h3>
@@ -369,15 +502,15 @@ class Registreren extends Component {
               </form>
             </div>
 
-            
+
             <MuiThemeProvider theme={theme}>
-              <Button 
-                id="button"                
-                className="login-button" 
-                variant="contained"                 
+              <Button
+                id="button"
+                className="login-button"
+                variant="contained"
                 type="primary"
                 color="default"
-                onClick={this.toggleHiddenAgain.bind(this)} 
+                onClick={this.toggleHiddenAgain.bind(this)}
               >
                 Terug
               </Button>
@@ -424,7 +557,7 @@ class Registreren extends Component {
         </FirstStepContainer>
 
         {//Snackbar is for the error message when the input email and/or password is invalid        
-        }           
+        }
         <Snackbar
           anchorOrigin={{
             vertical: 'bottom',
