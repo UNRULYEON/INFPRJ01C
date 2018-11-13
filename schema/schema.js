@@ -20,6 +20,7 @@ var schema = buildSchema(`
     signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String, adres: String, city: String, 
       postalcode: String): UserWithToken!
     login(email: String!, password: String!): UserWithToken!
+    merge(id_number: Int!, id: Int!): String
   },
   type ret{
     id_number: Int,

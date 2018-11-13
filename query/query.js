@@ -38,14 +38,6 @@ var root = {
     console.log(query)
     return db.manyOrNone(query)
   },
-// select * from schilderijen, schilder WHERE schilderijen.id_number = 1 AND principalmaker = name;
-  PaintingsByPainter: ({id}) => {
-    // let query = (`SELECT schilderijen.id_number as PaintingId, schilder.id as PainterId from schilderijen, schilder\
-    //  WHERE schilderijen.id_number = ${id} AND schilderijen.principalmaker = schilder.name`)
-    let query = (`SELECT * from schilderijen, schilder WHERE schilderijen.id_number = ${id} AND schilderijen.principalmaker = schilder.name`)
-    console.log(query)
-    return db.manyOrNone(query)
-  },
   paintersAll: ()=>{
     let query = `SELECT * from schilder`
     return db.manyOrNone(query)
@@ -66,7 +58,12 @@ var root = {
     let query = ('SELECT * from faq')
     return db.manyOrNone(query)
   },
-
+  // select * from schilderijen, schilder WHERE schilderijen.id_number = 1 AND principalmaker = name;
+  PaintingsByPainter: ({id}) => {
+    let query = (`SELECT * from schilderijen, schilder WHERE schilderijen.id_number = ${id} AND schilderijen.principalmaker = schilder.name`)
+    console.log(query)
+    return db.manyOrNone(query)
+  },
   async me (req, res, next) {
     if (!res.headers.authorization) {
       console.log(`\nUser not authenticated!\n`)
@@ -84,8 +81,13 @@ var root = {
     let query = (`SELECT * from gebruiker where id = ${decoded.id}`)
     return await db.manyOrNone(query)
   },
-
-
+  //Merge schilder met schilderij
+  async merge({id_number,id}){
+    console.log(`schilderijen = ${id_number} & schilder = ${id}`)
+    if(id_number != null != id || id_number != 0 != id){
+       return await db.one(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${id}, ${id_number})`)
+    }
+  },
   //user signup
   async signup ({ name, surname, mail, password, aanhef, adres, city, postalcode}) {
     // Salt password
@@ -111,7 +113,6 @@ var root = {
               "E28BA7D908327F1F8F08E396D60DC6FBCDB734387C2C08FCD2CF8E4C09B36AB7",
               { expiresIn: '1d' }
             )
-
         return {
           id: data.id,
           aanhef: aanhef,
@@ -123,7 +124,6 @@ var root = {
           postalcode: postalcode,
           token: tokens
         }
-
         // return {
         //   token: jwt.sign(
         //     { id: user[0].id },
