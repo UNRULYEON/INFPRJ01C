@@ -191,10 +191,10 @@ class App extends Component {
                     loggedIn={this.state.loggedIn}
                 />} />
                 <Route path="/registreren" component={Registreren} />
-                <Route component={NoMatch} />
                 <Route
                   exact
-                  path="/:user"
+                  strict
+                  path="/user/:user"
                   render={(props) => <Account
                     {...props}
                     user={this.state.user}
@@ -202,7 +202,9 @@ class App extends Component {
                     loggedIn={this.state.loggedIn}
                 />} />
                 <Route
-                  path="/:user/gegevens"
+                  exact
+                  strict
+                  path="/user/:user/gegevens"
                   render={(props) => <Details
                     {...props}
                     user={this.state.user}
@@ -210,7 +212,9 @@ class App extends Component {
                     loggedIn={this.state.loggedIn}
                 />} />
                 <Route
-                  path="/:user/bestellijst"
+                  exact
+                  strict
+                  path="/user/:user/bestellijst"
                   render={(props) => <Orders
                     {...props}
                     user={this.state.user}
@@ -218,13 +222,16 @@ class App extends Component {
                     loggedIn={this.state.loggedIn}
                 />} />
                 <Route
-                  path="/:user/huurlijst"
+                  exact
+                  strict
+                  path="/user/:user/huurlijst"
                   render={(props) => <Rentals
                     {...props}
                     user={this.state.user}
                     setUser={this.setUser}
                     loggedIn={this.state.loggedIn}
                 />} />
+                <Route component={NoMatch} />
               </Switch>
               <Footer/>
             </MuiThemeProvider>

@@ -68,9 +68,41 @@ var root = {
     return db.manyOrNone(query)
   },
   //#region Admin
-  async AdminAlter(){
-    
+  //#region alter users
+  //Add user
+  async addUser({name, surname, mail, password, aanhef, adres = null, city = null, postalcode = null, housenumber = null}){
+    const saltedPassword = await bcrypt.hash(password,10)
+    const user = await db.manyOrNone(`SELECT mail from gebruiker where mail = $1`,[mail])
+    if(user.length){
+      throw new Error('User with this email already exists')
+    }
+    return await db.one(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`, 
+    [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber]).then(data => {return data.id}).catch(err => {console.error(err) 
+            throw new Error(err)})    
   },
+  //Alter user
+  async alterUser(){
+
+  },
+  //Delete user
+  async deleteUser(){
+
+  },
+  //#endregion
+  //#region alter products
+  //Add product
+  async addProduct(){
+
+  },
+  //Alter products
+  async alterProduct(){
+
+  },
+  //Delete products
+  async deleteProduct(){
+
+  },
+  //#endregion
   //#endregion
   async me (req, res, next) {
     if (!res.headers.authorization) {
@@ -92,29 +124,33 @@ var root = {
   //#region Merging Painter & Paintings
   //Merge schilder met schilderij 1 at a time
   async merge({id_number,id}){
-    console.log(`schilderijen = ${id_number} & schilder = ${id}`)
+    // console.log(`schilderijen = ${id_number} & schilder = ${id}`)
     if(id_number != null != id || id_number != 0 != id){
        return await db.one(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${id}, ${id_number})`)
     }
   },
   //Merge all
   async merging(){
-    let amount = await db.manyOrNone('SELECT COUNT(*) from schilderijen').then( data => {return data})
-    console.log(amount[0].count)
-    for (let i = 1; i <= amount[0].count; i++){
-      console.log(i)
-      let schilderNum = await db.manyOrNone(`SELECT schilder.id from schilderijen, schilder WHERE schilderijen.id_number = ${i} AND schilderijen.principalmaker = schilder.name`).then( data => {return data})
-      console.log(schilderNum[0].id)
-      // Commented for safety reasons, only uncomment when the entire collection of painters is to be inserted
-      // await db.one(`INSERT INTO schilderschilderij (schilder, schilderij) values(${schilderNum[0].id}, ${i}) RETURNING id`).then(data => {return data})  
-      // console.log(`Insert executed`)  
-      console.log("Commented for safety reasons, only uncomment when the entire collection of painters is to be inserted")
-    }
+    // let amount = await db.manyOrNone('SELECT COUNT(*) from schilderijen').then( data => {return data})
+    // // console.log(amount[0].count)
+    // for (let i = 1; i <= amount[0].count; i++){
+    //   // console.log(i)
+    //   let schilderNum = await db.manyOrNone(`SELECT schilder.id from schilderijen, schilder WHERE schilderijen.id_number = ${i} AND schilderijen.principalmaker = schilder.name`).then( data => {return data})
+    //   // console.log(schilderNum[0].id)
+    //   // Commented for safety reasons, only uncomment when the entire collection of painters is to be inserted
+    //   await db.one(`INSERT INTO schilderschilderij (schilder, schilderij) values(${schilderNum[0].id}, ${i}) RETURNING id`).then(data => {return data})  
+    //   console.log(`Insert executed`)  
+    // }
+    console.log("Commented for safety reasons, only uncomment when the entire collection of painters is to be inserted")
   },
   //#endregion
   //#region User
   //user signup
+<<<<<<< HEAD
   async signup ({ name, surname, mail, password, aanhef, adres, housenumber, city, postalcode}) {
+=======
+  async signup ({ name, surname, mail, password, aanhef, adres, city, postalcode, housenumber}) {
+>>>>>>> ed12236c82d3238e9ab2abf9029477c196adb106
     // Salt password
     const saltedPassword =  await bcrypt.hash(password, 10)
 
@@ -128,9 +164,15 @@ var root = {
 
     // Generate token when insertion is complete
 
+<<<<<<< HEAD
     return await db.one('INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, housenumber, city, postalcode) \
     VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id', 
     [name, surname, mail, saltedPassword, aanhef, adres, housenumber, city, postalcode])
+=======
+    return await db.one('INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber) \
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id', 
+    [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber])
+>>>>>>> ed12236c82d3238e9ab2abf9029477c196adb106
       .then( data => {
         console.log(`\nUser ID: ${data.id}`)
         let tokens = jwt.sign(
@@ -148,6 +190,7 @@ var root = {
           housenumber: housenumber,
           city: city,
           postalcode: postalcode,
+          housenumber: housenumber,
           token: tokens
         }
       })
@@ -169,6 +212,7 @@ var root = {
       housenumber: housenumber,
       city: city,
       postalcode: postalcode,
+      housenumber: housenumber,
       token: tokenWithId.token
     }
 
