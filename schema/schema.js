@@ -22,12 +22,8 @@ var schema = buildSchema(`
     login(email: String!, password: String!): UserWithToken!
     merge(id_number: Int!, id: Int!): String
     merging: String
-<<<<<<< HEAD
     addUser(name: String!, surname: String!, mail: String!, password: String!, aanhef: String!, adres: String, city: String, postalcode: String, housenumber: String): String
     alterUser(id: Int!, name: String!, surname: String!, aanhef: String!, mail: String!, password: String!, adres: String!, city: String!, postalcode: String!, housenumber: String!): String!
-=======
-
->>>>>>> 55a7dea8dc9796dd296c6437c625cda41001d019
   },
   type ret{
     id_number: Int,
