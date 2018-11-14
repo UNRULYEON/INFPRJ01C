@@ -36,12 +36,10 @@ var root = {
   },
   paintingByID: ({id}) => {
     let query = (`SELECT * from schilderijen where id_number = ${id}`)
-    console.log(query)
     return db.manyOrNone(query)
   },
   PaintingsByPainter: ({id}) => {
     let query = (`SELECT * from schilderijen, schilder WHERE schilderijen.id_number = ${id} AND schilderijen.principalmaker = schilder.name`)
-    console.log(query)
     return db.manyOrNone(query)
   },
   //#endregion
@@ -81,17 +79,14 @@ var root = {
     [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber])
     .then(data => {console.log(`\nUser ID: ${data.id}`)
                     return data.id})
-      .catch(err => {console.error(err) 
-                      throw new Error(err)})    
+      .catch(err => {throw new Error(err)})    
   },
   //Alter user
   async alterUser({id, name, surname, mail, password, aanhef, adres, city, postalcode, housenumber}){
     const user = await db.manyOrNone(`SELECT * from gebruiker where id = ${[id]}`)
     .then(data => {return data})
-    .catch(err => {console.error(err)
-                    throw new Error(err)})
+    .catch(err => {throw new Error(err)})
     if(user[0].id != id){
-      console.log('No user with that ID!')
       throw new Error('No user with that ID!')
     }
     const saltedPassword = await bcrypt.hash(password,10)
@@ -100,7 +95,7 @@ var root = {
                           surname = $2,
                           mail = $3,
                           password = $4,
-                          aanhef =$5,
+                          aanhef = $5,
                           adres = $6,
                           city = $7,
                           postalcode = $8,
@@ -120,8 +115,34 @@ var root = {
 
   },
   //Alter products
-  async alterProduct(){
-
+  async alterProduct({id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescdutch, prodplace, width, height, principalmaker, price}){
+    const prod = await db.manyOrNone(`SELECT * from schilderijen where id_number = ${id_number}`)
+    .then(data => {return data})
+    .catch(err => {console.err(err)
+                    throw new Error(err)})
+    if(prod[0].id_number != id_number){
+      console.log(`No user with the given ID!`)
+      throw new Error(`No user with the given ID!`)
+    }
+    return await db.one(`UPDATE schilderijen set
+                          id = $1,
+                          title = $2,
+                          releasedate = $3,
+                          period = $4,
+                          description = $5,
+                          physicalmedium = $6,
+                          amountofpaintings = $7,
+                          src = $8,
+                          bigsrc = $9,
+                          plaquedescriptiondutch = $10,
+                          principalmakersproductionplaces = $11,
+                          width = $12,
+                          height = $13,
+                          principalmaker = $14,
+                          price = $15
+                          WHERE id_number = ${id_number}`,
+                          [id,title,releasedate,period,description,physicalmedium,amountofpaintings,src,bigsrc,plaquedescdutch,prodplace,width,height,principalmaker,price])
+                        .then(data => {return data})
   },
   //Delete products
   async deleteProduct(){
@@ -160,7 +181,8 @@ var root = {
     // // console.log(amount[0].count)
     // for (let i = 1; i <= amount[0].count; i++){
     //   // console.log(i)
-    //   let schilderNum = await db.manyOrNone(`SELECT schilder.id from schilderijen, schilder WHERE schilderijen.id_number = ${i} AND schilderijen.principalmaker = schilder.name`).then( data => {return data})
+    //   let schilderNum = await db.manyOrNone(`SELECT schilder.id from schilderijen, schilder WHERE schilderijen.id_number = ${i} AND schilderijen.principalmaker = schilder.name`)
+    //                                        .then( data => {return data})
     //   // console.log(schilderNum[0].id)
     //   // Commented for safety reasons, only uncomment when the entire collection of painters is to be inserted
     //   await db.one(`INSERT INTO schilderschilderij (schilder, schilderij) values(${schilderNum[0].id}, ${i}) RETURNING id`).then(data => {return data})  
