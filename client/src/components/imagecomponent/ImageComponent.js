@@ -4,8 +4,9 @@ import Img from 'react-image'
 import Loading from '../../components/loading/Loading'
 import './imageComponent.css'
 
-// Icons
-import cart from '../../icons/cart.svg';
+// Material-UI
+import IconButton from '@material-ui/core/IconButton';
+import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 
 class ImageComponent extends Component {
   render() {
@@ -42,9 +43,9 @@ class ImageComponent extends Component {
               <span className="item-details-price">€{this.props.photo.price || " -"}</span>
             </div>
             <div className="item-details-action">
-              <button className="item-details-action-button">
-                <img src={cart} alt="cart" width="24"/>
-              </button>
+              <IconButton color="primary" aria-label="Add to shopping cart">
+                <AddShoppingCartIcon />
+              </IconButton>
             </div>
           </div>
         )}
