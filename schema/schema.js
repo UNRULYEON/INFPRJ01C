@@ -25,7 +25,6 @@ var schema = buildSchema(`
     addUser(name: String!, surname: String!, mail: String!, password: String!, aanhef: String!, adres: String, city: String, postalcode: String, housenumber: String): String
     alterUser(id: Int!, name: String!, surname: String!, aanhef: String!, mail: String!, password: String!, adres: String!, city: String!, postalcode: String!, housenumber: String!): String!
     alterProduct(id_number: Int!, id: String!, title: String!, releasedate: String!, period: String! description: String!, physicalmedium: String!, amountofpaintings: Int!, src: String!, bigsrc: String!, plaguedescdutch: String!, prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!): String
-    addProduct(id: Int!, title: String!, releasedate: Int!, period: Int, description: String, physicalmedium: String,amountofpaintings: Int!, src: String, bigsrc: String, plaquedescriptiondutch: String, principalmakersproductionplaces:String, principalmaker: String, width: Int, height: Int): String
   },
   type ret{
     id_number: Int,
