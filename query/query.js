@@ -213,27 +213,6 @@ var root = {
         throw new Error(err)
         console.log(err)
       })
-
-    // Return token to client
-    console.log("Token" + tokenWithId.token);
-
-    const userWithToken = {
-      id: 11111,
-      aanhef: aanhef,
-      name: name,
-      surname: surname,
-      email: mail,
-      address: adres,
-      housenumber: housenumber,
-      city: city,
-      postalcode: postalcode,
-      housenumber: housenumber,
-      token: tokenWithId.token
-    }
-
-    console.log(`User: ${userWithToken}\n`)
-
-    return userWithToken
   },
   //user login
   async login ({email, password}) {
