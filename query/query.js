@@ -146,11 +146,7 @@ var root = {
   //#endregion
   //#region User
   //user signup
-<<<<<<< HEAD
   async signup ({ name, surname, mail, password, aanhef, adres, housenumber, city, postalcode}) {
-=======
-  async signup ({ name, surname, mail, password, aanhef, adres, city, postalcode, housenumber}) {
->>>>>>> ed12236c82d3238e9ab2abf9029477c196adb106
     // Salt password
     const saltedPassword =  await bcrypt.hash(password, 10)
 
@@ -164,15 +160,9 @@ var root = {
 
     // Generate token when insertion is complete
 
-<<<<<<< HEAD
     return await db.one('INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, housenumber, city, postalcode) \
     VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id', 
     [name, surname, mail, saltedPassword, aanhef, adres, housenumber, city, postalcode])
-=======
-    return await db.one('INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber) \
-    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id', 
-    [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber])
->>>>>>> ed12236c82d3238e9ab2abf9029477c196adb106
       .then( data => {
         console.log(`\nUser ID: ${data.id}`)
         let tokens = jwt.sign(

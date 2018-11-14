@@ -17,13 +17,8 @@ var schema = buildSchema(`
     status: Int
   },
   type Mutation {
-<<<<<<< HEAD
     signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String, adres: String, housenumber: String, city: String, 
       postalcode: String): UserWithToken!
-=======
-    signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String, adres: String, city: String, 
-      postalcode: String, housenumber: String): UserWithToken!
->>>>>>> ed12236c82d3238e9ab2abf9029477c196adb106
     login(email: String!, password: String!): UserWithToken!
     merge(id_number: Int!, id: Int!): String
     merging: String
