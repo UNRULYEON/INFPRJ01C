@@ -17,11 +17,12 @@ var schema = buildSchema(`
     status: Int
   },
   type Mutation {
-    signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String!, adres: String, city: String, postalcode: String, housenumber: String): UserWithToken!
+    signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String, adres: String, city: String, 
+      postalcode: String, housenumber: String): UserWithToken!
     login(email: String!, password: String!): UserWithToken!
     merge(id_number: Int!, id: Int!): String
     merging: String
-    addUser(name: String!, surname: String!, mail: String!, password: String!, aanhef: String!, adres: String, city: String, postalcode: String, housenumber: String): String
+
   },
   type ret{
     id_number: Int,
@@ -29,7 +30,7 @@ var schema = buildSchema(`
     principalmaker: String,
     name: String,
     id: Int,
-  },
+  }
   type Collection {
     id: ID,
     id_number: Int,
@@ -45,12 +46,13 @@ var schema = buildSchema(`
     principalmakersproductionplaces: String,
     width: Int,
     height: Int,
-    principalmaker: String
+    principalmaker: String,
+    price: Int,
   },
   type CollectionWithTotal{
     total: Int,
     collection: [Collection]
-  },
+  }
   type Painting{
     id: String,
     title: String,
