@@ -70,14 +70,15 @@ var root = {
   //#region Admin
   //#region alter users
   //Add user
-  async addUser(name, surname, mail, password, aanhef, adres, string, postalcode, housenumber){
+  async addUser({name, surname, mail, password, aanhef, adres = null, city = null, postalcode = null, housenumber = null}){
     const saltedPassword = await bcrypt.hash(password,10)
-    const user = await db.manyOrNone(`SELECT mail from gebruiker where mail = ${mail}`)
+    const user = await db.manyOrNone(`SELECT mail from gebruiker where mail = $1`,[mail])
     if(user.length){
       throw new Error('User with this email already exists')
     }
-    return await db.one(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber) VALUES(${name}, ${surname}, ${mail}, ${saltedPassword}, ${aanhef}, ${adres}, ${city}, ${postalcode}, ${housenumber})`).then(data => {return data})
-    
+    return await db.one(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`, 
+    [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber]).then(data => {return data.id}).catch(err => {console.error(err) 
+            throw new Error(err)})    
   },
   //Alter user
   async alterUser(){
