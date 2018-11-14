@@ -182,49 +182,49 @@ class App extends Component {
                     loggedIn={this.state.loggedIn}
                     setUser={this.setUser}
                   />} />
-                  <Route
-                    exact
-                    path="/:user"
-                    render={(props) => <Account
-                      {...props}
-                      user={this.state.user}
-                      setUser={this.setUser}
-                      loggedIn={this.state.loggedIn}
-                  />} />
-                  <Route
-                    path="/:user/gegevens"
-                    render={(props) => <Details
-                      {...props}
-                      user={this.state.user}
-                      setUser={this.setUser}
-                      loggedIn={this.state.loggedIn}
-                  />} />
-                  <Route
-                    path="/:user/bestellijst"
-                    render={(props) => <Orders
-                      {...props}
-                      user={this.state.user}
-                      setUser={this.setUser}
-                      loggedIn={this.state.loggedIn}
-                  />} />
-                  <Route
-                    path="/:user/huurlijst"
-                    render={(props) => <Rentals
-                      {...props}
-                      user={this.state.user}
-                      setUser={this.setUser}
-                      loggedIn={this.state.loggedIn}
-                  />} />
-                  <Route
-                    path="/winkelwagen"
-                    render={(props) => <Cart
-                      {...props}
-                      user={this.state.user}
-                      setUser={this.setUser}
-                      loggedIn={this.state.loggedIn}
-                  />} />
+                <Route
+                  path="/winkelwagen"
+                  render={(props) => <Cart
+                    {...props}
+                    user={this.state.user}
+                    setUser={this.setUser}
+                    loggedIn={this.state.loggedIn}
+                />} />
                 <Route path="/registreren" component={Registreren} />
                 <Route component={NoMatch} />
+                <Route
+                  exact
+                  path="/:user"
+                  render={(props) => <Account
+                    {...props}
+                    user={this.state.user}
+                    setUser={this.setUser}
+                    loggedIn={this.state.loggedIn}
+                />} />
+                <Route
+                  path="/:user/gegevens"
+                  render={(props) => <Details
+                    {...props}
+                    user={this.state.user}
+                    setUser={this.setUser}
+                    loggedIn={this.state.loggedIn}
+                />} />
+                <Route
+                  path="/:user/bestellijst"
+                  render={(props) => <Orders
+                    {...props}
+                    user={this.state.user}
+                    setUser={this.setUser}
+                    loggedIn={this.state.loggedIn}
+                />} />
+                <Route
+                  path="/:user/huurlijst"
+                  render={(props) => <Rentals
+                    {...props}
+                    user={this.state.user}
+                    setUser={this.setUser}
+                    loggedIn={this.state.loggedIn}
+                />} />
               </Switch>
               <Footer/>
             </MuiThemeProvider>
