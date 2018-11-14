@@ -18,7 +18,7 @@ var schema = buildSchema(`
     
   },
   type Mutation {
-    signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String, adres: String, city: String, 
+    signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String, adres: String, housenumber: String, city: String, 
       postalcode: String): UserWithToken!
     login(email: String!, password: String!): UserWithToken!
     merge(id_number: Int!, id: Int!): String
@@ -87,11 +87,11 @@ var schema = buildSchema(`
     surname: String,
     email: String,
     address: String,
+    housenumber: String,
     city: String,
     postalcode: String,
     password: String,
-    aanhef: String,
-    housenumber: String
+    aanhef: String    
   },
   type UserWithToken { 
     id: Int,
@@ -99,12 +99,12 @@ var schema = buildSchema(`
     surname: String,
     email: String,
     address: String,
+    housenumber: String,
     city: String,
     postalcode: String,
     password: String,
     aanhef: String,
-    token: String,
-    housenumber: String
+    token: String    
   },
   type FAQ{
     id: Int,
