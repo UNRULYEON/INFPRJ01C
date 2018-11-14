@@ -171,7 +171,7 @@ var root = {
   //#endregion
   //#region User
   //user signup
-  async signup ({ name, surname, mail, password, aanhef, adres, city, postalcode, housenumber}) {
+  async signup ({ name, surname, mail, password, aanhef, adres, housenumber, city, postalcode}) {
     // Salt password
     const saltedPassword =  await bcrypt.hash(password, 10)
 
@@ -185,9 +185,9 @@ var root = {
 
     // Generate token when insertion is complete
 
-    return await db.one('INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber) \
+    return await db.one('INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, housenumber, city, postalcode) \
     VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id', 
-    [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber])
+    [name, surname, mail, saltedPassword, aanhef, adres, housenumber, city, postalcode])
       .then( data => {
         console.log(`\nUser ID: ${data.id}`)
         let tokens = jwt.sign(
@@ -202,19 +202,12 @@ var root = {
           surname: surname,
           email: mail,
           address: adres,
+          housenumber: housenumber,
           city: city,
           postalcode: postalcode,
           housenumber: housenumber,
           token: tokens
         }
-        // return {
-        //   token: jwt.sign(
-        //     { id: user[0].id },
-        //     "E28BA7D908327F1F8F08E396D60DC6FBCDB734387C2C08FCD2CF8E4C09B36AB7",
-        //     { expiresIn: '1d' }
-        //   ),
-        //   id: data.id
-        // }
       })
       .catch( err => {
         throw new Error(err)
@@ -231,6 +224,7 @@ var root = {
       surname: surname,
       email: mail,
       address: adres,
+      housenumber: housenumber,
       city: city,
       postalcode: postalcode,
       housenumber: housenumber,

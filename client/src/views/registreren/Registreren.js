@@ -78,6 +78,9 @@ const theme = new createMuiTheme({
     primary: {
       main: '#43a047'
     },
+    secondary: {
+      main: '#000'
+    },
   },
   typography: {
     useNextVariants: true,
@@ -97,13 +100,14 @@ const theme = new createMuiTheme({
 
 // Query const
 const SIGNUP = gql`
-mutation Signup($name: String!, $surname: String!, $mail: String!, $password: String!, $aanhef: String!, $adres: String!, $city: String, $postalcode: String!) {
-  signup(name: $name, surname: $surname, mail: $mail, password: $password, aanhef: $aanhef, adres: $adres, city: $city, postalcode: $postalcode) {
+mutation Signup($name: String!, $surname: String!, $mail: String!, $password: String!, $aanhef: String, $adres: String, $housenumber: String, $city: String, $postalcode: String) {
+  signup(name: $name, surname: $surname, mail: $mail, password: $password, aanhef: $aanhef, adres: $adres, housenumber: $housenumber, city: $city, postalcode: $postalcode) {
     id
     name
     surname
     email
     address
+    housenumber
     city
     postalcode
     password
@@ -124,6 +128,7 @@ class Registreren extends Component {
       password: '',
       aanhef: 'Dhr.',
       adres: '',
+      housenumber: '',
       city: '',
       postalcode: '',
 
@@ -185,6 +190,7 @@ class Registreren extends Component {
       password: '',
       aanhef: 'Dhr.',
       adres: '',
+      housenumber: '',
       city: '',
       postalcode: '',
     });
@@ -289,24 +295,27 @@ class Registreren extends Component {
         <div id="naam" >
           <h1>Naam</h1>
 
+
           <p>Aanhef</p>
-              Dhr.
+          <div id="aanhef">
+            Dhr.
               <Radio
-                color="primary"
-                value="Dhr."
-                checked={this.state.aanhef === 'Dhr.'}
-                onChange={this.handleChangeRadio}
-              />
-              Mevr.
+              color="primary"
+              value="Dhr."
+              checked={this.state.aanhef === 'Dhr.'}
+              onChange={this.handleChangeRadio}
+            />
+            Mevr.
               <Radio
-                color="primary"
-                value="Mevr."
-                checked={this.state.aanhef === 'Mevr.'}
-                onChange={this.handleChangeRadio}
-              />
+              color="primary"
+              value="Mevr."
+              checked={this.state.aanhef === 'Mevr.'}
+              onChange={this.handleChangeRadio}
+            />
+          </div>
 
 
-          <TextField id="textFieldName"
+          <TextField
             name="name"
             label="Naam"
             onChange={e => this.onChange(e)}
@@ -325,7 +334,7 @@ class Registreren extends Component {
         <div id="lijn"></div>
 
         <div id="adres">
-          <h1>Adres</h1>
+          <h1 id="adresHeader">Adres</h1>
 
           <TextField
             name="adres"
@@ -336,8 +345,10 @@ class Registreren extends Component {
 
 
           <TextField
-            name="Huisnummer"
+            name="housenumber"
             label="Huisnummer"
+            onChange={e => this.onChange(e)}
+            value={this.state.housenumber}
           />
 
           <TextField
@@ -363,18 +374,18 @@ class Registreren extends Component {
   //method that shows case 2 of stepper
   showBetaalInfo() {
     return (
-        <div id="showBetaalInfo">
-          <h1>Betaalwijze</h1>
-          <p>Betaalmethode</p>
-          <form>
-            <select name="Betaalmethode">
-              <option value="IDEAL">IDEAL</option>
-              <option value="Achteraf">Achteraf betalen</option>
-              <option value="Creditcard">Creditcard</option>
-              <option value="Paypal">Paypal</option>
-            </select>
-          </form>
-        </div>
+      <div id="showBetaalInfo">
+        <h1>Betaalwijze</h1>
+        <p>Betaalmethode</p>
+        <form>
+          <select name="Betaalmethode">
+            <option value="IDEAL">IDEAL</option>
+            <option value="Achteraf">Achteraf betalen</option>
+            <option value="Creditcard">Creditcard</option>
+            <option value="Paypal">Paypal</option>
+          </select>
+        </form>
+      </div>
     )
   }
 
@@ -385,43 +396,55 @@ class Registreren extends Component {
     return (
 
       <section className="section-container">
-        <Stepper activeStep={activeStep} alternativeLabel>
-          {this.getSteps().map(label => {
-            return (
-              <Step key={label}>
-                <StepLabel>
-                  {label}
-                </StepLabel>
-              </Step>
-            );
-          })}
-        </Stepper>
+
+        {/* to not show the current steps at the beginning */}
+        {activeStep !== 0 ?
+          <Stepper activeStep={activeStep} alternativeLabel>
+            {this.getSteps().map(label => {
+              return (
+                <Step key={label}>
+                  <StepLabel>
+                    {label}
+                  </StepLabel>
+                </Step>
+              );
+            })}
+          </Stepper>
+          : null
+        }
+
+
 
 
         <div>
-          {activeStep === this.getSteps().length ? (
-            <div id="getStepsDone">
-              Done!
+          {activeStep === this.getSteps().length ?
+            (
+              <div id="getStepsDone">
+                Done!
               <Button
-              // TODO: edit this to insta login with the given info instead of resetting the register page
-                onClick={this.handleReset}
-              >
-                Opnieuw registreren
+                  // TODO: edit this to insta login with the given info instead of resetting the register page
+                  color="secondary"
+                  onClick={this.handleReset}
+                >
+                  Opnieuw registreren
               </Button>
-            </div>
-          )
+              </div>
+            )
             //else
-            : (
+            :
+            (
               <div>
                 {this.getStepContent(activeStep)}
                 <div id="buttonsBackNext">
                   <MuiThemeProvider theme={theme}>
-                    <Button
+
+                    {/* to not show the current back button at the beginning */}
+                    {activeStep !== 0 ? <Button
                       id="button"
                       className="login-button"
-                      variant="contained"
+                      variant="outlined"
                       type="primary"
-                      color="default"
+                      color="secondary"
                       disabled={activeStep === 0}
                       onClick={e => {
                         this.handleBack()
@@ -429,9 +452,12 @@ class Registreren extends Component {
                     >
                       Terug
                     </Button>
+                      :
+                      null}
+
 
                     {/* display button 'Next'  */}
-                    {activeStep != 2 ?
+                    {activeStep !== 2 ?
                       <Button
                         id="button"
                         color="primary"
@@ -480,6 +506,7 @@ class Registreren extends Component {
                                     password: this.state.password,
                                     aanhef: this.state.aanhef,
                                     adres: this.state.adres,
+                                    housenumber: this.state.housenumber,
                                     city: this.state.city,
                                     postalcode: this.state.postalcode
                                   }
@@ -495,7 +522,8 @@ class Registreren extends Component {
                   </MuiThemeProvider>
                 </div>
               </div>
-            )}
+            )
+          }
         </div>
 
 

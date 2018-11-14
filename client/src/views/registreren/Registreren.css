@@ -23,11 +23,11 @@
   justify-content: center;
   align-items: flex-start;
   border: 1px solid rgb(231, 231, 231);
-  max-width: 1px;
   flex: 1;
+  max-width: 1px;
   height: 350px;
-  margin: 0px 15px 0px 15px;
-
+  background-color: rgb(231, 231, 231);
+  margin: 15px 15px 15px 15px;
 }
 
 /* second step page */
@@ -38,19 +38,20 @@
 }
 
 #naam{
-  align-items: center;
-  max-width: 300px;
-  height: 350px;
+  display:flex;
+  justify-content: center;
+  flex-direction: column;
+  
 }
 
 #adres{
-  flex: 1;
-  max-width: 300px;
-  height: 350px;
+  display:flex;
+  justify-content: center;
+  flex-direction: column;
 }
 
-#textFieldName{
-  margin-top:12px;
+#adresHeader{
+  margin-bottom: 37px;
 }
 
 /* last step page */
@@ -75,139 +76,69 @@
 
 /* Buttons */
 #button{
-  width:300px;
+  width:150px;
 }
-
 
 #buttonsBackNext{
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
 }
 
 
 
 
+/* screen max width 648px */
+@media screen and (max-width: 648px){
+  /* first step page */
+  #showRegister{
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    flex-direction: column;
+    
+  }
 
-#een{
-  display: block;
-  float: left;
-}
+  #emailWachtwoordForm{
+    align-items: flex-start;
+    max-width: 415px;
+    margin: 0px 75px 0px 120px;
+  }
 
-#twee{
-  margin: 50px 0px 50px 350px;
-  display: block;
-  width: 700px;
-  float: left;
-}
+  #Waarom {
+    flex: 1;
+    max-width: 415px;
+  }
 
-#drie {
-  margin: 50px 0px 50px 350px;
-  display: block;
-  width: 700px;
-  float: left;
-}
+  #lijn{
+    border: 1px solid rgb(231, 231, 231);
+    height: 1px;
+    max-width:350px;
+    width: 350px;
+    margin: 15px 15px 15px 15px;
+  }
 
-#betalen{
-  margin: 0px 0px 50px 0px;
-}
+  /* second step page */
+  #showNaamAdres{
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    flex-direction: column;
+  }
 
-#stappen{
-  margin: 10px 0px 50px 0px;
-  float: left;
-}
+  #naam{
+    margin: 10px 10px 10px 10px;
+    
+  }
 
-#voornaam{
-  margin-top:51px;
-  
-}
+  #adres{
+    margin: 10px 10px 10px 10px;
+  }
 
-#uno {
-  border: 0px solid black;
-  border-radius: 50%;
-  width: 30px;
-  height: 25px;
-  text-align: center;
-  float: left;
-  margin: 0px 10px 0px 0px;
-  padding-top: 5px;
-  background-color: #53B534;
-  color: white;
-}
-
-#unoText {
-  float: left;
-  margin: 0px 10px 0px 0px;
-  padding-top: 5px;
-}
-
-#dos {
-  border: 1px solid black;
-  border-radius: 50%;
-  width: 30px;
-  height: 25px;
-  text-align: center;
-  float: left;
-  margin: 0px 10px 0px 10px;
-  padding-top: 5px;
-}
-
-#dosText {
-  float: left;
-  margin: 0px 10px 0px 0px;
-  padding-top: 5px;
-}
-
-#dosTwee {
-  border: 0px solid black;
-  border-radius: 50%;
-  width: 30px;
-  height: 25px;
-  text-align: center;
-  float: left;
-  margin: 0px 10px 0px 0px;
-  padding-top: 5px;
-  background-color: #53B534;
-  color: white;
-}
-
-#tres {
-  border: 1px solid black;
-  border-radius: 50%;
-  width: 30px;
-  height: 25px;
-  text-align: center;
-  float: left;
-  margin: 0px 10px 0px 10px;
-  padding-top: 5px;
-}
-
-#tresText {
-  float: left;
-  margin: 0px 10px 0px 0px;
-  padding-top: 5px;
-}
-
-#for{
-  float:left;
-  margin-left: 150px;
-  margin-top: -10px;
-}
-
-#email{
-  width:300px;
-  margin-left:15px;
-}
-
-#pas{
-  width:300px;
-  margin-left:15px;
-}
-
-
-#buttonNext{
-  width:300px;
-  margin: 0px 10px 0px 10px;
-  display: none;
+  #buttonsBackNext{
+    display: flex;
+    justify-content: center;
+    flex-direction: column-reverse;
+  }
 }
 
