@@ -76,13 +76,38 @@ var root = {
     if(user.length){
       throw new Error('User with this email already exists')
     }
-    return await db.one(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`, 
-    [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber]).then(data => {return data.id}).catch(err => {console.error(err) 
-            throw new Error(err)})    
+    return await db.one(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber) 
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`, 
+    [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber])
+    .then(data => {console.log(`\nUser ID: ${data.id}`)
+                    return data.id})
+      .catch(err => {console.error(err) 
+                      throw new Error(err)})    
   },
   //Alter user
-  async alterUser(){
-
+  async alterUser({id, name, surname, mail, password, aanhef, adres, city, postalcode, housenumber}){
+    const user = await db.manyOrNone(`SELECT * from gebruiker where id = ${[id]}`)
+    .then(data => {return data})
+    .catch(err => {console.error(err)
+                    throw new Error(err)})
+    if(user[0].id != id){
+      console.log('No user with that ID!')
+      throw new Error('No user with that ID!')
+    }
+    const saltedPassword = await bcrypt.hash(password,10)
+    return await db.one(`UPDATE gebruiker set 
+                          name = $1,
+                          surname = $2,
+                          mail = $3,
+                          password = $4,
+                          aanhef =$5,
+                          adres = $6,
+                          city = $7,
+                          postalcode = $8,
+                          housenumber = $9
+                          WHERE id = ${id}`,
+                          [name,surname,mail,saltedPassword,aanhef,adres,city,postalcode,housenumber])
+                        .then(data => {return data})
   },
   //Delete user
   async deleteUser(){

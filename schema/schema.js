@@ -22,6 +22,7 @@ var schema = buildSchema(`
     merge(id_number: Int!, id: Int!): String
     merging: String
     addUser(name: String!, surname: String!, mail: String!, password: String!, aanhef: String!, adres: String, city: String, postalcode: String, housenumber: String): String
+    alterUser(id: Int!, name: String!, surname: String!, aanhef: String!, mail: String!, password: String!, adres: String!, city: String!, postalcode: String!, housenumber: String!): String!
   },
   type ret{
     id_number: Int,
