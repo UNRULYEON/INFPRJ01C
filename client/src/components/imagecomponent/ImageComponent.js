@@ -10,9 +10,6 @@ import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 
 class ImageComponent extends Component {
   render() {
-    let width = {
-      width: this.props.photo.width - 60
-    }
 
     function getLocal(prop) {
       return "/schilderij/" + prop.photo.id_number;
@@ -37,15 +34,10 @@ class ImageComponent extends Component {
           />
         </NavLink>
         {this.props.noIC ? null : (
-          <div className="item-details" style={width}>
+          <div className="item-details" style={{width: this.props.photo.width}}>
             <div className="item-details-text">
               <span className="item-details-title">{this.props.photo.title}</span>
               <span className="item-details-price">€{this.props.photo.price || " -"}</span>
-            </div>
-            <div className="item-details-action">
-              <IconButton color="primary" aria-label="Add to shopping cart">
-                <AddShoppingCartIcon />
-              </IconButton>
             </div>
           </div>
         )}
