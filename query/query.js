@@ -111,8 +111,14 @@ var root = {
   //#endregion
   //#region alter products
   //Add product
-  async addProduct(){
-
+  async addProduct({id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescdutch, prodplace, width, height, principalmaker,price}){
+    return await db.one(`INSERT INTO schilderijen(id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescriptiondutch, principalmakersproductionplaces, principalmaker, width, height, price) 
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id_number`, 
+    [id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescdutch, prodplace, principalmaker, width, height, price])
+    .then(data => {console.log(`\nPainting ID: ${data.id_number}`)
+                    return data.id_number})
+      .catch(err => {console.error(err)
+        throw new Error(err)})
   },
   //Alter products
   async alterProduct({id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescdutch, prodplace, width, height, principalmaker, price}){
