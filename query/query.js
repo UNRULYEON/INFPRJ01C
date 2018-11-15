@@ -66,6 +66,28 @@ var root = {
     return db.manyOrNone(query)
   },
   //#region Admin
+  //#region papatabel
+  async createbabytabel({tabelnaam, foreignkey}){
+    const c = await db.manyOrNone(`SELECT * from ${tabelnaam}`)
+            .then(data => {console.log(data)
+                          return data})
+            .catch(err => {console.error(err)
+            })
+    if(c.length){
+      console.log(c)
+      console.log("c exists")
+    }else(
+      console.log("c doesn't exist")
+    )
+    // // let check = `SELECT to_regclass(schema_name.table_name)`
+    // let query = `CREATE TABLE ${tabelnaam} (id serial PRIMARY KEY, foreignKey int)`
+    // // console.log(query)
+    // const create = db.one(query)
+    // // console.log(create)
+    // // console.log('ref in papa maken en inhoud in baby')
+    // return create
+  },  
+  //#endregion
   //#region alter users
   //Add user
   async addUser({name, surname, mail, password, aanhef, adres = null, city = null, postalcode = null, housenumber = null}){
@@ -133,8 +155,7 @@ var root = {
     .catch(err => {console.err(err)
                     throw new Error(err)})
     if(prod[0].id_number != id_number){
-      console.log(`No user with the given ID!`)
-      throw new Error(`No user with the given ID!`)
+      throw new Error(`No product with the given ID!`)
     }
     return await db.one(`UPDATE schilderijen set
                           id = $1,
@@ -173,15 +194,12 @@ var root = {
       console.log(`\nUser not authenticated!\n`)
       throw new Error('You are not authenticated!')
     }
-
     var decoded = jwt.verify(
       String(res.headers.authorization).slice(7),
       'E28BA7D908327F1F8F08E396D60DC6FBCDB734387C2C08FCD2CF8E4C09B36AB7'
     );
-
     console.log(`\nToken: ${String(res.headers.authorization).slice(7)}`)
     console.log(`ID: ${decoded.id}\n`)
-
     let query = (`SELECT * from gebruiker where id = ${decoded.id}`)
     return await db.manyOrNone(query)
   },
