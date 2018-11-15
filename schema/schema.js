@@ -14,7 +14,7 @@ var schema = buildSchema(`
     workByPainter(id: String!): [Painting]
     me: User
     faq: [FAQ]
-    status: Int
+    status: Int 
   },
   type Mutation {
     signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String, adres: String, housenumber: String, city: String, 
@@ -22,10 +22,12 @@ var schema = buildSchema(`
     login(email: String!, password: String!): UserWithToken!
     merge(id_number: Int!, id: Int!): String
     merging: String
-    addUser(name: String!, surname: String!, mail: String!, password: String!, aanhef: String!, adres: String, city: String, postalcode: String, housenumber: String): String
+    addUser(name: String!, surname: String!, mail: String!, password: String!, aanhef: String!, adres: String, city: String, postalcode: String, housenumber: String): String!
     alterUser(id: Int!, name: String!, surname: String!, aanhef: String!, mail: String!, password: String!, adres: String!, city: String!, postalcode: String!, housenumber: String!): String!
-    addProduct(id: String!, title: String!, releasedate: Int, period: Int, description: String, physicalmedium: String, amountofpaintings: Int, src: String, bigsrc: String, plaguedescdutch: String, prodplace: String, width: Int, height: Int principalmaker: String, price: Int): String
+    deleteUser(id: Int!): String
+    addProduct(id: String!, title: String!, releasedate: Int!, period: Int!, description: String!, physicalmedium: String!, amountofpaintings: Int!, src: String!, bigsrc: String!, plaguedescdutch: String!, prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!): String!
     alterProduct(id_number: Int!, id: String!, title: String!, releasedate: Int!, period: Int! description: String!, physicalmedium: String!, amountofpaintings: Int!, src: String!, bigsrc: String!, plaguedescdutch: String!, prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!): String
+    deleteProduct(id: Int!): String
   },
   type ret{
     id_number: Int,

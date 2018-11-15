@@ -105,8 +105,14 @@ var root = {
                         .then(data => {return data})
   },
   //Delete user
-  async deleteUser(){
-
+  async deleteUser({id}){
+    let user = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${id}`)
+    if(user.length){
+      let query = `DELETE from gebruiker WHERE id = ${id}`
+      return await db.one(query)
+    }else{
+      throw new Error(`The specified User doesn't exist!`)
+    }
   },
   //#endregion
   //#region alter products
@@ -151,8 +157,14 @@ var root = {
                         .then(data => {return data})
   },
   //Delete products
-  async deleteProduct(){
-
+  async deleteProduct({id}){
+    let prod = await db.manyOrNone(`SELECT * from schilderijen WHERE id_number = ${id}`)
+    if(prod.length){      
+      let query = `DELETE from schilderijen where id_number = ${id}`
+      return await db.one(query)
+    }else{
+      throw new Error(`The specified Painting doesn't exist!`)
+    }
   },
   //#endregion
   //#endregion
