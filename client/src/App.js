@@ -100,6 +100,7 @@ class App extends Component {
       loggedIn: false,
       cart: {
         items: [],
+        total: 0,
         timestamp: ''
       },
       snackbarOpen: false
@@ -175,6 +176,7 @@ class App extends Component {
     switch (type){
       case 'ADD_TO_CART':
         let currCart = []
+        let total = 0
 
         if (!this.state.cart.items.length > 0) {
           // console.log(`No items in cart, pushing recieving item to cart...`)
@@ -226,8 +228,13 @@ class App extends Component {
           }
         }
 
+        for (let i = 0; i < currCart.length; i++) {
+          total = (currCart[i].price * currCart[i].amount) + total
+        }
+
         const cart = {
           items: currCart,
+          total: total,
           timestamp: String(new Date())
         }
 
