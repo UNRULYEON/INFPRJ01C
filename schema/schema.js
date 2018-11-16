@@ -12,6 +12,7 @@ var schema = buildSchema(`
     painters: [Painter]
     painterByID(id: String!): [Painter]
     workByPainter(id: String!): [Painting]
+    checkUser(mail: String!): Boolean!
     me: User
     faq: [FAQ]
     status: Int
@@ -22,7 +23,6 @@ var schema = buildSchema(`
     login(email: String!, password: String!): UserWithToken!
     merge(id_number: Int!, id: Int!): String
     merging: String
-
   },
   type ret{
     id_number: Int,
