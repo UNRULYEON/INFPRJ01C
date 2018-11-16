@@ -36,12 +36,10 @@ var root = {
   },
   paintingByID: ({id}) => {
     let query = (`SELECT * from schilderijen where id_number = ${id}`)
-    console.log(query)
     return db.manyOrNone(query)
   },
   PaintingsByPainter: ({id}) => {
     let query = (`SELECT * from schilderijen, schilder WHERE schilderijen.id_number = ${id} AND schilderijen.principalmaker = schilder.name`)
-    console.log(query)
     return db.manyOrNone(query)
   },
   //#endregion
@@ -68,6 +66,28 @@ var root = {
     return db.manyOrNone(query)
   },
   //#region Admin
+  //#region papatabel
+  async createbabytabel({tabelnaam, foreignkey}){
+    const c = await db.manyOrNone(`SELECT * from ${tabelnaam}`)
+            .then(data => {console.log(data)
+                          return data})
+            .catch(err => {console.error(err)
+            })
+    if(c.length){
+      console.log(c)
+      console.log("c exists")
+    }else(
+      console.log("c doesn't exist")
+    )
+    // // let check = `SELECT to_regclass(schema_name.table_name)`
+    // let query = `CREATE TABLE ${tabelnaam} (id serial PRIMARY KEY, foreignKey int)`
+    // // console.log(query)
+    // const create = db.one(query)
+    // // console.log(create)
+    // // console.log('ref in papa maken en inhoud in baby')
+    // return create
+  },  
+  //#endregion
   //#region alter users
   //Add user
   async addUser({name, surname, mail, password, aanhef, adres = null, city = null, postalcode = null, housenumber = null}){
@@ -76,31 +96,96 @@ var root = {
     if(user.length){
       throw new Error('User with this email already exists')
     }
-    return await db.one(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`, 
-    [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber]).then(data => {return data.id}).catch(err => {console.error(err) 
-            throw new Error(err)})    
+    return await db.one(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber) 
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`, 
+    [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber])
+    .then(data => {console.log(`\nUser ID: ${data.id}`)
+                    return data.id})
+      .catch(err => {throw new Error(err)})    
   },
   //Alter user
-  async alterUser(){
-
+  async alterUser({id, name, surname, mail, password, aanhef, adres, city, postalcode, housenumber}){
+    const user = await db.manyOrNone(`SELECT * from gebruiker where id = ${[id]}`)
+    .then(data => {return data})
+    .catch(err => {throw new Error(err)})
+    if(user[0].id != id){
+      throw new Error('No user with that ID!')
+    }
+    const saltedPassword = await bcrypt.hash(password,10)
+    return await db.one(`UPDATE gebruiker set 
+                          name = $1,
+                          surname = $2,
+                          mail = $3,
+                          password = $4,
+                          aanhef = $5,
+                          adres = $6,
+                          city = $7,
+                          postalcode = $8,
+                          housenumber = $9
+                          WHERE id = ${id}`,
+                          [name,surname,mail,saltedPassword,aanhef,adres,city,postalcode,housenumber])
+                        .then(data => {return data})
   },
   //Delete user
-  async deleteUser(){
-
+  async deleteUser({id}){
+    let user = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${id}`)
+    if(user.length){
+      let query = `DELETE from gebruiker WHERE id = ${id}`
+      return await db.one(query)
+    }else{
+      throw new Error(`The specified User doesn't exist!`)
+    }
   },
   //#endregion
   //#region alter products
   //Add product
-  async addProduct(){
-
+  async addProduct({id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescdutch, prodplace, width, height, principalmaker,price}){
+    return await db.one(`INSERT INTO schilderijen(id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescriptiondutch, principalmakersproductionplaces, principalmaker, width, height, price) 
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id_number`, 
+    [id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescdutch, prodplace, principalmaker, width, height, price])
+    .then(data => {console.log(`\nPainting ID: ${data.id_number}`)
+                    return data.id_number})
+      .catch(err => {console.error(err)
+        throw new Error(err)})
   },
   //Alter products
-  async alterProduct(){
-
+  async alterProduct({id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescdutch, prodplace, width, height, principalmaker, price}){
+    const prod = await db.manyOrNone(`SELECT * from schilderijen where id_number = ${id_number}`)
+    .then(data => {return data})
+    .catch(err => {console.err(err)
+                    throw new Error(err)})
+    if(prod[0].id_number != id_number){
+      throw new Error(`No product with the given ID!`)
+    }
+    return await db.one(`UPDATE schilderijen set
+                          id = $1,
+                          title = $2,
+                          releasedate = $3,
+                          period = $4,
+                          description = $5,
+                          physicalmedium = $6,
+                          amountofpaintings = $7,
+                          src = $8,
+                          bigsrc = $9,
+                          plaquedescriptiondutch = $10,
+                          principalmakersproductionplaces = $11,
+                          width = $12,
+                          height = $13,
+                          principalmaker = $14,
+                          price = $15
+                          WHERE id_number = ${id_number}`,
+                          [id,title,releasedate,period,description,physicalmedium,amountofpaintings,src,bigsrc,plaquedescdutch,prodplace,width,height,principalmaker,price])
+                        .then(data => {return data})
   },
   //Delete products
-  async deleteProduct(){
-
+  async deleteProduct({id}){
+    let prod = await db.manyOrNone(`SELECT * from schilderijen WHERE id_number = ${id}`)
+    if(prod.length){      
+      let query = `DELETE from schilderijen where id_number = ${id}`
+      return await db.one(query)
+    }else{
+      throw new Error(`The specified Painting doesn't exist!`)
+    }
   },
   //#endregion
   //#endregion
@@ -109,15 +194,12 @@ var root = {
       console.log(`\nUser not authenticated!\n`)
       throw new Error('You are not authenticated!')
     }
-
     var decoded = jwt.verify(
       String(res.headers.authorization).slice(7),
       'E28BA7D908327F1F8F08E396D60DC6FBCDB734387C2C08FCD2CF8E4C09B36AB7'
     );
-
     console.log(`\nToken: ${String(res.headers.authorization).slice(7)}`)
     console.log(`ID: ${decoded.id}\n`)
-
     let query = (`SELECT * from gebruiker where id = ${decoded.id}`)
     return await db.manyOrNone(query)
   },
@@ -135,7 +217,8 @@ var root = {
     // // console.log(amount[0].count)
     // for (let i = 1; i <= amount[0].count; i++){
     //   // console.log(i)
-    //   let schilderNum = await db.manyOrNone(`SELECT schilder.id from schilderijen, schilder WHERE schilderijen.id_number = ${i} AND schilderijen.principalmaker = schilder.name`).then( data => {return data})
+    //   let schilderNum = await db.manyOrNone(`SELECT schilder.id from schilderijen, schilder WHERE schilderijen.id_number = ${i} AND schilderijen.principalmaker = schilder.name`)
+    //                                        .then( data => {return data})
     //   // console.log(schilderNum[0].id)
     //   // Commented for safety reasons, only uncomment when the entire collection of painters is to be inserted
     //   await db.one(`INSERT INTO schilderschilderij (schilder, schilderij) values(${schilderNum[0].id}, ${i}) RETURNING id`).then(data => {return data})  
@@ -198,27 +281,6 @@ var root = {
         throw new Error(err)
         console.log(err)
       })
-
-    // Return token to client
-    console.log("Token" + tokenWithId.token);
-
-    const userWithToken = {
-      id: 11111,
-      aanhef: aanhef,
-      name: name,
-      surname: surname,
-      email: mail,
-      address: adres,
-      housenumber: housenumber,
-      city: city,
-      postalcode: postalcode,
-      housenumber: housenumber,
-      token: tokenWithId.token
-    }
-
-    console.log(`User: ${userWithToken}\n`)
-
-    return userWithToken
   },
   //user login
   async login ({email, password}) {
