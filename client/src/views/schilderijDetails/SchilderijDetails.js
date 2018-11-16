@@ -6,7 +6,8 @@ import Currency from 'react-currency-formatter';
 import './SchilderijDetails.css'
 
 // Material-UI
-import Button from '@material-ui/core/Button'
+import IconButton from '@material-ui/core/IconButton';
+import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 
 // Components
 import Img from 'react-image'
@@ -172,36 +173,37 @@ class SchilderijDetails extends Component {
 									/>
 								</span>
 								<div className="details-buttons flex row-nowrap">
-      						<Button
-									onClick={() => {
-										const id = this.props.match.params.id
-										const title = data.paintingByID[0].title
-										const principalmaker = data.paintingByID[0].principalmaker
-										const src = data.paintingByID[0].src
-										const width = data.paintingByID[0].width
-										const height = data.paintingByID[0].height
-										const price = data.paintingByID[0].price
-										const amount = 1
-
-										const item = {
-											id,
-											title,
-											principalmaker,
-											src,
-											width,
-											height,
-											price,
-											amount
-										}
-
-										console.log(item)
-
-										this.setCart(item)
-									}}
-									>
-										Bestellen
-									</Button>
-									<button>Huren</button>
+									<IconButton
+										color="primary"
+										aria-label="Add to shopping cart"
+										onClick={() => {
+											const id = this.props.match.params.id
+											const title = data.paintingByID[0].title
+											const principalmaker = data.paintingByID[0].principalmaker
+											const src = data.paintingByID[0].src
+											const width = data.paintingByID[0].width
+											const height = data.paintingByID[0].height
+											const price = data.paintingByID[0].price
+											const amount = 1
+	
+											const item = {
+												id,
+												title,
+												principalmaker,
+												src,
+												width,
+												height,
+												price,
+												amount
+											}
+	
+											console.log(item)
+	
+											this.setCart(item)
+										}}
+										>
+										<AddShoppingCartIcon />
+									</IconButton>
 								</div>
 								<span className="divider my-3"></span>
 								<span className="details-info">Gratis levering</span>
