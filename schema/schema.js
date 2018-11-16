@@ -75,7 +75,8 @@ var schema = buildSchema(`
     principalmakersproductionplaces: String,
     width: Int,
     height: Int,
-    principalmaker: String
+    principalmaker: String,
+    price: Int
   },
   type Painter{
     name: String,

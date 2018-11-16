@@ -1,0 +1,44 @@
+.cart-item-container{
+  display: flex;
+  flex-flow: column nowrap;
+  margin: 0 15px;
+}
+
+.cart-item-wrapper{
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  font-size: 15px;
+}
+
+.cart-item-title{
+  font-family: 'IBM Plex Sans';
+  font-weight: 700;
+  margin-right: 10px;
+}
+
+.cart-item-price{
+  text-align: right;
+  min-width: 130px;
+}
+
+.cart-item-divider{
+  width: 100%;
+  height: 1px;
+  background: #ddd;
+}
+
+.cart-item-shipping{
+  margin: 15px 0 5px 0;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+}
+
+.cart-item-total{
+  margin: 5px 0 5px 0;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  font-weight: 700;
+}
