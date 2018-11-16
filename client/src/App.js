@@ -197,6 +197,7 @@ class App extends Component {
               let src = data.src
               let width = data.width
               let height = data.height
+              let price = data.price
               let amount = this.state.cart.items[i].amount + 1
 
               let item = {
@@ -206,6 +207,7 @@ class App extends Component {
                 src,
                 width,
                 height,
+                price,
                 amount
               }
 
