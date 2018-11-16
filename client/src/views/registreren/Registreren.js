@@ -87,7 +87,12 @@ class Registreren extends Component {
       emailBestaat: false,
       emailIsCorrect: true,
 
+      //checkUser becomes true when the button Next is pressed
+      //when checkUser becomes true <Query> gets executed this calls the function handleNextNotInDB
       checkUser: false,
+
+      //userChecked becomes true after handleNextNotInDB is called
+      //when userChecked equals true AND emailIsCorrect equals true callEmailCheck() is called
       userChecked: false, 
     }
   }
@@ -163,13 +168,13 @@ class Registreren extends Component {
     }
   }
 
-  callBackStepOne() {
-    this.restoreStateWhenBack()
+  callBackStepOne() {    
     this.handleBack()
+    this.restoreStateWhenBack()
   }
 
   restoreStateWhenBack() {
-    if (this.state.activeStep === 1) {
+    if (this.state.activeStep === 0) {
       this.setState({
         // checkUser: false,
         userChecked: false,
@@ -179,6 +184,8 @@ class Registreren extends Component {
     }
   }
 
+  //function is called when <Query> returns onCompleted succesfully
+  //if emailIsCorrect equals true callEmailCheck() is
   handleNextNotInDB() {
       this.setState({
         // user has been checked
@@ -188,11 +195,12 @@ class Registreren extends Component {
       })
       if (this.state.emailIsCorrect === true) {
         // this.setState({ checkUser: false })
-        this.callEmailCheck()
+        this.handleNext()
       }
 
   }
 
+  //shows password as type string if called
   handleClickShowPassword = () => {
     this.setState(state => ({ showPassword: !state.showPassword }));
   }
@@ -215,7 +223,7 @@ class Registreren extends Component {
   }
 
 
-
+  //calls handleNext() if userChecked is true
   callEmailCheck() {
     this.setState({
       checkUser: true
@@ -223,9 +231,9 @@ class Registreren extends Component {
     if (this.state.mail === '') {
       this.setState({ emailIsCorrect: false, })
     }
-    else if (this.state.userChecked) {
+    else if (this.state.userChecked && this.state.emailIsCorrect === true) {
       this.handleNext()
-      this.checkUserFunc()
+      // this.checkUserFunc()
     }
   }
 
