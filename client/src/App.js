@@ -14,7 +14,19 @@ import { ApolloProvider } from "react-apollo";
 
 // Material-UI
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import classNames from 'classnames';
 import Snackbar from '@material-ui/core/Snackbar';
+import Button from '@material-ui/core/Button';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import ErrorIcon from '@material-ui/icons/Error';
+import InfoIcon from '@material-ui/icons/Info';
+import CloseIcon from '@material-ui/icons/Close';
+import green from '@material-ui/core/colors/green';
+import amber from '@material-ui/core/colors/amber';
+import IconButton from '@material-ui/core/IconButton';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import WarningIcon from '@material-ui/icons/Warning';
+import { withStyles } from '@material-ui/core/styles';
 
 // Views
 import Home from './views/home/Home';
@@ -82,6 +94,71 @@ const theme = new createMuiTheme({
   },
 });
 
+const variantIcon = {
+  success: CheckCircleIcon,
+  warning: WarningIcon,
+  error: ErrorIcon,
+  info: InfoIcon,
+};
+
+const snackbarStyle = theme => ({
+  success: {
+    backgroundColor: green[600],
+  },
+  error: {
+    backgroundColor: theme.palette.error.dark,
+  },
+  info: {
+    backgroundColor: theme.palette.primary.dark,
+  },
+  warning: {
+    backgroundColor: amber[700],
+  },
+  icon: {
+    fontSize: 20,
+  },
+  iconVariant: {
+    opacity: 0.9,
+    marginRight: theme.spacing.unit,
+  },
+  message: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+});
+
+function snackbarContent(props) {
+  const { classes, className, message, onClose, variant, ...other } = props;
+  const Icon = variantIcon[variant];
+
+  return (
+    <SnackbarContent
+      className={classNames(classes[variant], className)}
+      aria-describedby="client-snackbar"
+      message={
+        <span id="client-snackbar" className={classes.message}>
+          <Icon className={classNames(classes.icon, classes.iconVariant)} />
+          {message}
+        </span>
+      }
+      action={[
+        <IconButton
+          key="close"
+          aria-label="Close"
+          color="inherit"
+          className={classes.close}
+          onClick={onClose}
+        >
+          <CloseIcon className={classes.icon} />
+        </IconButton>,
+      ]}
+      {...other}
+    />
+  );
+}
+
+const SnackbarContentWrapper = withStyles(snackbarStyle)(snackbarContent);
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -104,7 +181,9 @@ class App extends Component {
         timestamp: ''
       },
       current_item: '',
-      snackbarOpen: false
+      snackbarOpen: false,
+      snackbarVariant: "",
+      snackbarMessage: ""
     }
   }
 
@@ -247,7 +326,11 @@ class App extends Component {
           cart
         }))
 
-        this.setState({ snackbarOpen: true });
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "Het item is toegevoegd aan je winkelwagen"
+        });
         break;
       case 'REMOVE_FROM_CART':
         break;
@@ -268,7 +351,9 @@ class App extends Component {
       return;
     }
 
-    this.setState({ snackbarOpen: false });
+    this.setState({
+      snackbarOpen: false
+    });
   };
 
   render() {
@@ -369,13 +454,15 @@ class App extends Component {
                   horizontal: 'left',
                 }}
                 open={this.state.snackbarOpen}
-                autoHideDuration={3000}
+                autoHideDuration={6000}
                 onClose={this.handleSnackbarClose}
-                ContentProps={{
-                  'aria-describedby': 'message-id',
-                }}
-                message={<span id="message-id">Item is toegevoegd aan je winkelwagen</span>}
-              />
+              >
+                <SnackbarContentWrapper
+                  onClose={this.handleSnackbarClose}
+                  variant={this.state.snackbarVariant}
+                  message={this.state.snackbarMessage}
+                />
+              </Snackbar>
             </MuiThemeProvider>
           </div>
         </Router>
