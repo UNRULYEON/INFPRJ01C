@@ -5,7 +5,6 @@ import {
 import Currency from 'react-currency-formatter';
 import './CartList.css';
 
-// Components
 
 class CartList extends Component {
 	render() {

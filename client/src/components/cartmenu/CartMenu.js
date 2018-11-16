@@ -6,8 +6,31 @@ import React, { Component } from 'react';
 import posed from "react-pose";
 import './CartMenu.css';
 
+// Material-UI
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+
 // Components
 import CartList from '../cartlist/CartList'
+
+const theme = new createMuiTheme({
+  palette: {
+    primary: {
+      main: '#43a047'
+    },
+    type: 'dark'
+  },
+  typography: {
+    useNextVariants: true,
+  },
+  overrides: {
+    MuiButton: { // Name of the component ⚛️ / style sheet
+      root: { // Name of the rule
+        color: 'white', // Some CSS
+      },
+    },
+  },
+});
 
 const Menu = posed.div({
   open: {
@@ -43,7 +66,15 @@ class CartMenu extends Component {
           )}
         </div>
         <div className="cart-actions">
-          <button className="cart-action-order">Bekijk winkelwagen</button>
+          <MuiThemeProvider theme={theme}>
+            <Button
+              color="primary"
+              className="cart-action-order"
+              variant="outlined"
+            >
+              Bekijk je winkelwagen
+            </Button>
+          </MuiThemeProvider>
         </div>
       </Menu>
 		);
