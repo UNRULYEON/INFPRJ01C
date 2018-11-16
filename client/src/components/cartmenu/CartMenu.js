@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-// import {
-//     Link,
-//     NavLink
-// } from 'react-router-dom';
+import {
+    Link
+} from 'react-router-dom';
 import posed from "react-pose";
 import './CartMenu.css';
 
@@ -70,13 +69,16 @@ class CartMenu extends Component {
         </div>
         <div className="cart-actions">
           <MuiThemeProvider theme={theme}>
-            <Button
-              color="primary"
-              className="cart-action-order"
-              variant="outlined"
-            >
-              Bekijk je winkelwagen
-            </Button>
+            <Link to={`/winkelwagen`} onClick={this.props.closeModal}>
+              <Button
+                color="primary"
+                className="cart-action-order"
+                variant="outlined"
+                fullWidth
+              >
+                Bekijk je winkelwagen
+              </Button>
+            </Link>
           </MuiThemeProvider>
         </div>
       </Menu>
