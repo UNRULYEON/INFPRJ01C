@@ -103,6 +103,7 @@ class App extends Component {
         total: 0,
         timestamp: ''
       },
+      current_item: '',
       snackbarOpen: false
     }
   }
@@ -255,6 +256,13 @@ class App extends Component {
     }
   }
 
+  setCurrentItem(id) {
+    this.setState({
+      current_item: id
+    });
+    console.log(`Item set`)
+  }
+
   handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -284,9 +292,13 @@ class App extends Component {
                   render={(props) => <SchilderijDetails
                     {...props}
                     setCart={this.setCart}
+                    currentItem={this.state.current_item}
+                    setCurrentItem={this.setCurrentItem}
                 />} />
                 <Route path="/schilders" component={Schilders}/>
-                <Route path="/schilder/:id" component={SchilderDetails}/>
+                <Route
+                path="/schilder/:id"
+                component={SchilderDetails}/>
                 <Route path="/zoeken" component={Search} />
                 <Route path="/contact" component={Contact} />
                 <Route path="/faq" component={FAQ} />
