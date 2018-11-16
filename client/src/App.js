@@ -256,6 +256,7 @@ class App extends Component {
     switch (type){
       case 'ADD_TO_CART':
         let currCart = []
+        let alreadyInCart = false
         let total = 0
 
         if (!this.state.cart.items.length > 0) {
@@ -270,32 +271,34 @@ class App extends Component {
             // console.log(`Current item: ${this.state.cart.items[i].id}`)
             // console.log(`Recieving item: ${data.id}`)
             if (data.id === this.state.cart.items[i].id) {
-              // console.log(`Incrementing item with ID: ${this.state.cart.items[i].id}`)
+              // // console.log(`Incrementing item with ID: ${this.state.cart.items[i].id}`)
 
-              // Creating item
-              let id = data.id
-              let title = data.title
-              let principalmaker = data.principalmaker
-              let src = data.src
-              let width = data.width
-              let height = data.height
-              let price = data.price
-              let amount = this.state.cart.items[i].amount + 1
+              // // Creating item
+              // let id = data.id
+              // let title = data.title
+              // let principalmaker = data.principalmaker
+              // let src = data.src
+              // let width = data.width
+              // let height = data.height
+              // let price = data.price
+              // let amount = this.state.cart.items[i].amount + 1
 
-              let item = {
-                id,
-                title,
-                principalmaker,
-                src,
-                width,
-                height,
-                price,
-                amount
-              }
+              // let item = {
+              //   id,
+              //   title,
+              //   principalmaker,
+              //   src,
+              //   width,
+              //   height,
+              //   price,
+              //   amount
+              // }
 
-              // console.log(`Item to be pushed to currItem: ${item}`)
-              amountModified = true
-              currCart.push(item)
+              // // console.log(`Item to be pushed to currItem: ${item}`)
+              // amountModified = true
+              // currCart.push(item)
+
+              alreadyInCart = true
             } else {
               // console.log(`Item doesn't need to be incr, pushing cart-item to new cart with ID: ${this.state.cart.items[i].id}`)
               currCart.push(this.state.cart.items[i])
@@ -326,11 +329,19 @@ class App extends Component {
           cart
         }))
 
-        this.setState({
-          snackbarOpen: true,
-          snackbarVariant: "success",
-          snackbarMessage: "Het item is toegevoegd aan je winkelwagen"
-        });
+        if (alreadyInCart) {
+          this.setState({
+            snackbarOpen: true,
+            snackbarVariant: "error",
+            snackbarMessage: "Het product zit al in je winkelwagen"
+          });
+        } else {
+          this.setState({
+            snackbarOpen: true,
+            snackbarVariant: "success",
+            snackbarMessage: "Het item is toegevoegd aan je winkelwagen"
+          });
+        }
         break;
       case 'REMOVE_FROM_CART':
         break;
@@ -454,7 +465,7 @@ class App extends Component {
                   horizontal: 'left',
                 }}
                 open={this.state.snackbarOpen}
-                autoHideDuration={6000}
+                autoHideDuration={3000}
                 onClose={this.handleSnackbarClose}
               >
                 <SnackbarContentWrapper
