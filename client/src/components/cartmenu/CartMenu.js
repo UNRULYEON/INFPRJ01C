@@ -33,8 +33,8 @@ class CartMenu extends Component {
       >
         <span className="menu-title">Winkelwagen</span>
         <div className="cart-container">
-          {this.props.data ? (
-            <p>DATA</p>
+          {this.props.cart ? (
+            <p>d</p>
           ) : (
             <p className="cart-no-items">Je hebt niks in je winkelwagen!</p>
           )}

@@ -182,6 +182,8 @@ class Header extends Component {
 							>
 								<CartMenu
 									menu={this.state.cartMenuToggle}
+									cart={this.props.cart}
+									setCart={this.props.setCart}
 								/>
 							</OutsideClickHandler>
 						</div>

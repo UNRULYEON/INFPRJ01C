@@ -14,6 +14,7 @@ import { ApolloProvider } from "react-apollo";
 
 // Material-UI
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import Snackbar from '@material-ui/core/Snackbar';
 
 // Views
 import Home from './views/home/Home';
@@ -96,11 +97,17 @@ class App extends Component {
         postalcode: '',
         cellphone: ''
       },
-      loggedIn: false
+      loggedIn: false,
+      cart: {
+        items: [],
+        timestamp: ''
+      },
+      snackbarOpen: false
     }
   }
 
   componentWillMount() {
+    // Check if user data is present as a cookie
     if (localStorage.getItem('USER')) {
       const localUser = JSON.parse(localStorage.getItem('USER'));
 
@@ -117,6 +124,15 @@ class App extends Component {
           cellphone: localUser.cellphone
         },
         loggedIn: true
+      })
+    }
+
+    // Check if cart data is present as a cookie
+    if (localStorage.getItem('CART')) {
+      const localCart = JSON.parse(localStorage.getItem('CART'));
+
+      this.setState({
+        cart: localCart.cart
       })
     }
   }
@@ -155,6 +171,89 @@ class App extends Component {
     }
   }
 
+  setCart = (data, type) => {
+    switch (type){
+      case 'ADD_TO_CART':
+        let currCart = []
+
+        if (!this.state.cart.items.length > 0) {
+          // console.log(`No items in cart, pushing recieving item to cart...`)
+          currCart.push(data)
+        } else {
+          // console.log(`Items in cart, checking if an item needs to be incr...`)
+
+          let amountModified = false
+
+          for (let i = 0; i < this.state.cart.items.length; i++){
+            // console.log(`Current item: ${this.state.cart.items[i].id}`)
+            // console.log(`Recieving item: ${data.id}`)
+            if (data.id === this.state.cart.items[i].id) {
+              // console.log(`Incrementing item with ID: ${this.state.cart.items[i].id}`)
+
+              // Creating item
+              let id = data.id
+              let title = data.title
+              let principalmaker = data.principalmaker
+              let src = data.src
+              let width = data.width
+              let height = data.height
+              let amount = this.state.cart.items[i].amount + 1
+
+              let item = {
+                id,
+                title,
+                principalmaker,
+                src,
+                width,
+                height,
+                amount
+              }
+
+              // console.log(`Item to be pushed to currItem: ${item}`)
+              amountModified = true
+              currCart.push(item)
+            } else {
+              // console.log(`Item doesn't need to be incr, pushing cart-item to new cart with ID: ${this.state.cart.items[i].id}`)
+              currCart.push(this.state.cart.items[i])
+            }
+          }
+
+          if (!amountModified) {
+            // console.log(`Amount has not been modified, it's a new item, pushing to cart...`)
+            currCart.push(data)
+          }
+        }
+
+        const cart = {
+          items: currCart,
+          timestamp: String(new Date())
+        }
+
+        this.setState(({
+          cart: cart
+        }))
+
+        localStorage.setItem('CART', JSON.stringify({
+          cart
+        }))
+
+        this.setState({ snackbarOpen: true });
+        break;
+      case 'REMOVE_FROM_CART':
+        break;
+      default:
+        break;
+    }
+  }
+
+  handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    this.setState({ snackbarOpen: false });
+  };
+
   render() {
     return (
       <ApolloProvider client={client}>
@@ -162,14 +261,21 @@ class App extends Component {
           <div className="App">
             <MuiThemeProvider theme={theme}>
               <Header
-                setUser={this.setUser}
                 user={this.state.user}
+                cart={this.state.cart}
+                setUser={this.setUser}
+                setCart={this.setCart}
                 loggedIn={this.state.loggedIn}
               />
               <Switch>
                 <Route exact path="/" component={Home}/>
                 <Route path="/schilderijen/" component={Schilderijen}/>
-                <Route path="/schilderij/:id" component={SchilderijDetails}/>
+                <Route
+                  path="/schilderij/:id"
+                  render={(props) => <SchilderijDetails
+                    {...props}
+                    setCart={this.setCart}
+                />} />
                 <Route path="/schilders" component={Schilders}/>
                 <Route path="/schilder/:id" component={SchilderDetails}/>
                 <Route path="/zoeken" component={Search} />
@@ -187,7 +293,9 @@ class App extends Component {
                   render={(props) => <Cart
                     {...props}
                     user={this.state.user}
+                    cart={this.state.cart}
                     setUser={this.setUser}
+                    setCart={this.setCart}
                     loggedIn={this.state.loggedIn}
                 />} />
                 <Route path="/registreren" component={Registreren} />
@@ -234,6 +342,19 @@ class App extends Component {
                 <Route component={NoMatch} />
               </Switch>
               <Footer/>
+              <Snackbar
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                open={this.state.snackbarOpen}
+                autoHideDuration={3000}
+                onClose={this.handleSnackbarClose}
+                ContentProps={{
+                  'aria-describedby': 'message-id',
+                }}
+                message={<span id="message-id">Item is toegevoegd aan je winkelwagen</span>}
+              />
             </MuiThemeProvider>
           </div>
         </Router>

@@ -4,6 +4,9 @@ import { Query } from "react-apollo";
 import gql from "graphql-tag";
 import './SchilderijDetails.css'
 
+// Material-UI
+import Button from '@material-ui/core/Button'
+
 // Components
 import Img from 'react-image'
 import Loading from '../../components/loading/Loading'
@@ -21,6 +24,7 @@ const GET_ART_DETAILS = gql`
 			amountofpaintings
 			principalmaker
 			bigsrc
+			src
 			width
 			height
 		}
@@ -33,6 +37,10 @@ class SchilderijDetails extends Component {
 		this.state = {
 			id: ''
 		}
+	}
+
+	setCart = (data) => {
+		this.props.setCart(data, 'ADD_TO_CART')
 	}
 
 	componentDidMount() {
@@ -55,6 +63,7 @@ class SchilderijDetails extends Component {
 	}
 
 	render() {
+
 		return (
 			<Query
 				query={GET_ART_DETAILS}
@@ -88,7 +97,31 @@ class SchilderijDetails extends Component {
 								</span>
 								<span className="details-price">{data.paintingByID[0].price || "€ PRICE"}</span>
 								<div className="details-buttons flex row-nowrap">
-									<button>Bestel nu</button>
+      						<Button
+									onClick={() => {
+										const id = this.props.match.params.id
+										const title = data.paintingByID[0].title
+										const principalmaker = data.paintingByID[0].principalmaker
+										const src = data.paintingByID[0].src
+										const width = data.paintingByID[0].width
+										const height = data.paintingByID[0].height
+										const amount = 1
+
+										const item = {
+											id,
+											title,
+											principalmaker,
+											src,
+											width,
+											height,
+											amount
+										}
+
+										this.setCart(item)
+									}}
+									>
+										Bestellen
+									</Button>
 									<button>Huren</button>
 								</div>
 								<span className="divider my-3"></span>
