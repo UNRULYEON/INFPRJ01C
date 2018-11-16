@@ -16,6 +16,7 @@ const GET_ART = gql`
       src
       width
       height
+      price
     }
   }
 `;
