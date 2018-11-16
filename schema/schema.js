@@ -14,6 +14,7 @@ var schema = buildSchema(`
     workByPainter(id: String!): [Painting]
     checkUser(mail: String!): Boolean!
     me: User
+    filterbyperiod(period: Int!): [Painting]
     faq: [FAQ]
     status: Int 
   },

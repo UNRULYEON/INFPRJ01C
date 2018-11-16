@@ -60,6 +60,11 @@ var root = {
     let query = (`SELECT * from schilderijen where principalmaker = ${id}`)
     return db.manyOrNone(query)
   },
+  //#region filters
+  filterbyperiod:({period}) => {
+    let query = (`SELECT * from schilderijen where period = ${period}`)
+    return db.manyOrNone(query)
+  },
   //#endregion
   faq: () => {
     let query = ('SELECT * from faq')
