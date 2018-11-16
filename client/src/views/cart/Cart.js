@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-// import {
-//     Link,
-//     Redirect
-// } from 'react-router-dom';
+import {
+    Link
+} from 'react-router-dom';
 import './Cart.css'
 
 // Components
@@ -15,12 +14,12 @@ class Cart extends Component {
     }
   }
 
-  setUserApp(user, isLoggedIn) {
-    this.props.setUser(user, isLoggedIn)
-    this.setState({
-      redirect: true
-    })
-  }
+  // setUserApp(user, isLoggedIn) {
+  //   this.props.setUser(user, isLoggedIn)
+  //   this.setState({
+  //     redirect: true
+  //   })
+  // }
 
   render() {
     return (
