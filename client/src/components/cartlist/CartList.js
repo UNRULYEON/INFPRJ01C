@@ -17,7 +17,7 @@ class CartList extends Component {
                 {/* <p className="cart-item-title">
                   { item.title }
                 </p> */}
-                <Link to={`/schilderij/${item.id}`}>
+                <Link to={`/schilderij/${item.id}`} onClick={this.props.closeModal}>
                   <p className="cart-item-title">
                     { item.title }
                   </p>

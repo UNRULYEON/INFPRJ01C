@@ -60,7 +60,10 @@ class CartMenu extends Component {
         <span className="menu-title">Winkelwagen</span>
         <div className="cart-container">
           {this.props.cart.items.length ? (
-            <CartList cart={this.props.cart} />
+            <CartList
+              cart={this.props.cart}
+              closeModal={this.props.closeModal}
+              />
           ) : (
             <p className="cart-no-items">Je hebt niks in je winkelwagen!</p>
           )}

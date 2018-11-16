@@ -281,7 +281,7 @@ class AccountMenu extends Component {
           </MuiThemeProvider>
           <div className="onboarding-container">
             <span>Nieuw bij ARTIC?</span>
-            <Link to={"/registreren"} className="onboarding-link">Maak een account aan</Link>
+            <Link to={"/registreren"} onClick={this.props.closeModal} className="onboarding-link">Maak een account aan</Link>
           </div>
           <Snackbar
             anchorOrigin={{
