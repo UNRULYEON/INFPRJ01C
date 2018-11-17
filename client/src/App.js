@@ -16,7 +16,6 @@ import { ApolloProvider } from "react-apollo";
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import Snackbar from '@material-ui/core/Snackbar';
-import Button from '@material-ui/core/Button';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import ErrorIcon from '@material-ui/icons/Error';
 import InfoIcon from '@material-ui/icons/Info';
@@ -180,6 +179,16 @@ class App extends Component {
         total: 0,
         timestamp: ''
       },
+      order: {
+        items: [],
+        total: 0,
+        timestamp: ''
+      },
+      rental: {
+        items: [],
+        total: 0,
+        timestamp: ''
+      },
       current_item: '',
       snackbarOpen: false,
       snackbarVariant: "",
@@ -214,6 +223,24 @@ class App extends Component {
 
       this.setState({
         cart: localCart.cart
+      })
+    }
+
+    // Check if order data is present as a cookie
+    if (localStorage.getItem('ORDER')) {
+      const localOrder = JSON.parse(localStorage.getItem('ORDER'));
+
+      this.setState({
+        order: localOrder.order
+      })
+    }
+
+    // Check if order rental is present as a cookie
+    if (localStorage.getItem('RENTAL')) {
+      const localRental = JSON.parse(localStorage.getItem('RENTAL'));
+
+      this.setState({
+        rental: localRental.rental
       })
     }
   }
@@ -350,6 +377,72 @@ class App extends Component {
     }
   }
 
+  updateCart = (items) => {
+    let total = 0
+
+    for (let i = 0; i < items.length; i++) {
+      total = (items[i].price * items[i].amount) + total
+    }
+
+    const cart = {
+      items: items,
+      total: total,
+      timestamp: String(new Date())
+    }
+
+    this.setState(({
+      cart: cart
+    }))
+
+    localStorage.setItem('CART', JSON.stringify({
+      cart
+    }))
+  }
+
+  updateOrder = (items) => {
+    let total = 0
+
+    for (let i = 0; i < items.length; i++) {
+      total = (items[i].price * items[i].amount) + total
+    }
+
+    const order = {
+      items: items,
+      total: total,
+      timestamp: String(new Date())
+    }
+
+    this.setState(({
+      order: order
+    }))
+
+    localStorage.setItem('ORDER', JSON.stringify({
+      order
+    }))
+  }
+
+  updateRental = (items) => {
+    let total = 0
+
+    for (let i = 0; i < items.length; i++) {
+      total = (items[i].price * items[i].amount / 20) + total
+    }
+
+    const rental = {
+      items: items,
+      total: total,
+      timestamp: String(new Date())
+    }
+
+    this.setState(({
+      rental: rental
+    }))
+
+    localStorage.setItem('RENTAL', JSON.stringify({
+      rental
+    }))
+  }
+
   setCurrentItem(id) {
     this.setState({
       current_item: id
@@ -411,8 +504,12 @@ class App extends Component {
                     {...props}
                     user={this.state.user}
                     cart={this.state.cart}
+                    order={this.state.order}
+                    rental={this.state.rental}
                     setUser={this.setUser}
-                    setCart={this.setCart}
+                    updateCart={this.updateCart}
+                    updateOrder={this.updateOrder}
+                    updateRental={this.updateRental}
                     loggedIn={this.state.loggedIn}
                 />} />
                 <Route path="/registreren" component={Registreren} />
