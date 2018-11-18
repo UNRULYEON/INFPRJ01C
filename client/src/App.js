@@ -469,6 +469,8 @@ class App extends Component {
               <Header
                 user={this.state.user}
                 cart={this.state.cart}
+                order={this.state.order}
+                rental={this.state.rental}
                 setUser={this.setUser}
                 setCart={this.setCart}
                 loggedIn={this.state.loggedIn}

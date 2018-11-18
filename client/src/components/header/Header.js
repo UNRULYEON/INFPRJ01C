@@ -183,6 +183,8 @@ class Header extends Component {
 								<CartMenu
 									menu={this.state.cartMenuToggle}
 									cart={this.props.cart}
+									order={this.props.order}
+									rental={this.props.rental}
 									setCart={this.props.setCart}
 									closeModal={this.toggleCart}
 								/>

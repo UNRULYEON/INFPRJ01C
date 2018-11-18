@@ -60,11 +60,29 @@ class CartMenu extends Component {
         <div className="cart-container">
           {this.props.cart.items.length ? (
             <CartList
-              cart={this.props.cart}
+              list={this.props.cart}
               closeModal={this.props.closeModal}
               />
           ) : (
             <p className="cart-no-items">Je hebt niks in je winkelwagen!</p>
+          )}
+          <p className="cart-type-title">Bestellijst</p>
+          {this.props.order.items.length ? (
+            <CartList
+              list={this.props.order}
+              closeModal={this.props.closeModal}
+              />
+          ) : (
+            <p className="cart-no-items">Je hebt niks in je bestelllijst!</p>
+          )}
+          <p className="cart-type-title">Huurlijst</p>
+          {this.props.rental.items.length ? (
+            <CartList
+              list={this.props.rental}
+              closeModal={this.props.closeModal}
+              />
+          ) : (
+            <p className="cart-no-items">Je hebt niks in je huurlijst!</p>
           )}
         </div>
         <div className="cart-actions">

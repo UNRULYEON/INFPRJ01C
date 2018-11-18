@@ -21,6 +21,13 @@
   margin: 15px;
 }
 
+.cart-type-title{
+  margin: 15px 0 0 0 ;
+  padding: 10px 15px;
+  font-weight: 700;
+  background: #eeeeee;
+}
+
 .cart-no-items{
   text-align: center;
 }
