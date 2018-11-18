@@ -115,7 +115,7 @@ class Cart extends Component {
 	getList = id => this.state[this.id2List[id]];
 
 	componentDidMount = () => {
-		!this.props.cart.items.length ? this.setState({buttonDisabledState: false}) : this.setState({buttonDisabledState: true})
+		this.props.cart.items.length > 1 ? this.setState({buttonDisabledState: false}) : this.setState({buttonDisabledState: true})
 	}
 
 	onDragEnd = (result) => {
