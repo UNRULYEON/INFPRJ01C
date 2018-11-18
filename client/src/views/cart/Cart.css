@@ -81,3 +81,7 @@
 .draggable-component{
   transition: .2s box-shadow ease-in-out;
 }
+
+.cart-button-continue{
+  color: white;
+}
