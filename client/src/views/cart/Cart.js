@@ -473,7 +473,7 @@ class Cart extends Component {
 																						</div>
 																						<div>
  																							<Tooltip title="Wijzig eind-datum" enterDelay={500} leaveDelay={200}>
-																								<Button onClick={() => {this.openPicker('start')}}>
+																								<Button onClick={() => {this.openPicker('end')}}>
 																									<Moment
 																										format="DD-MM-YYYY"
 																										date={item.endDate}
