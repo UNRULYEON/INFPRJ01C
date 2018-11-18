@@ -231,7 +231,7 @@ class Cart extends Component {
 																					<IconButton
 																						color="primary"
 																						aria-label="Delete"
-																						onClick={this.removeFromList(this.state.cart)}
+																						// onClick={this.removeFromList(this.state.cart)}
 																					>
 																						<DeleteIcon />
 																					</IconButton>
@@ -287,7 +287,7 @@ class Cart extends Component {
 																					<IconButton
 																						color="primary"
 																						aria-label="Delete"
-																						onClick={this.removeFromList(this.state.order)}
+																						// onClick={this.removeFromList(this.state.order)}
 																					>
 																						<DeleteIcon />
 																					</IconButton>
@@ -358,7 +358,7 @@ class Cart extends Component {
 																					<IconButton
 																						color="primary"
 																						aria-label="Delete"
-																						onClick={this.removeFromList(this.state.rental)}
+																						// onClick={this.removeFromList(this.state.rental)}
 																					>
 																						<DeleteIcon />
 																					</IconButton>

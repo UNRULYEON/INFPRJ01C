@@ -284,56 +284,34 @@ class App extends Component {
       case 'ADD_TO_CART':
         let currCart = []
         let alreadyInCart = false
+        let alreadyInOrder = false
+        let alreadyInRental = false
         let total = 0
 
         if (!this.state.cart.items.length > 0) {
-          // console.log(`No items in cart, pushing recieving item to cart...`)
           currCart.push(data)
         } else {
-          // console.log(`Items in cart, checking if an item needs to be incr...`)
-
-          let amountModified = false
-
           for (let i = 0; i < this.state.cart.items.length; i++){
-            // console.log(`Current item: ${this.state.cart.items[i].id}`)
-            // console.log(`Recieving item: ${data.id}`)
             if (data.id === this.state.cart.items[i].id) {
-              // // console.log(`Incrementing item with ID: ${this.state.cart.items[i].id}`)
-
-              // // Creating item
-              // let id = data.id
-              // let title = data.title
-              // let principalmaker = data.principalmaker
-              // let src = data.src
-              // let width = data.width
-              // let height = data.height
-              // let price = data.price
-              // let amount = this.state.cart.items[i].amount + 1
-
-              // let item = {
-              //   id,
-              //   title,
-              //   principalmaker,
-              //   src,
-              //   width,
-              //   height,
-              //   price,
-              //   amount
-              // }
-
-              // // console.log(`Item to be pushed to currItem: ${item}`)
-              // amountModified = true
-              // currCart.push(item)
-
               alreadyInCart = true
             } else {
-              // console.log(`Item doesn't need to be incr, pushing cart-item to new cart with ID: ${this.state.cart.items[i].id}`)
               currCart.push(this.state.cart.items[i])
             }
           }
 
-          if (!amountModified) {
-            // console.log(`Amount has not been modified, it's a new item, pushing to cart...`)
+          for (let i = 0; i < this.state.order.items.length; i++){
+            if (data.id === this.state.order.items[i].id) {
+              alreadyInOrder = true
+            }
+          }
+
+          for (let i = 0; i < this.state.rental.items.length; i++){
+            if (data.id === this.state.rental.items[i].id) {
+              alreadyInRental = true
+            }
+          }
+
+          if (!alreadyInOrder && !alreadyInRental) {
             currCart.push(data)
           }
         }
@@ -360,7 +338,19 @@ class App extends Component {
           this.setState({
             snackbarOpen: true,
             snackbarVariant: "error",
-            snackbarMessage: "Het product zit al in je winkelwagen"
+            snackbarMessage: "Het item zit al in je winkelwagen"
+          });
+        } else if (alreadyInOrder) {
+          this.setState({
+            snackbarOpen: true,
+            snackbarVariant: "error",
+            snackbarMessage: "Het item zit al in je bestellijst"
+          });
+        } else if (alreadyInRental) {
+          this.setState({
+            snackbarOpen: true,
+            snackbarVariant: "error",
+            snackbarMessage: "Het item zit al in je huurlijst"
           });
         } else {
           this.setState({
