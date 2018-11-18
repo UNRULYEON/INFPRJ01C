@@ -11,6 +11,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
+import Tooltip from '@material-ui/core/Tooltip';
 
 //Date picker
 import DateFnsUtils from '@date-io/date-fns';
@@ -443,12 +444,14 @@ class Cart extends Component {
 																							locale={nlLocale}
 																						>
 																						<div>
-        																			<Button onClick={() => {this.openPicker('start')}}>
-																								<Moment
-																									format="DD-MM-YYYY"
-																									date={item.startDate}
-																								/>
-																							</Button>
+ 																							<Tooltip title="Wijzig start-datum" enterDelay={500} leaveDelay={200}>
+																								<Button onClick={() => {this.openPicker('start')}}>
+																									<Moment
+																										format="DD-MM-YYYY"
+																										date={item.startDate}
+																									/>
+																								</Button>
+																							</Tooltip>
 																							<div className="picker">
 																								<DatePicker
 																									label="Startdatum"
@@ -469,12 +472,14 @@ class Cart extends Component {
 																							</div>
 																						</div>
 																						<div>
-        																			<Button onClick={() => {this.openPicker('end')}}>
-																								<Moment
-																									format="DD-MM-YYYY"
-																									date={item.endDate}
-																								/>
-																							</Button>
+ 																							<Tooltip title="Wijzig eind-datum" enterDelay={500} leaveDelay={200}>
+																								<Button onClick={() => {this.openPicker('start')}}>
+																									<Moment
+																										format="DD-MM-YYYY"
+																										date={item.endDate}
+																									/>
+																								</Button>
+																							</Tooltip>
 																							<div className="picker">
 																								<DatePicker
 																									label="Einddatum"
