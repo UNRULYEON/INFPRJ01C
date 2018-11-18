@@ -283,37 +283,41 @@ class App extends Component {
     switch (type){
       case 'ADD_TO_CART':
         let currCart = this.state.cart.items
+        let cartArr = this.state.cart.items
+        let orderArr = this.state.order.items
+        let rentalArr = this.state.rental.items
         let alreadyInCart = false
         let alreadyInOrder = false
         let alreadyInRental = false
         let total = 0
 
         console.log(currCart.length)
+        console.log(cartArr)
+        console.log(orderArr)
+        console.log(rentalArr)
 
-        if (this.state.cart.items.length > 0) {
-          for (let i = 0; i < this.state.cart.items.length; i++){
+        if (cartArr.length > 0) {
+          for (let i = 0; i < cartArr.length; i++){
             console.log(`Running cart loop`)
-            if (data.id === this.state.cart.items[i].id) {
+            if (data.id === cartArr[i].id) {
               alreadyInCart = true
-            } else {
-              currCart.push(this.state.cart.items[i])
             }
           }
         }
 
-        if (this.state.order.items.length > 0) {
-          for (let i = 0; i < this.state.order.items.length; i++){
+        if (orderArr.length > 0) {
+          for (let i = 0; i < orderArr.length; i++){
             console.log(`Running order loop`)
-            if (data.id === this.state.order.items[i].id) {
+            if (data.id === orderArr[i].id) {
               alreadyInOrder = true
             }
           }
         }
 
-        if (this.state.rental.items.length > 0) {
-          for (let i = 0; i < this.state.rental.items.length; i++){
+        if (rentalArr.length > 0) {
+          for (let i = 0; i < rentalArr.length; i++){
             console.log(`Running rental loop`)
-            if (data.id === this.state.rental.items[i].id) {
+            if (data.id === rentalArr[i].id) {
               alreadyInRental = true
             }
           }
