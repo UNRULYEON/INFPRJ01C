@@ -11,14 +11,13 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
-import Tooltip from '@material-ui/core/Tooltip';
 
 //Date picker
 import DateFnsUtils from '@date-io/date-fns';
+import Moment from 'react-moment';
 import { MuiPickersUtilsProvider } from 'material-ui-pickers';
-import { TimePicker } from 'material-ui-pickers';
 import { DatePicker } from 'material-ui-pickers';
-import { DateTimePicker } from 'material-ui-pickers';
+import nlLocale from 'date-fns/locale/nl';
 
 // Components
 import PageTitle from '../../components/pageLink/PageLink'
@@ -150,9 +149,6 @@ class Cart extends Component {
 							destination
 					);
 
-					console.log(source)
-					console.log(destination)
-
 					if (result.cart) {
 						if (!result.cart.length) {
 							this.setState({buttonDisabledState: false})
@@ -190,21 +186,14 @@ class Cart extends Component {
 	};
 
 	removeFromList(list, id, type) {
-		console.log('Removing from list...')
-
 		switch (type) {
 			case 'CART':
 				let newArrCart = []
-				let removedCart = {}
-
 				for (let i = 0; i < this.state.cart.length; i++) {
-					if (this.state.cart[i].id === id) {
-						removedCart = this.state.cart[i]
-					} else {
+					if (!this.state.cart[i].id === id) {
 						newArrCart.push(this.state.cart[i])
 					}
 				}
-
 				this.props.updateCart(newArrCart)
 				this.setState({
 					cart: newArrCart
@@ -212,16 +201,11 @@ class Cart extends Component {
 				break;
 			case 'ORDER':
 				let newArrOrder = []
-				let removedOrder = {}
-
 				for (let i = 0; i < this.state.order.length; i++) {
-					if (this.state.order[i].id === id) {
-						removedOrder = this.state.order[i]
-					} else {
+					if (!this.state.order[i].id === id) {
 						newArrOrder.push(this.state.order[i])
 					}
 				}
-
 				this.props.updateOrder(newArrOrder)
 				this.setState({
 					order: newArrOrder
@@ -229,20 +213,54 @@ class Cart extends Component {
 				break;
 			case 'RENTAL':
 				let newArrRental = []
-				let removedRental = {}
-
 				for (let i = 0; i < this.state.rental.length; i++) {
-					if (this.state.rental[i].id === id) {
-						removedRental = this.state.rental[i]
-					} else {
+					if (!this.state.rental[i].id === id) {
 						newArrRental.push(this.state.rental[i])
 					}
 				}
-
 				this.props.updateRental(newArrRental)
 				this.setState({
 					rental: newArrRental
 				});
+				break;
+			default:
+				break;
+		}
+	}
+
+	handleDateChange = (date, id, type) => {
+		let newArr = []
+		for (let i = 0; i < this.state.rental.length; i++){
+			if (this.state.rental[i].id === id) {
+				let newItem = this.state.rental[i]
+				switch (type) {
+					case 'startDate':
+						newItem.startDate = date
+						break;
+					case 'endDate':
+						newItem.endDate = date
+						break;
+					default:
+						break;
+				}
+				newArr.push(newItem)
+			} else {
+				newArr.push(this.state.rental[i])
+			}
+		}
+		this.props.updateRental(newArr)
+		this.setState({
+			rental: newArr
+		});
+	}
+
+	openPicker = (e) => {
+		switch (e) {
+			case 'start':
+				this.pickerStartDate.open(e);
+				break;
+			case 'end':
+				this.pickerEndDate.open(e);
 				break;
 			default:
 				break;
@@ -341,7 +359,8 @@ class Cart extends Component {
 																				<div className="draggable-details">
 																					<Link to={`/schilderij/${item.id}`}>
 																						<span className="draggable-details-title">{ item.title }</span>
-																					</Link>																					<span className="draggable-details-maker">{ item.principalmaker }</span>
+																					</Link>
+																					<span className="draggable-details-maker">{ item.principalmaker }</span>
 																				</div>
 																				<div className="draggable-action">
 																					<IconButton
@@ -414,10 +433,71 @@ class Cart extends Component {
 																				<div className="draggable-details">
 																					<Link to={`/schilderij/${item.id}`}>
 																						<span className="draggable-details-title">{ item.title }</span>
-																					</Link>																					<span className="draggable-details-maker">{ item.principalmaker }</span>
+																					</Link>
+																					<span className="draggable-details-maker">{ item.principalmaker }</span>
 																				</div>
 																				<div className="draggable-action">
+																					<div className="draggable-action-date">
+																						<MuiPickersUtilsProvider
+																							utils={DateFnsUtils}
+																							locale={nlLocale}
+																						>
+																						<div>
+        																			<Button onClick={() => {this.openPicker('start')}}>
+																								<Moment
+																									format="DD-MM-YYYY"
+																									date={item.startDate}
+																								/>
+																							</Button>
+																							<div className="picker">
+																								<DatePicker
+																									label="Startdatum"
+																									todayLabel="Vandaag"
+																									cancelLabel="Annuleren"
+																									format="dd-MM-yyyy"
+																									disablePast
+																									showTodayButton
+																									maxDateMessage="Date must be less than today"
+																									value={item.startDate}
+																									onChange={(date) => {
+																										this.handleDateChange(date, item.id, 'startDate')
+																									}}
+																									ref={node => {
+																										this.pickerStartDate = node;
+																									}}
+																								/>
+																							</div>
+																						</div>
+																						<div>
+        																			<Button onClick={() => {this.openPicker('end')}}>
+																								<Moment
+																									format="DD-MM-YYYY"
+																									date={item.endDate}
+																								/>
+																							</Button>
+																							<div className="picker">
+																								<DatePicker
+																									label="Einddatum"
+																									todayLabel="Vandaag"
+																									cancelLabel="Annuleren"
+																									format="dd-MM-yyyy"
+																									disablePast
+																									showTodayButton
+																									maxDateMessage="Date must be less than today"
+																									value={item.endDate}
+																									onChange={(date) => {
+																										this.handleDateChange(date, item.id, 'endDate')
+																									}}
+																									ref={node => {
+																										this.pickerEndDate = node;
+																									}}
+																								/>
+																							</div>
+																						</div>
+																						</MuiPickersUtilsProvider>
+																					</div>
 																					<IconButton
+																					 	className="draggable-action-delete"
 																						color="primary"
 																						aria-label="Delete"
 																						onClick={() => {

@@ -187,7 +187,9 @@ class SchilderijDetails extends Component {
 												const height = data.paintingByID[0].height
 												const price = data.paintingByID[0].price
 												const amount = 1
-		
+												const startDate = new Date()
+												const endDate = new Date()
+
 												const item = {
 													id,
 													title,
@@ -196,11 +198,10 @@ class SchilderijDetails extends Component {
 													width,
 													height,
 													price,
-													amount
+													amount,
+													startDate,
+													endDate
 												}
-		
-												console.log(item)
-		
 												this.setCart(item)
 											}}
 											>

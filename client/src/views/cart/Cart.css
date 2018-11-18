@@ -6,6 +6,8 @@
 .draggable-image-container{
   width: 60px;
   height: 60px;
+  display: block;
+  margin: auto 0;
 }
 
 .draggable-image{
@@ -32,8 +34,23 @@
 .draggable-action{
   margin-left: auto;
   display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+}
+
+.draggable-action-date{
+  display: flex;
   flex-flow: column nowrap;
   justify-content: center;
+}
+
+.picker{
+  display: none;
+  visibility: hidden;
+}
+
+.draggable-action-delete{
+  min-width: 80px;
 }
 
 .draggable-price{
