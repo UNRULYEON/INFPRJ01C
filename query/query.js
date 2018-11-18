@@ -73,7 +73,7 @@ var root = {
   //#region Admin
   //#region papa & baby tabel
   //Create tabel and insert data
-  async createbabytabel({tabelnaam, foreignkey, type}){
+  async createBabyTabel({tabelnaam, foreignkey, type}){
     if(tabelnaam == ""){
       throw new Error("The provided name is empty!")
     }
@@ -97,7 +97,7 @@ var root = {
       db.one(`INSERT INTO ${tabelnaam}(foreignkey) VALUES($1) RETURNING id`,[element.foreignkey])
       .then()
       .catch()
-    });
+    })
 
     //Create ref to the newly created table in the papatabel
     let papaInsert = await db.manyOrNone(`INSERT INTO papatabel(naam,type) VALUES($1, $2) RETURNING id`,[tabelnaam,type])
@@ -105,14 +105,23 @@ var root = {
           .catch(err => {throw new Error(err)})
     return `Data has been inserted into row: ${papaInsert[0].id}`
   },  
-  //Remove tabel and link in papatabel
-  async removebabytabel({id}){
+  //Add content to babytabel
+  async addToBabyTabel({id,foreignkey}){
     let table = await db.manyOrNone(`SELECT * from papatabel WHERE id = ${id}`)
     if(!table.length){
       throw new Error(`The specified Table doesn't exist`)
     }
-    console.log(table[0])
-    let tablename = table[0].naam
+    let tabelnaam = table[0].naam
+    foreignkey.forEach(element => {
+      db.one(`INSERT INTO ${tabelnaam}(foreignkey) VALUES($1) RETURNING id`,[element.foreignkey])
+    })
+  },
+  //Remove tabel and link in papatabel
+  async removeBabyTabel({id}){
+    let table = await db.manyOrNone(`SELECT * from papatabel WHERE id = ${id}`)
+    if(!table.length){
+      throw new Error(`The specified Table doesn't exist`)
+    }
 
     db.one(`DROP TABLE IF EXISTS ${tablename}`)
 
