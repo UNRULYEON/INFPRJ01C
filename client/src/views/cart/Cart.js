@@ -150,6 +150,9 @@ class Cart extends Component {
 							destination
 					);
 
+					console.log(source)
+					console.log(destination)
+
 					if (result.cart) {
 						if (!result.cart.length) {
 							this.setState({buttonDisabledState: false})
@@ -186,9 +189,64 @@ class Cart extends Component {
 				}
 	};
 
-	removeFromList(list) {
-		console.log('Removing from list')
-		console.log(list)
+	removeFromList(list, id, type) {
+		console.log('Removing from list...')
+
+		switch (type) {
+			case 'CART':
+				let newArrCart = []
+				let removedCart = {}
+
+				for (let i = 0; i < this.state.cart.length; i++) {
+					if (this.state.cart[i].id === id) {
+						removedCart = this.state.cart[i]
+					} else {
+						newArrCart.push(this.state.cart[i])
+					}
+				}
+
+				this.props.updateCart(newArrCart)
+				this.setState({
+					cart: newArrCart
+				});
+				break;
+			case 'ORDER':
+				let newArrOrder = []
+				let removedOrder = {}
+
+				for (let i = 0; i < this.state.order.length; i++) {
+					if (this.state.order[i].id === id) {
+						removedOrder = this.state.order[i]
+					} else {
+						newArrOrder.push(this.state.order[i])
+					}
+				}
+
+				this.props.updateOrder(newArrOrder)
+				this.setState({
+					order: newArrOrder
+				});
+				break;
+			case 'RENTAL':
+				let newArrRental = []
+				let removedRental = {}
+
+				for (let i = 0; i < this.state.rental.length; i++) {
+					if (this.state.rental[i].id === id) {
+						removedRental = this.state.rental[i]
+					} else {
+						newArrRental.push(this.state.rental[i])
+					}
+				}
+
+				this.props.updateRental(newArrRental)
+				this.setState({
+					rental: newArrRental
+				});
+				break;
+			default:
+				break;
+		}
 	}
 
   render() {
@@ -231,7 +289,9 @@ class Cart extends Component {
 																					<IconButton
 																						color="primary"
 																						aria-label="Delete"
-																						// onClick={this.removeFromList(this.state.cart)}
+																						onClick={() => {
+																							this.removeFromList(this.state.cart, item.id, 'CART')
+																						}}
 																					>
 																						<DeleteIcon />
 																					</IconButton>
@@ -287,7 +347,9 @@ class Cart extends Component {
 																					<IconButton
 																						color="primary"
 																						aria-label="Delete"
-																						// onClick={this.removeFromList(this.state.order)}
+																						onClick={() =>{
+																							this.removeFromList(this.state.order, item.id, 'ORDER')
+																						}}
 																					>
 																						<DeleteIcon />
 																					</IconButton>
@@ -358,14 +420,16 @@ class Cart extends Component {
 																					<IconButton
 																						color="primary"
 																						aria-label="Delete"
-																						// onClick={this.removeFromList(this.state.rental)}
+																						onClick={() => {
+																							this.removeFromList(this.state.rental, item.id, 'RENTAL')
+																						}}
 																					>
 																						<DeleteIcon />
 																					</IconButton>
 																				</div>
 																				<div className="draggable-price">
 																					<Currency
-																						quantity={`${(item.price * item.amount) / 20}`}
+																						quantity={(item.price * item.amount) / 20}
 																						symbol="€ "
 																						decimal=","
 																						group="."
