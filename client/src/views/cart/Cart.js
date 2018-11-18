@@ -9,6 +9,8 @@ import './Cart.css'
 // Material-UI
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
 import Tooltip from '@material-ui/core/Tooltip';
 
 //Date picker
@@ -77,7 +79,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 		border: '2px solid rgb(245, 245, 245)',
 		background: 'white',
 		boxShadow: isDragging ? `0px 5px 15px 0px rgba(50, 50, 50, 0.15)` : `none`,
-		transition: '.2s all eas-in-out',
+		transition: '.2s all ease-in-out',
 
     // styles we need to apply on draggables
     ...draggableStyle
@@ -86,9 +88,10 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 const getListStyle = isDraggingOver => ({
 	// background: isDraggingOver ? 'lightblue' : 'lightgrey',
 	border: '1px solid #eeeeee',
+	minHeight: '100px',
 	borderRadius: 2,
 	padding: grid,
-
+	transition: 'height .2s ease-in-out'
 });
 
 
@@ -110,6 +113,10 @@ class Cart extends Component {
 	};
 
 	getList = id => this.state[this.id2List[id]];
+
+	componentDidMount = () => {
+		!this.props.cart.items.length ? this.setState({buttonDisabledState: false}) : this.setState({buttonDisabledState: true})
+	}
 
 	onDragEnd = (result) => {
 			const { source, destination } = result;
@@ -143,7 +150,13 @@ class Cart extends Component {
 							destination
 					);
 
-					!result.cart.length ? this.setState({buttonDisabledState: false}) : this.setState({buttonDisabledState: true})
+					if (result.cart) {
+						if (!result.cart.length) {
+							this.setState({buttonDisabledState: false})
+						} else {
+							this.setState({buttonDisabledState: true})
+						}
+					}
 
 					if (result.cart && result.order) {
 						this.props.updateCart(result.cart)
@@ -173,13 +186,18 @@ class Cart extends Component {
 				}
 	};
 
+	removeFromList(list) {
+		console.log('Removing from list')
+		console.log(list)
+	}
+
   render() {
     return (
       <section className="section-container">
         <PageTitle title="Winkelwagen"/>
 				<DragDropContext onDragEnd={this.onDragEnd}>
 					<h3>Winkelwagen</h3>
-					<Droppable droppableId="cart">
+					<Droppable droppableId="cart" className="droppable-component">
 							{(provided, snapshot) => (
 									<div
 											ref={provided.innerRef}
@@ -194,6 +212,7 @@ class Cart extends Component {
 																			ref={provided.innerRef}
 																			{...provided.draggableProps}
 																			{...provided.dragHandleProps}
+																			className="draggable-component"
 																			style={getItemStyle(
 																					snapshot.isDragging,
 																					provided.draggableProps.style
@@ -207,6 +226,15 @@ class Cart extends Component {
 																						<span className="draggable-details-title">{ item.title }</span>
 																					</Link>
 																					<span className="draggable-details-maker">{ item.principalmaker }</span>
+																				</div>
+																				<div className="draggable-action">
+																					<IconButton
+																						color="primary"
+																						aria-label="Delete"
+																						onClick={this.removeFromList(this.state.cart)}
+																					>
+																						<DeleteIcon />
+																					</IconButton>
 																				</div>
 																				<div className="draggable-price">
 																					<Currency
@@ -241,6 +269,7 @@ class Cart extends Component {
 																			ref={provided.innerRef}
 																			{...provided.draggableProps}
 																			{...provided.dragHandleProps}
+																			className="draggable-component"
 																			style={getItemStyle(
 																					snapshot.isDragging,
 																					provided.draggableProps.style
@@ -253,7 +282,16 @@ class Cart extends Component {
 																					<Link to={`/schilderij/${item.id}`}>
 																						<span className="draggable-details-title">{ item.title }</span>
 																					</Link>																					<span className="draggable-details-maker">{ item.principalmaker }</span>
-																				</div> 
+																				</div>
+																				<div className="draggable-action">
+																					<IconButton
+																						color="primary"
+																						aria-label="Delete"
+																						onClick={this.removeFromList(this.state.order)}
+																					>
+																						<DeleteIcon />
+																					</IconButton>
+																				</div>
 																				<div className="draggable-price">
 																					<Currency
 																						quantity={item.price * item.amount}
@@ -302,6 +340,7 @@ class Cart extends Component {
 																			ref={provided.innerRef}
 																			{...provided.draggableProps}
 																			{...provided.dragHandleProps}
+																			className="draggable-component"
 																			style={getItemStyle(
 																					snapshot.isDragging,
 																					provided.draggableProps.style
@@ -315,13 +354,23 @@ class Cart extends Component {
 																						<span className="draggable-details-title">{ item.title }</span>
 																					</Link>																					<span className="draggable-details-maker">{ item.principalmaker }</span>
 																				</div>
+																				<div className="draggable-action">
+																					<IconButton
+																						color="primary"
+																						aria-label="Delete"
+																						onClick={this.removeFromList(this.state.rental)}
+																					>
+																						<DeleteIcon />
+																					</IconButton>
+																				</div>
 																				<div className="draggable-price">
 																					<Currency
-																						quantity={(item.price * item.amount) / 20}
+																						quantity={`${(item.price * item.amount) / 20}`}
 																						symbol="€ "
 																						decimal=","
 																						group="."
 																					/>
+																					&nbsp;/ dag
 																				</div>
 																			</div>
 																	</div>

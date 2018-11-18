@@ -29,13 +29,20 @@
   color: grey;
 }
 
-.draggable-price{
+.draggable-action{
   margin-left: auto;
-  text-align: right;
-  min-width: 130px;
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
+}
+
+.draggable-price{
+  text-align: right;
+  min-width: 130px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-self: center;
 }
 
 .cart-shipping{
@@ -69,4 +76,8 @@
 .cart-button-next{
   text-align: right;
   margin: 20px 26px 0 0;
+}
+
+.draggable-component{
+  transition: .2s box-shadow ease-in-out;
 }
