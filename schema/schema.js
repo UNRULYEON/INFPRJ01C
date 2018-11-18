@@ -31,6 +31,7 @@ var schema = buildSchema(`
     alterProduct(id_number: Int!, id: String!, title: String!, releasedate: Int!, period: Int! description: String!, physicalmedium: String!, amountofpaintings: Int!, src: String!, bigsrc: String!, plaguedescdutch: String!, prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!): String
     deleteProduct(id: Int!): String
     createbabytabel(tabelnaam: String!, foreignkey: [RefBaby!], type: String!): String
+    removebabytabel(id: Int!): String
   },
   input RefBaby{foreignkey: Int!},
   type ret{

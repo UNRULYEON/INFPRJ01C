@@ -8,6 +8,7 @@ sub-tabellen moeten door admin aangemaakt gaan worden
 *alle gegevens in 1 keer toevoegen aan de sub-tabel
 
 
+*admin kan in PAPAtabel een naam verwijderen, dan wordt eerst de gehele sub-tabel verwijdert voordat de rij in de PAPAtabel wordt verwijdert
 
-admin kan in PAPAtabel een naam verwijderen, dan wordt eerst de gehele sub-tabel verwijdert voordat de rij in de PAPAtabel wordt verwijdert
+
 gegevens later toevoegen aan baby

@@ -71,7 +71,8 @@ var root = {
     return db.manyOrNone(query)
   },
   //#region Admin
-  //#region papatabel
+  //#region papa & baby tabel
+  //Create tabel and insert data
   async createbabytabel({tabelnaam, foreignkey, type}){
     if(tabelnaam == ""){
       throw new Error("The provided name is empty!")
@@ -84,7 +85,7 @@ var root = {
       if(element.table == tabelnaam){
         throw new Error(`There already is a Table existing with the name '${tabelnaam}'`)
       }
-    });
+    })
 
     //Creating the table
     db.one(`CREATE TABLE ${tabelnaam} (id serial PRIMARY KEY, foreignKey int)`)
@@ -104,6 +105,29 @@ var root = {
           .catch(err => {throw new Error(err)})
     return `Data has been inserted into row: ${papaInsert[0].id}`
   },  
+  //Remove tabel and link in papatabel
+  async removebabytabel({id}){
+    let table = await db.manyOrNone(`SELECT * from papatabel WHERE id = ${id}`)
+    if(!table.length){
+      throw new Error(`The specified Table doesn't exist`)
+    }
+    console.log(table[0])
+    let tablename = table[0].naam
+
+    db.one(`DROP TABLE IF EXISTS ${tablename}`)
+
+    //In order to check if the table actually dropped
+    let tableNameCheck = await db.manyOrNone(`SELECT relname as table from pg_stat_user_tables where schemaname = 'public'`)
+                  .then(data => {return data})
+                  .catch(err => {throw new Error(`Error while checking if the table has been dropped: ${err}`)})
+    tableNameCheck.forEach(element => {
+      if(element.table == tablename){
+        throw new Error(`Failed to drop the table: '${tablename}. Please try again later.'`)
+      }
+    })
+    db.one(`DELETE FROM papatabel WHERE id = ${id}`)
+    return "The specified table has been removed from the DB"
+  },
   //#endregion
   //#region alter users
   //Add user
