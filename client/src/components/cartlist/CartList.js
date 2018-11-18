@@ -10,13 +10,10 @@ class CartList extends Component {
 	render() {
 		return (
       <div className="cart-item-container">
-        {this.props.cart.items.map((item) => (
+        {this.props.list.items.map((item) => (
           <div key={item.id}>
             <div className="cart-item-wrapper">
               <div className="cart-item-details">
-                {/* <p className="cart-item-title">
-                  { item.title }
-                </p> */}
                 <Link to={`/schilderij/${item.id}`} onClick={this.props.closeModal}>
                   <p className="cart-item-title">
                     { item.title }
@@ -45,7 +42,7 @@ class CartList extends Component {
           <div>Totaal</div>
           <div>
             <Currency
-              quantity={this.props.cart.total}
+              quantity={this.props.list.total}
               symbol="€ "
               decimal=","
               group="."

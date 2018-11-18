@@ -12,13 +12,20 @@
   -webkit-box-shadow: 0px 5px 15px 0px rgba(50, 50, 50, 0.15);
   -moz-box-shadow:    0px 5px 15px 0px rgba(50, 50, 50, 0.15);
   box-shadow:         0px 5px 15px 0px rgba(50, 50, 50, 0.15);
-  overflow: scroll;
+  overflow-y: auto;
 }
 
 .menu-title{
   font-family: "IBM Plex Sans", 'Roboto', sans-serif;
   font-size: 1.5em;
   margin: 15px;
+}
+
+.cart-type-title{
+  margin: 15px 0 0 0 ;
+  padding: 10px 15px;
+  font-weight: 700;
+  background: #eeeeee;
 }
 
 .cart-no-items{

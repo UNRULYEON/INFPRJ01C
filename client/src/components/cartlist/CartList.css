@@ -12,9 +12,8 @@
 }
 
 .cart-item-title{
-  font-family: 'IBM Plex Sans';
-  font-weight: 700;
-  margin-right: 10px;
+  font-family: 'Roboto', sans-serif;
+  text-decoration: underline;
 }
 
 .cart-item-price{

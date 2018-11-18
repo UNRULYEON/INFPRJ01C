@@ -16,7 +16,6 @@ import { ApolloProvider } from "react-apollo";
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import Snackbar from '@material-ui/core/Snackbar';
-import Button from '@material-ui/core/Button';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import ErrorIcon from '@material-ui/icons/Error';
 import InfoIcon from '@material-ui/icons/Info';
@@ -180,6 +179,16 @@ class App extends Component {
         total: 0,
         timestamp: ''
       },
+      order: {
+        items: [],
+        total: 0,
+        timestamp: ''
+      },
+      rental: {
+        items: [],
+        total: 0,
+        timestamp: ''
+      },
       current_item: '',
       snackbarOpen: false,
       snackbarVariant: "",
@@ -214,6 +223,24 @@ class App extends Component {
 
       this.setState({
         cart: localCart.cart
+      })
+    }
+
+    // Check if order data is present as a cookie
+    if (localStorage.getItem('ORDER')) {
+      const localOrder = JSON.parse(localStorage.getItem('ORDER'));
+
+      this.setState({
+        order: localOrder.order
+      })
+    }
+
+    // Check if order rental is present as a cookie
+    if (localStorage.getItem('RENTAL')) {
+      const localRental = JSON.parse(localStorage.getItem('RENTAL'));
+
+      this.setState({
+        rental: localRental.rental
       })
     }
   }
@@ -255,61 +282,56 @@ class App extends Component {
   setCart = (data, type) => {
     switch (type){
       case 'ADD_TO_CART':
-        let currCart = []
+        let currCart = this.state.cart.items
+        let cartArr = this.state.cart.items
+        let orderArr = this.state.order.items
+        let rentalArr = this.state.rental.items
         let alreadyInCart = false
+        let alreadyInOrder = false
+        let alreadyInRental = false
         let total = 0
 
-        if (!this.state.cart.items.length > 0) {
-          // console.log(`No items in cart, pushing recieving item to cart...`)
-          currCart.push(data)
-        } else {
-          // console.log(`Items in cart, checking if an item needs to be incr...`)
+        console.log(currCart.length)
+        console.log(cartArr)
+        console.log(orderArr)
+        console.log(rentalArr)
 
-          let amountModified = false
-
-          for (let i = 0; i < this.state.cart.items.length; i++){
-            // console.log(`Current item: ${this.state.cart.items[i].id}`)
-            // console.log(`Recieving item: ${data.id}`)
-            if (data.id === this.state.cart.items[i].id) {
-              // // console.log(`Incrementing item with ID: ${this.state.cart.items[i].id}`)
-
-              // // Creating item
-              // let id = data.id
-              // let title = data.title
-              // let principalmaker = data.principalmaker
-              // let src = data.src
-              // let width = data.width
-              // let height = data.height
-              // let price = data.price
-              // let amount = this.state.cart.items[i].amount + 1
-
-              // let item = {
-              //   id,
-              //   title,
-              //   principalmaker,
-              //   src,
-              //   width,
-              //   height,
-              //   price,
-              //   amount
-              // }
-
-              // // console.log(`Item to be pushed to currItem: ${item}`)
-              // amountModified = true
-              // currCart.push(item)
-
+        if (cartArr.length > 0) {
+          for (let i = 0; i < cartArr.length; i++){
+            console.log(`Running cart loop`)
+            if (data.id === cartArr[i].id) {
               alreadyInCart = true
-            } else {
-              // console.log(`Item doesn't need to be incr, pushing cart-item to new cart with ID: ${this.state.cart.items[i].id}`)
-              currCart.push(this.state.cart.items[i])
             }
           }
+        }
 
-          if (!amountModified) {
-            // console.log(`Amount has not been modified, it's a new item, pushing to cart...`)
-            currCart.push(data)
+        if (orderArr.length > 0) {
+          for (let i = 0; i < orderArr.length; i++){
+            console.log(`Running order loop`)
+            if (data.id === orderArr[i].id) {
+              alreadyInOrder = true
+            }
           }
         }
+
+        if (rentalArr.length > 0) {
+          for (let i = 0; i < rentalArr.length; i++){
+            console.log(`Running rental loop`)
+            if (data.id === rentalArr[i].id) {
+              alreadyInRental = true
+            }
+          }
+        }
+
+
+        if (!alreadyInCart && !alreadyInOrder && !alreadyInRental) {
+          console.log(`Item pushed to cart`)
+          currCart.push(data)
+        }
+
+        console.log(`Cart: ${alreadyInCart}`)
+        console.log(`Order: ${alreadyInOrder}`)
+        console.log(`Rental: ${alreadyInRental}`)
 
         for (let i = 0; i < currCart.length; i++) {
           total = (currCart[i].price * currCart[i].amount) + total
@@ -333,7 +355,19 @@ class App extends Component {
           this.setState({
             snackbarOpen: true,
             snackbarVariant: "error",
-            snackbarMessage: "Het product zit al in je winkelwagen"
+            snackbarMessage: "Het item zit al in je winkelwagen"
+          });
+        } else if (alreadyInOrder) {
+          this.setState({
+            snackbarOpen: true,
+            snackbarVariant: "error",
+            snackbarMessage: "Het item zit al in je bestellijst"
+          });
+        } else if (alreadyInRental) {
+          this.setState({
+            snackbarOpen: true,
+            snackbarVariant: "error",
+            snackbarMessage: "Het item zit al in je huurlijst"
           });
         } else {
           this.setState({
@@ -348,6 +382,72 @@ class App extends Component {
       default:
         break;
     }
+  }
+
+  updateCart = (items) => {
+    let total = 0
+
+    for (let i = 0; i < items.length; i++) {
+      total = (items[i].price * items[i].amount) + total
+    }
+
+    const cart = {
+      items: items,
+      total: total,
+      timestamp: String(new Date())
+    }
+
+    this.setState(({
+      cart: cart
+    }))
+
+    localStorage.setItem('CART', JSON.stringify({
+      cart
+    }))
+  }
+
+  updateOrder = (items) => {
+    let total = 0
+
+    for (let i = 0; i < items.length; i++) {
+      total = (items[i].price * items[i].amount) + total
+    }
+
+    const order = {
+      items: items,
+      total: total,
+      timestamp: String(new Date())
+    }
+
+    this.setState(({
+      order: order
+    }))
+
+    localStorage.setItem('ORDER', JSON.stringify({
+      order
+    }))
+  }
+
+  updateRental = (items) => {
+    let total = 0
+
+    for (let i = 0; i < items.length; i++) {
+      total = (items[i].price * items[i].amount / 20) + total
+    }
+
+    const rental = {
+      items: items,
+      total: total,
+      timestamp: String(new Date())
+    }
+
+    this.setState(({
+      rental: rental
+    }))
+
+    localStorage.setItem('RENTAL', JSON.stringify({
+      rental
+    }))
   }
 
   setCurrentItem(id) {
@@ -376,6 +476,8 @@ class App extends Component {
               <Header
                 user={this.state.user}
                 cart={this.state.cart}
+                order={this.state.order}
+                rental={this.state.rental}
                 setUser={this.setUser}
                 setCart={this.setCart}
                 loggedIn={this.state.loggedIn}
@@ -411,8 +513,12 @@ class App extends Component {
                     {...props}
                     user={this.state.user}
                     cart={this.state.cart}
+                    order={this.state.order}
+                    rental={this.state.rental}
                     setUser={this.setUser}
-                    setCart={this.setCart}
+                    updateCart={this.updateCart}
+                    updateOrder={this.updateOrder}
+                    updateRental={this.updateRental}
                     loggedIn={this.state.loggedIn}
                 />} />
                 <Route path="/registreren" component={Registreren} />
