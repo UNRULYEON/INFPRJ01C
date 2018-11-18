@@ -3,16 +3,10 @@ import { NavLink } from 'react-router-dom'
 import Img from 'react-image'
 import Loading from '../../components/loading/Loading'
 import './imageComponent.css'
-
-// Material-UI
-import IconButton from '@material-ui/core/IconButton';
-import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+import Currency from 'react-currency-formatter';
 
 class ImageComponent extends Component {
   render() {
-    let width = {
-      width: this.props.photo.width - 60
-    }
 
     function getLocal(prop) {
       return "/schilderij/" + prop.photo.id_number;
@@ -37,15 +31,17 @@ class ImageComponent extends Component {
           />
         </NavLink>
         {this.props.noIC ? null : (
-          <div className="item-details" style={width}>
+          <div className="item-details" style={{width: this.props.photo.width}}>
             <div className="item-details-text">
               <span className="item-details-title">{this.props.photo.title}</span>
-              <span className="item-details-price">€{this.props.photo.price || " -"}</span>
-            </div>
-            <div className="item-details-action">
-              <IconButton color="primary" aria-label="Add to shopping cart">
-                <AddShoppingCartIcon />
-              </IconButton>
+              <span className="item-details-price">
+                <Currency
+                  quantity={this.props.photo.price}
+                  symbol="€ "
+                  decimal=","
+                  group="."
+                />
+              </span>
             </div>
           </div>
         )}

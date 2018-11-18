@@ -1,10 +1,35 @@
 import React, { Component } from 'react';
-// import {
-//     Link,
-//     NavLink
-// } from 'react-router-dom';
+import {
+    Link
+} from 'react-router-dom';
 import posed from "react-pose";
 import './CartMenu.css';
+
+// Material-UI
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+
+// Components
+import CartList from '../cartlist/CartList'
+
+const theme = new createMuiTheme({
+  palette: {
+    primary: {
+      main: '#43a047'
+    },
+    type: 'dark'
+  },
+  typography: {
+    useNextVariants: true,
+  },
+  overrides: {
+    MuiButton: { // Name of the component ⚛️ / style sheet
+      root: { // Name of the rule
+        color: 'white', // Some CSS
+      },
+    },
+  },
+});
 
 const Menu = posed.div({
   open: {
@@ -12,7 +37,7 @@ const Menu = posed.div({
     transition: {
       duration: '200'
     },
-    applyAtStart: { display: 'flex', margin: '10px 0 0 -260px'}
+    applyAtStart: { display: 'flex', margin: '10px 0 0 -360px'}
   },
   closed: {
     opacity: 0,
@@ -29,18 +54,32 @@ class CartMenu extends Component {
 		return (
       <Menu
         pose={this.props.menu ? 'open' : 'closed'}
-        className="dropdown"
+        className="dropdown-cart"
       >
         <span className="menu-title">Winkelwagen</span>
         <div className="cart-container">
-          {this.props.data ? (
-            <p>DATA</p>
+          {this.props.cart.items.length ? (
+            <CartList
+              cart={this.props.cart}
+              closeModal={this.props.closeModal}
+              />
           ) : (
             <p className="cart-no-items">Je hebt niks in je winkelwagen!</p>
           )}
         </div>
         <div className="cart-actions">
-          <button className="cart-action-order">Bekijk winkelwagen</button>
+          <MuiThemeProvider theme={theme}>
+            <Link to={`/winkelwagen`} onClick={this.props.closeModal}>
+              <Button
+                color="primary"
+                className="cart-action-order"
+                variant="outlined"
+                fullWidth
+              >
+                Bekijk je winkelwagen
+              </Button>
+            </Link>
+          </MuiThemeProvider>
         </div>
       </Menu>
 		);

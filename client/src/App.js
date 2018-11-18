@@ -14,6 +14,19 @@ import { ApolloProvider } from "react-apollo";
 
 // Material-UI
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import classNames from 'classnames';
+import Snackbar from '@material-ui/core/Snackbar';
+import Button from '@material-ui/core/Button';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import ErrorIcon from '@material-ui/icons/Error';
+import InfoIcon from '@material-ui/icons/Info';
+import CloseIcon from '@material-ui/icons/Close';
+import green from '@material-ui/core/colors/green';
+import amber from '@material-ui/core/colors/amber';
+import IconButton from '@material-ui/core/IconButton';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import WarningIcon from '@material-ui/icons/Warning';
+import { withStyles } from '@material-ui/core/styles';
 
 // Views
 import Home from './views/home/Home';
@@ -81,6 +94,71 @@ const theme = new createMuiTheme({
   },
 });
 
+const variantIcon = {
+  success: CheckCircleIcon,
+  warning: WarningIcon,
+  error: ErrorIcon,
+  info: InfoIcon,
+};
+
+const snackbarStyle = theme => ({
+  success: {
+    backgroundColor: green[600],
+  },
+  error: {
+    backgroundColor: theme.palette.error.dark,
+  },
+  info: {
+    backgroundColor: theme.palette.primary.dark,
+  },
+  warning: {
+    backgroundColor: amber[700],
+  },
+  icon: {
+    fontSize: 20,
+  },
+  iconVariant: {
+    opacity: 0.9,
+    marginRight: theme.spacing.unit,
+  },
+  message: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+});
+
+function snackbarContent(props) {
+  const { classes, className, message, onClose, variant, ...other } = props;
+  const Icon = variantIcon[variant];
+
+  return (
+    <SnackbarContent
+      className={classNames(classes[variant], className)}
+      aria-describedby="client-snackbar"
+      message={
+        <span id="client-snackbar" className={classes.message}>
+          <Icon className={classNames(classes.icon, classes.iconVariant)} />
+          {message}
+        </span>
+      }
+      action={[
+        <IconButton
+          key="close"
+          aria-label="Close"
+          color="inherit"
+          className={classes.close}
+          onClick={onClose}
+        >
+          <CloseIcon className={classes.icon} />
+        </IconButton>,
+      ]}
+      {...other}
+    />
+  );
+}
+
+const SnackbarContentWrapper = withStyles(snackbarStyle)(snackbarContent);
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -96,11 +174,21 @@ class App extends Component {
         postalcode: '',
         cellphone: ''
       },
-      loggedIn: false
+      loggedIn: false,
+      cart: {
+        items: [],
+        total: 0,
+        timestamp: ''
+      },
+      current_item: '',
+      snackbarOpen: false,
+      snackbarVariant: "",
+      snackbarMessage: ""
     }
   }
 
   componentWillMount() {
+    // Check if user data is present as a cookie
     if (localStorage.getItem('USER')) {
       const localUser = JSON.parse(localStorage.getItem('USER'));
 
@@ -117,6 +205,15 @@ class App extends Component {
           cellphone: localUser.cellphone
         },
         loggedIn: true
+      })
+    }
+
+    // Check if cart data is present as a cookie
+    if (localStorage.getItem('CART')) {
+      const localCart = JSON.parse(localStorage.getItem('CART'));
+
+      this.setState({
+        cart: localCart.cart
       })
     }
   }
@@ -155,6 +252,121 @@ class App extends Component {
     }
   }
 
+  setCart = (data, type) => {
+    switch (type){
+      case 'ADD_TO_CART':
+        let currCart = []
+        let alreadyInCart = false
+        let total = 0
+
+        if (!this.state.cart.items.length > 0) {
+          // console.log(`No items in cart, pushing recieving item to cart...`)
+          currCart.push(data)
+        } else {
+          // console.log(`Items in cart, checking if an item needs to be incr...`)
+
+          let amountModified = false
+
+          for (let i = 0; i < this.state.cart.items.length; i++){
+            // console.log(`Current item: ${this.state.cart.items[i].id}`)
+            // console.log(`Recieving item: ${data.id}`)
+            if (data.id === this.state.cart.items[i].id) {
+              // // console.log(`Incrementing item with ID: ${this.state.cart.items[i].id}`)
+
+              // // Creating item
+              // let id = data.id
+              // let title = data.title
+              // let principalmaker = data.principalmaker
+              // let src = data.src
+              // let width = data.width
+              // let height = data.height
+              // let price = data.price
+              // let amount = this.state.cart.items[i].amount + 1
+
+              // let item = {
+              //   id,
+              //   title,
+              //   principalmaker,
+              //   src,
+              //   width,
+              //   height,
+              //   price,
+              //   amount
+              // }
+
+              // // console.log(`Item to be pushed to currItem: ${item}`)
+              // amountModified = true
+              // currCart.push(item)
+
+              alreadyInCart = true
+            } else {
+              // console.log(`Item doesn't need to be incr, pushing cart-item to new cart with ID: ${this.state.cart.items[i].id}`)
+              currCart.push(this.state.cart.items[i])
+            }
+          }
+
+          if (!amountModified) {
+            // console.log(`Amount has not been modified, it's a new item, pushing to cart...`)
+            currCart.push(data)
+          }
+        }
+
+        for (let i = 0; i < currCart.length; i++) {
+          total = (currCart[i].price * currCart[i].amount) + total
+        }
+
+        const cart = {
+          items: currCart,
+          total: total,
+          timestamp: String(new Date())
+        }
+
+        this.setState(({
+          cart: cart
+        }))
+
+        localStorage.setItem('CART', JSON.stringify({
+          cart
+        }))
+
+        if (alreadyInCart) {
+          this.setState({
+            snackbarOpen: true,
+            snackbarVariant: "error",
+            snackbarMessage: "Het product zit al in je winkelwagen"
+          });
+        } else {
+          this.setState({
+            snackbarOpen: true,
+            snackbarVariant: "success",
+            snackbarMessage: "Het item is toegevoegd aan je winkelwagen"
+          });
+        }
+        break;
+      case 'REMOVE_FROM_CART':
+        break;
+      default:
+        break;
+    }
+  }
+
+  setCurrentItem(id) {
+    this.setState({
+      current_item: id
+    });
+    console.log(`Item set`)
+  }
+
+  handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    this.setState({
+      snackbarOpen: false
+    });
+  };
+
   render() {
     return (
       <ApolloProvider client={client}>
@@ -162,16 +374,27 @@ class App extends Component {
           <div className="App">
             <MuiThemeProvider theme={theme}>
               <Header
-                setUser={this.setUser}
                 user={this.state.user}
+                cart={this.state.cart}
+                setUser={this.setUser}
+                setCart={this.setCart}
                 loggedIn={this.state.loggedIn}
               />
               <Switch>
                 <Route exact path="/" component={Home}/>
                 <Route path="/schilderijen/" component={Schilderijen}/>
-                <Route path="/schilderij/:id" component={SchilderijDetails}/>
+                <Route
+                  path="/schilderij/:id"
+                  render={(props) => <SchilderijDetails
+                    {...props}
+                    setCart={this.setCart}
+                    currentItem={this.state.current_item}
+                    setCurrentItem={this.setCurrentItem}
+                />} />
                 <Route path="/schilders" component={Schilders}/>
-                <Route path="/schilder/:id" component={SchilderDetails}/>
+                <Route
+                path="/schilder/:id"
+                component={SchilderDetails}/>
                 <Route path="/zoeken" component={Search} />
                 <Route path="/contact" component={Contact} />
                 <Route path="/faq" component={FAQ} />
@@ -187,7 +410,9 @@ class App extends Component {
                   render={(props) => <Cart
                     {...props}
                     user={this.state.user}
+                    cart={this.state.cart}
                     setUser={this.setUser}
+                    setCart={this.setCart}
                     loggedIn={this.state.loggedIn}
                 />} />
                 <Route path="/registreren" component={Registreren} />
@@ -234,6 +459,21 @@ class App extends Component {
                 <Route component={NoMatch} />
               </Switch>
               <Footer/>
+              <Snackbar
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                open={this.state.snackbarOpen}
+                autoHideDuration={3000}
+                onClose={this.handleSnackbarClose}
+              >
+                <SnackbarContentWrapper
+                  onClose={this.handleSnackbarClose}
+                  variant={this.state.snackbarVariant}
+                  message={this.state.snackbarMessage}
+                />
+              </Snackbar>
             </MuiThemeProvider>
           </div>
         </Router>

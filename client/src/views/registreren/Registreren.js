@@ -1,16 +1,12 @@
 import React, { Component } from 'react';
 import './Registreren.css';
-import { Mutation } from "react-apollo";
+import { Query, Mutation } from "react-apollo";
 import gql from "graphql-tag";
-
-// // Components
-// import PageTitle from '../../components/pageLink/PageLink';
 
 // Material-UI
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -18,90 +14,36 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import green from '@material-ui/core/colors/green';
 import Radio from '@material-ui/core/Radio';
-import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
-import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormLabel from '@material-ui/core/FormLabel';
-
-// Pose Animation
-import posed from "react-pose";
 
 //steppers
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
-import Typography from '@material-ui/core/Typography';
-import { RadioGroup } from '@material-ui/core';
-
-// animation const
-const FirstStepContainer = posed.div({
-  open: {
-    x: '0%',
-    transition: {
-      x: {
-        type: 'tween',
-        ease: 'easeIn',
-        duration: '400'
-      }
-    }
-  },
-  closed: {
-    x: '100%',
-    transition: {
-      x: {
-        type: 'tween',
-        ease: 'easeIn',
-        duration: '500'
-      }
-    }
-  }
-});
-
-const styles = {
-  root: {
-    color: green[600],
-    '&$checked': {
-      color: green[500],
-    },
-  },
-  checked: {},
-};
 
 // theme const
 const theme = new createMuiTheme({
   palette: {
-    primary: {
-      main: '#43a047'
-    },
-    secondary: {
-      main: '#000'
-    },
+    primary: { main: '#43a047' },
+    secondary: { main: '#000' },
   },
   typography: {
     useNextVariants: true,
   },
   overrides: {
-    MuiButton: { // Name of the component ⚛️ / style sheet
-      root: { // Name of the rule
-        color: 'white', // Some CSS
-      },
+    MuiButton: {
+      root: { color: 'white' },
     },
-    TextField: {
-      width: 200,
-    },
+    TextField: { width: 200, },
   },
 });
-
 
 // Query const
 const SIGNUP = gql`
 mutation Signup($name: String!, $surname: String!, $mail: String!, $password: String!, $aanhef: String, $adres: String, $housenumber: String, $city: String, $postalcode: String) {
-  signup(name: $name, surname: $surname, mail: $mail, password: $password, aanhef: $aanhef, adres: $adres, housenumber: $housenumber, city: $city, postalcode: $postalcode) {
+  signup(name: $name, surname: $surname, mail: $mail, password: $password, aanhef: $aanhef, adres: $adres, housenumber: $housenumber, city: $city, postalcode: $postalcode) 
+  {
     id
     name
     surname
@@ -115,6 +57,12 @@ mutation Signup($name: String!, $surname: String!, $mail: String!, $password: St
     token
   }
 }
+  `;
+
+const CHECK_USER = gql`
+  query checkUser($mail: String!){
+    checkUser(mail: $mail)
+  }
   `;
 
 // Constructor
@@ -132,19 +80,21 @@ class Registreren extends Component {
       city: '',
       postalcode: '',
 
-      isHidden: false,
-      isHidden2: true,
-      isHidden3: false,
-      toggle: false,
-
-      buttonState: false,
-      snackbar: false,
       showPassword: false,
 
       activeStep: 0,
-      buttonText: 'Next',
-      buttonNext: true,
-    };
+
+      emailBestaat: false,
+      emailIsCorrect: true,
+
+      //checkUser becomes true when the button Next is pressed
+      //when checkUser becomes true <Query> gets executed this calls the function handleNextNotInDB
+      checkUser: false,
+
+      //userChecked becomes true after handleNextNotInDB is called
+      //when userChecked equals true AND emailIsCorrect equals true callEmailCheck() is called
+      userChecked: false, 
+    }
   }
 
   //stepper get methods
@@ -155,13 +105,10 @@ class Registreren extends Component {
   getStepContent(stepIndex) {
     switch (stepIndex) {
       case 0:
-        console.log("show register")
         return this.showRegister();
       case 1:
-        console.log("Show naam en adres")
         return this.showNaamAdres();
       case 2:
-        console.log("show betaalinfo")
         return this.showBetaalInfo();
       default:
         return 'Uknown stepIndex';
@@ -172,28 +119,14 @@ class Registreren extends Component {
   handleNext = () => {
     this.setState(state => ({
       activeStep: state.activeStep + 1,
-    }));
+    }))
+    console.log(`the stepper incremented ` + this.state.activeStep)
   };
 
   handleBack = () => {
     this.setState(state => ({
       activeStep: state.activeStep - 1,
-    }));
-  };
-
-  handleReset = () => {
-    this.setState({
-      activeStep: 0,
-      name: '',
-      surname: '',
-      mail: '',
-      password: '',
-      aanhef: 'Dhr.',
-      adres: '',
-      housenumber: '',
-      city: '',
-      postalcode: '',
-    });
+    }))
   };
 
   //handle change for radio button
@@ -201,35 +134,76 @@ class Registreren extends Component {
     this.setState({
       aanhef: event.target.value
     });
-    console.log("state changed")
   }
 
-  // snackbar methods
   handleChange = name => event => {
     this.setState({
       [name]: event.target.value,
-    });
-  };
+      emailIsCorrect: false,
+    })
+    if (!(/\S+@\S+\.\S+/).test(this.state.mail) | this.state.mail === '') {
+      this.setState({
+        emailIsCorrect: false
+      })
 
-  handleSnackbarClick = () => {
-    this.setState({
-      snackbar: true
-    });
-  };
-
-  handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
     }
-    this.setState({
-      snackbar: false,
-    });
-  };
+    else {
+      this.setState({
+        emailIsCorrect: true
+      })
 
+    }
+  }
+
+  checkUserFunc() {
+    if (this.state.activeStep === 0) {
+      this.setState({
+        checkUser: true,
+      })
+    }
+    else {
+      this.setState({
+        checkUser: false,
+      })
+    }
+  }
+
+  callBackStepOne() {    
+    this.handleBack()
+    this.restoreStateWhenBack()
+  }
+
+  restoreStateWhenBack() {
+    if (this.state.activeStep === 0) {
+      this.setState({
+        // checkUser: false,
+        userChecked: false,
+        emailIsCorrect: true,
+        emailBestaat: false,
+      })
+    }
+  }
+
+  //function is called when <Query> returns onCompleted succesfully
+  //if emailIsCorrect equals true callEmailCheck() is
+  handleNextNotInDB() {
+      this.setState({
+        // user has been checked
+        userChecked: true,
+        //checkUser to false to prevent infinite loop
+        checkUser: false,
+      })
+      if (this.state.emailIsCorrect === true) {
+        // this.setState({ checkUser: false })
+        this.handleNext()
+      }
+
+  }
+
+  //shows password as type string if called
   handleClickShowPassword = () => {
     this.setState(state => ({ showPassword: !state.showPassword }));
   }
-
 
   // adds input to state
   onChange = (e) => {
@@ -238,22 +212,50 @@ class Registreren extends Component {
     });
   }
 
+  toggleHelperText() {
+    if (!this.state.emailIsCorrect) {
+      return 'email is fout'
+    } else if (this.state.emailBestaat) {
+      return 'email bestaat al'
+    } else if (this.state.mail === '') {
+      return 'email is leeg'
+    }
+  }
 
 
+  //calls handleNext() if userChecked is true
+  callEmailCheck() {
+    this.setState({
+      checkUser: true
+    })
+    if (this.state.mail === '') {
+      this.setState({ emailIsCorrect: false, })
+    }
+    else if (this.state.userChecked && this.state.emailIsCorrect === true) {
+      this.handleNext()
+      // this.checkUserFunc()
+    }
+  }
 
-  //method shows case 0 of stepper
   showRegister() {
     return (
       <div id="showRegister">
         <div id="emailWachtwoordForm">
-
           <h1>Account</h1>
-          <TextField
-            name="mail"
-            label="Email"
-            onChange={this.handleChange('mail')}
-            value={this.state.mail}
-          />
+
+          <FormControl aria-describedby="component-error-text">
+            <InputLabel>Email</InputLabel>
+            <Input
+              error={this.state.emailBestaat | !this.state.emailIsCorrect ? true : false}
+              name="mail"
+              label="Email"
+              onChange={this.handleChange('mail')}
+              value={this.state.mail}
+            />
+            <FormHelperText id="component-error-text">
+              {this.toggleHelperText()}
+            </FormHelperText>
+          </FormControl>
           <br></br>
 
           <FormControl className="login-input">
@@ -263,7 +265,6 @@ class Registreren extends Component {
               type={this.state.showPassword ? 'text' : 'password'}
               onChange={this.handleChange('password')}
               value={this.state.password}
-
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton onClick={this.handleClickShowPassword}>
@@ -271,9 +272,9 @@ class Registreren extends Component {
                   </IconButton>
                 </InputAdornment>
               }
-
             />
           </FormControl>
+
         </div>
 
         <div id="lijn"></div>
@@ -284,29 +285,28 @@ class Registreren extends Component {
           <p className="details-info">Bestel sneller met je bewaarde gegevens</p>
           <p className="details-info">Je winkelmandje altijd en overal opgeslagen</p>
         </div>
+
       </div>
     )
   }
 
-  //Shows case 1 of stepper
+  //SHows case 1 of stepper
   showNaamAdres() {
     return (
       <div id="showNaamAdres">
-        <div id="naam" >
+        <div id="naam">
           <h1>Naam</h1>
-
-
           <p>Aanhef</p>
           <div id="aanhef">
             Dhr.
-              <Radio
+            <Radio
               color="primary"
               value="Dhr."
               checked={this.state.aanhef === 'Dhr.'}
               onChange={this.handleChangeRadio}
             />
             Mevr.
-              <Radio
+            <Radio
               color="primary"
               value="Mevr."
               checked={this.state.aanhef === 'Mevr.'}
@@ -314,14 +314,12 @@ class Registreren extends Component {
             />
           </div>
 
-
           <TextField
             name="name"
             label="Naam"
             onChange={e => this.onChange(e)}
             value={this.state.name}
           />
-
 
           <TextField
             name="surname"
@@ -338,11 +336,10 @@ class Registreren extends Component {
 
           <TextField
             name="adres"
-            label="Adres"
+            label="Straat"
             onChange={e => this.onChange(e)}
             value={this.state.adres}
           />
-
 
           <TextField
             name="housenumber"
@@ -371,7 +368,7 @@ class Registreren extends Component {
     )
   }
 
-  //method that shows case 2 of stepper
+  // method that shows case 2 of stepper
   showBetaalInfo() {
     return (
       <div id="showBetaalInfo">
@@ -389,16 +386,16 @@ class Registreren extends Component {
     )
   }
 
-
-  //return html objects
+  // return html objects
   render() {
     const { activeStep } = this.state;
     return (
-
       <section className="section-container">
 
-        {/* to not show the current steps at the beginning */}
+        {/* to not show the stepper at the beginning */}
         {activeStep !== 0 ?
+
+          // the stepper
           <Stepper activeStep={activeStep} alternativeLabel>
             {this.getSteps().map(label => {
               return (
@@ -407,79 +404,83 @@ class Registreren extends Component {
                     {label}
                   </StepLabel>
                 </Step>
-              );
+              )
             })}
           </Stepper>
           : null
         }
 
-
-
+        {this.state.checkUser === true && this.state.activeStep === 0 ? (
+          <Query
+            query={CHECK_USER}
+            variables={{ mail: this.state.mail }}
+            onCompleted={(data) => {
+              {
+                {
+                  data.checkUser ? console.log(`already exists`) : this.handleNextNotInDB()
+                }
+              }
+            }}
+            onError={(err) => {
+              console.log(`Query failed: ${err}`)
+            }}
+          >
+            {() => {
+              return (
+                <div></div>
+              );
+            }}
+          </Query>
+        ) : null}
 
         <div>
           {activeStep === this.getSteps().length ?
             (
-              <div id="getStepsDone">
-                Done!
-              <Button
-                  // TODO: edit this to insta login with the given info instead of resetting the register page
-                  color="secondary"
-                  onClick={this.handleReset}
-                >
-                  Opnieuw registreren
-              </Button>
-              </div>
+              <div id="getStepsDone">Done!</div>
             )
-            //else
             :
             (
               <div>
                 {this.getStepContent(activeStep)}
                 <div id="buttonsBackNext">
                   <MuiThemeProvider theme={theme}>
+                    {/* to no show back button at the beginning */}
+                    {activeStep !== 0 ?
 
-                    {/* to not show the current back button at the beginning */}
-                    {activeStep !== 0 ? <Button
-                      id="button"
-                      className="login-button"
-                      variant="outlined"
-                      type="primary"
-                      color="secondary"
-                      disabled={activeStep === 0}
-                      onClick={e => {
-                        this.handleBack()
-                      }}
-                    >
-                      Terug
-                    </Button>
-                      :
-                      null}
+                      // button to go back
+                      <Button
+                        id="button"
+                        className="login-button"
+                        variant="outlined"
+                        type="primary"
+                        color="secondary"
+                        disabled={activeStep === 0}
+                        onClick={e => {
+                          this.callBackStepOne()
+                        }}
+                      >
+                        Terug
+                      </Button>
+                      : null
+                    }
 
-
-                    {/* display button 'Next'  */}
                     {activeStep !== 2 ?
+                      //next knop
                       <Button
                         id="button"
                         color="primary"
                         className="login-button"
                         variant="contained"
                         onClick={e => {
-                          this.setState({
-                            buttonState: true,
-                          });
-
-                          if (!(/\S+@\S+\.\S+/).test(this.state.mail)) {
-                            this.handleSnackbarClick()
-                            return
+                          {
+                            this.callEmailCheck()
                           }
-                          //go to next step here
-                          this.handleNext()
-                          console.log(this.state)
                         }}
                       >
                         Next
                       </Button>
 
+                      //Registreren knop
                       :
                       // Display button 'Registreren'
                       <Mutation mutation={SIGNUP}>
@@ -493,7 +494,7 @@ class Registreren extends Component {
                             onClick={
                               e => {
                                 this.setState({
-                                  buttonState: true,
+
                                 });
 
                                 //Mutate
@@ -518,7 +519,8 @@ class Registreren extends Component {
                             registreren
                           </Button>
                         )}
-                      </Mutation>}
+                      </Mutation>
+                    }
                   </MuiThemeProvider>
                 </div>
               </div>
@@ -526,29 +528,11 @@ class Registreren extends Component {
           }
         </div>
 
+      </section>
 
-
-
-        {//Snackbar is for the error message when the input email and/or password is invalid     
-        }
-        <Snackbar
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          open={this.state.snackbar}
-          autoHideDuration={6000}
-          onClose={this.handleSnackbarClose}
-          ContentProps={{
-            'aria-describedby': 'message-id',
-          }}
-          message={<span id="message-id">Het email en/of het wachtwoord is onjuist ingevuld.<br />Probeer het opnieuw.</span>}
-        />
-
-      </section >
-
-    );
+    )
   }
+
 }
 
 export default Registreren;

@@ -60,6 +60,11 @@ var root = {
     let query = (`SELECT * from schilderijen where principalmaker = ${id}`)
     return db.manyOrNone(query)
   },
+  //#region filters
+  filterbyperiod:({period}) => {
+    let query = (`SELECT * from schilderijen where period = ${period}`)
+    return db.manyOrNone(query)
+  },
   //#endregion
   faq: () => {
     let query = ('SELECT * from faq')
@@ -241,6 +246,16 @@ var root = {
   //#endregion
   //#region User
   //user signup
+  async checkUser({ mail }){
+    const user = await db.manyOrNone('SELECT mail from gebruiker where mail = $1', [mail])
+
+    // Throw an error when a user with the same email exists
+    if (user.length) {
+      return true;
+    } else {
+      return false;
+    }
+  },
   async signup ({ name, surname, mail, password, aanhef, adres, housenumber, city, postalcode}) {
     // Salt password
     const saltedPassword =  await bcrypt.hash(password, 10)

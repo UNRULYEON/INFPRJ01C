@@ -12,7 +12,9 @@ var schema = buildSchema(`
     painters: [Painter]
     painterByID(id: String!): [Painter]
     workByPainter(id: String!): [Painting]
+    checkUser(mail: String!): Boolean!
     me: User
+    filterbyperiod(period: Int!): [Painting]
     faq: [FAQ]
     status: Int 
   },
@@ -74,7 +76,8 @@ var schema = buildSchema(`
     principalmakersproductionplaces: String,
     width: Int,
     height: Int,
-    principalmaker: String
+    principalmaker: String,
+    price: Int
   },
   type Painter{
     name: String,

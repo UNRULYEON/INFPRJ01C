@@ -83,6 +83,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 25px;
 }
 
 
@@ -96,18 +97,14 @@
     align-items: center; 
     justify-content: center;
     flex-direction: column;
-    
   }
 
   #emailWachtwoordForm{
-    align-items: flex-start;
-    max-width: 415px;
-    margin: 0px 75px 0px 120px;
+    margin: 10px 10px 10px 10px;
   }
 
   #Waarom {
-    flex: 1;
-    max-width: 415px;
+    margin: 10px 10px 10px 10px;
   }
 
   #lijn{
@@ -127,12 +124,18 @@
   }
 
   #naam{
+    width:100%;
     margin: 10px 10px 10px 10px;
     
   }
 
   #adres{
+    width:100%;
     margin: 10px 10px 10px 10px;
+  }
+
+  #button{
+    width: 100%;
   }
 
   #buttonsBackNext{

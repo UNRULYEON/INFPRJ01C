@@ -2,7 +2,12 @@ import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom'
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
+import Currency from 'react-currency-formatter';
 import './SchilderijDetails.css'
+
+// Material-UI
+import IconButton from '@material-ui/core/IconButton';
+import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 
 // Components
 import Img from 'react-image'
@@ -21,8 +26,10 @@ const GET_ART_DETAILS = gql`
 			amountofpaintings
 			principalmaker
 			bigsrc
+			src
 			width
 			height
+			price
 		}
 	}
 `;
@@ -35,11 +42,23 @@ class SchilderijDetails extends Component {
 		}
 	}
 
-	componentDidMount() {
-		console.log(`Painting ID: ${this.props.match.params.id}`)
+	setCart = (data) => {
+		this.props.setCart(data, 'ADD_TO_CART')
+	}
+
+	setID(id) {
+		// console.log(`Painting ID: ${id}`)
 		this.setState({
-				id: this.props.match.params.id
+				id: id
 		})
+	}
+
+	componentDidMount() {
+		this.setID(this.props.match.params.id)
+	}
+
+	componentWillReceiveProps(nextProps) {
+		this.setID(nextProps.match.params.id)
 	}
 
 	getMakerLink(maker) {
@@ -54,7 +73,66 @@ class SchilderijDetails extends Component {
 		}
 	}
 
+	price(data) {
+		let s = String(data)
+		let reversed = ''
+		let tempPriceArr = []
+		let tempPrice = ''
+		let price = ''
+
+		// for(let char of s){
+		// 	reversed = char + reversed;
+		// }
+
+		// if (reversed.length <= 3) {
+		// 	for(let char of reversed){
+		// 		tempPrice = char + tempPrice;
+		// 	}
+		// } else if (reversed.length <= 6) {
+		// 	tempPrice = `${reversed.slice(0, 3)}.${reversed.slice(3, 6)}`
+		// 	for(let char of tempPrice){
+		// 		price = char + price;
+		// 	}
+		// }
+
+
+		for(let char of s){
+			reversed = char + reversed;
+		}
+
+		if (reversed.slice(0, 3)) {
+			console.log(`0-3`)
+			tempPriceArr.push(reversed.slice(0, 3))
+			if (reversed.slice(3, 6)) {
+				console.log(`3-6`)
+				tempPriceArr.push(reversed.slice(3, 6))
+				if (reversed.slice(6, 9)) {
+					console.log(`6-9`)
+					tempPriceArr.push(reversed.slice(6, 9))
+					if (reversed.slice(9, 12)) {
+						console.log(`6-9`)
+						tempPriceArr.push(reversed.slice(9, 12))
+						if (reversed.slice(12, 15)) {
+							console.log(`6-9`)
+							tempPriceArr.push(reversed.slice(12, 15))
+						}
+					}
+				}
+			}
+		}
+
+		tempPrice = `${reversed.slice(0, 3)}.${reversed.slice(3, 6)}.${reversed.slice(6, 9)}.${reversed.slice(9, 12)}`
+
+
+		for(let char of tempPrice){
+			price = char + price;
+		}
+
+		return `${price},00`
+	}
+
 	render() {
+
 		return (
 			<Query
 				query={GET_ART_DETAILS}
@@ -86,10 +164,46 @@ class SchilderijDetails extends Component {
 								<span className="details-author">
 									{this.getMakerLink(data.paintingByID[0].principalmaker)}
 								</span>
-								<span className="details-price">{data.paintingByID[0].price || "€ PRICE"}</span>
+								<span className="details-price">
+									<Currency
+										quantity={data.paintingByID[0].price}
+										symbol="€ "
+										decimal=","
+										group="."
+									/>
+								</span>
 								<div className="details-buttons flex row-nowrap">
-									<button>Bestel nu</button>
-									<button>Huren</button>
+									<IconButton
+										color="primary"
+										aria-label="Add to shopping cart"
+										onClick={() => {
+											const id = this.props.match.params.id
+											const title = data.paintingByID[0].title
+											const principalmaker = data.paintingByID[0].principalmaker
+											const src = data.paintingByID[0].src
+											const width = data.paintingByID[0].width
+											const height = data.paintingByID[0].height
+											const price = data.paintingByID[0].price
+											const amount = 1
+	
+											const item = {
+												id,
+												title,
+												principalmaker,
+												src,
+												width,
+												height,
+												price,
+												amount
+											}
+	
+											console.log(item)
+	
+											this.setCart(item)
+										}}
+										>
+										<AddShoppingCartIcon />
+									</IconButton>
 								</div>
 								<span className="divider my-3"></span>
 								<span className="details-info">Gratis levering</span>
