@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Query } from "react-apollo";
 import Pagination from 'rc-pagination';
+import nl_NL from 'rc-pagination/lib/locale/nl_NL';
 import gql from "graphql-tag";
 import './Schilderijen.css'
 
@@ -54,10 +55,11 @@ class Schilderijen extends Component {
                 <div>
                   <Gallery images={data.paintingOrderedByPagination.collection}/>
                   <Pagination
-                    showTotal={(total, range) => `${range[0]} - ${range[1]} of ${total} items`}
+                    showTotal={(total, range) => `${range[0]} - ${range[1]} van ${total} items`}
                     total={data.paintingOrderedByPagination.total}
                     onChange={this.onChange}
                     current={this.state.page}
+                    locale={nl_NL}
                   />
                 </div>
               )
