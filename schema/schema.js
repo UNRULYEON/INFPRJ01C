@@ -30,8 +30,11 @@ var schema = buildSchema(`
     addProduct(id: String!, title: String!, releasedate: Int!, period: Int!, description: String!, physicalmedium: String!, amountofpaintings: Int!, src: String!, bigsrc: String!, plaguedescdutch: String!, prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!): String!
     alterProduct(id_number: Int!, id: String!, title: String!, releasedate: Int!, period: Int! description: String!, physicalmedium: String!, amountofpaintings: Int!, src: String!, bigsrc: String!, plaguedescdutch: String!, prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!): String
     deleteProduct(id: Int!): String
-    createbabytabel(tabelnaam: String!, array: String): String
+    createBabyTabel(tabelnaam: String!, foreignkey: [RefBaby!], type: String!): String
+    addToBabyTabel(id: Int!, foreignkey: [RefBaby!]): String
+    removeBabyTabel(id: Int!): String
   },
+  input RefBaby{foreignkey: Int!},
   type ret{
     id_number: Int,
     title: String,

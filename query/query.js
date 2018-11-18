@@ -71,27 +71,72 @@ var root = {
     return db.manyOrNone(query)
   },
   //#region Admin
-  //#region papatabel
-  async createbabytabel({tabelnaam, foreignkey}){
-    const c = await db.manyOrNone(`SELECT * from ${tabelnaam}`)
-            .then(data => {console.log(data)
-                          return data})
-            .catch(err => {console.error(err)
-            })
-    if(c.length){
-      console.log(c)
-      console.log("c exists")
-    }else(
-      console.log("c doesn't exist")
-    )
-    // // let check = `SELECT to_regclass(schema_name.table_name)`
-    // let query = `CREATE TABLE ${tabelnaam} (id serial PRIMARY KEY, foreignKey int)`
-    // // console.log(query)
-    // const create = db.one(query)
-    // // console.log(create)
-    // // console.log('ref in papa maken en inhoud in baby')
-    // return create
+  //#region papa & baby tabel
+  //Create tabel and insert data
+  async createBabyTabel({tabelnaam, foreignkey, type}){
+    if(tabelnaam == ""){
+      throw new Error("The provided name is empty!")
+    }
+    //In order to check if the table already exists
+    let tableNameCheck = await db.manyOrNone(`SELECT relname as table from pg_stat_user_tables where schemaname = 'public'`)
+                  .then(data => {return data})
+                  .catch(err => {throw new Error(`Error while checking if the given table already exists: ${err}`)})
+    tableNameCheck.forEach(element => {
+      if(element.table == tabelnaam){
+        throw new Error(`There already is a Table existing with the name '${tabelnaam}'`)
+      }
+    })
+
+    //Creating the table
+    db.one(`CREATE TABLE ${tabelnaam} (id serial PRIMARY KEY, foreignKey int)`)
+        .then()
+        .catch()
+    
+    //Inserting all data into the table
+    foreignkey.forEach(element => {
+      db.one(`INSERT INTO ${tabelnaam}(foreignkey) VALUES($1) RETURNING id`,[element.foreignkey])
+      .then()
+      .catch()
+    })
+
+    //Create ref to the newly created table in the papatabel
+    let papaInsert = await db.manyOrNone(`INSERT INTO papatabel(naam,type) VALUES($1, $2) RETURNING id`,[tabelnaam,type])
+          .then(data => {return data})
+          .catch(err => {throw new Error(err)})
+    return `Data has been inserted into row: ${papaInsert[0].id}`
   },  
+  //Add content to babytabel
+  async addToBabyTabel({id,foreignkey}){
+    let table = await db.manyOrNone(`SELECT * from papatabel WHERE id = ${id}`)
+    if(!table.length){
+      throw new Error(`The specified Table doesn't exist`)
+    }
+    let tabelnaam = table[0].naam
+    foreignkey.forEach(element => {
+      db.one(`INSERT INTO ${tabelnaam}(foreignkey) VALUES($1) RETURNING id`,[element.foreignkey])
+    })
+  },
+  //Remove tabel and link in papatabel
+  async removeBabyTabel({id}){
+    let table = await db.manyOrNone(`SELECT * from papatabel WHERE id = ${id}`)
+    if(!table.length){
+      throw new Error(`The specified Table doesn't exist`)
+    }
+
+    db.one(`DROP TABLE IF EXISTS ${tablename}`)
+
+    //In order to check if the table actually dropped
+    let tableNameCheck = await db.manyOrNone(`SELECT relname as table from pg_stat_user_tables where schemaname = 'public'`)
+                  .then(data => {return data})
+                  .catch(err => {throw new Error(`Error while checking if the table has been dropped: ${err}`)})
+    tableNameCheck.forEach(element => {
+      if(element.table == tablename){
+        throw new Error(`Failed to drop the table: '${tablename}. Please try again later.'`)
+      }
+    })
+    db.one(`DELETE FROM papatabel WHERE id = ${id}`)
+    return "The specified table has been removed from the DB"
+  },
   //#endregion
   //#region alter users
   //Add user
