@@ -85,6 +85,10 @@ var root = {
     let query = (`SELECT * from schilderijen where period = ${period}`)
     return db.manyOrNone(query)
   },
+  filterbypricedesc:() => {
+    let query = (`SELECT * from schilderijen ORDER BY price ASC`)
+    return db.manyOrNone(query)
+  },
   //#endregion
   faq: () => {
     let query = ('SELECT * from faq')
