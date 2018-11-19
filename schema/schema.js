@@ -17,6 +17,7 @@ var schema = buildSchema(`
     filterbyperiod(period: Int!): [Painting]
     faq: [FAQ]
     status: Int 
+    papatabel: [PapaGet]
   },
   type Mutation {
     signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String, adres: String, housenumber: String, city: String, 
@@ -35,13 +36,18 @@ var schema = buildSchema(`
     removeBabyTabel(id: Int!): String
   },
   input RefBaby{foreignkey: Int!},
+  type PapaGet{
+    id: Int,
+    naam: String,
+    type: String
+  },
   type ret{
     id_number: Int,
     title: String,
     principalmaker: String,
     name: String,
     id: Int,
-  }
+  },
   type Collection {
     id: ID,
     id_number: Int,
@@ -63,7 +69,7 @@ var schema = buildSchema(`
   type CollectionWithTotal{
     total: Int,
     collection: [Collection]
-  }
+  },
   type Painting{
     id: String,
     title: String,

@@ -80,6 +80,7 @@ var root = {
     let query = (`SELECT * from schilderijen where principalmaker = ${id}`)
     return db.manyOrNone(query)
   },
+  //#endregion
   //#region filters
   filterbyperiod:({period}) => {
     let query = (`SELECT * from schilderijen where period = ${period}`)
@@ -92,6 +93,10 @@ var root = {
   },
   //#region Admin
   //#region papa & baby tabel
+  //Return content of papatabel
+  papatabel: () =>{
+    return db.manyOrNone(`SELECT * FROM papatabel`)
+  },
   //Create tabel and insert data
   async createBabyTabel({tabelnaam, foreignkey, type}){
     if(tabelnaam == ""){
@@ -258,21 +263,8 @@ var root = {
     }
   },
   //#endregion
-  //#endregion
-  async me (req, res, next) {
-    if (!res.headers.authorization) {
-      console.log(`\nUser not authenticated!\n`)
-      throw new Error('You are not authenticated!')
-    }
-    var decoded = jwt.verify(
-      String(res.headers.authorization).slice(7),
-      'E28BA7D908327F1F8F08E396D60DC6FBCDB734387C2C08FCD2CF8E4C09B36AB7'
-    );
-    console.log(`\nToken: ${String(res.headers.authorization).slice(7)}`)
-    console.log(`ID: ${decoded.id}\n`)
-    let query = (`SELECT * from gebruiker where id = ${decoded.id}`)
-    return await db.manyOrNone(query)
-  },
+  //#endregion  
+  
   //#region Merging Painter & Paintings
   //Merge schilder met schilderij 1 at a time
   async merge({id_number,id}){
@@ -297,7 +289,22 @@ var root = {
     console.log("Commented for safety reasons, only uncomment when the entire collection of painters is to be inserted")
   },
   //#endregion
+  
   //#region User
+  async me (req, res, next) {
+    if (!res.headers.authorization) {
+      console.log(`\nUser not authenticated!\n`)
+      throw new Error('You are not authenticated!')
+    }
+    var decoded = jwt.verify(
+      String(res.headers.authorization).slice(7),
+      'E28BA7D908327F1F8F08E396D60DC6FBCDB734387C2C08FCD2CF8E4C09B36AB7'
+    );
+    console.log(`\nToken: ${String(res.headers.authorization).slice(7)}`)
+    console.log(`ID: ${decoded.id}\n`)
+    let query = (`SELECT * from gebruiker where id = ${decoded.id}`)
+    return await db.manyOrNone(query)
+  },
   //user signup
   async checkUser({ mail }){
     const user = await db.manyOrNone('SELECT mail from gebruiker where mail = $1', [mail])
