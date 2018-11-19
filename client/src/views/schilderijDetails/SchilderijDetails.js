@@ -31,6 +31,7 @@ const GET_ART_DETAILS = gql`
 			width
 			height
 			price
+			painter
 		}
 	}
 `;
@@ -62,10 +63,10 @@ class SchilderijDetails extends Component {
 		this.setID(nextProps.match.params.id)
 	}
 
-	getMakerLink(maker) {
+	getMakerLink(id ,maker) {
 		if (maker !== "anoniem") {
 			return (
-				<NavLink to={"/schilder/" + maker}>{maker}</NavLink>
+				<NavLink to={"/schilder/" + id}>{maker}</NavLink>
 			)
 		} else {
 			return (
@@ -74,66 +75,7 @@ class SchilderijDetails extends Component {
 		}
 	}
 
-	price(data) {
-		let s = String(data)
-		let reversed = ''
-		let tempPriceArr = []
-		let tempPrice = ''
-		let price = ''
-
-		// for(let char of s){
-		// 	reversed = char + reversed;
-		// }
-
-		// if (reversed.length <= 3) {
-		// 	for(let char of reversed){
-		// 		tempPrice = char + tempPrice;
-		// 	}
-		// } else if (reversed.length <= 6) {
-		// 	tempPrice = `${reversed.slice(0, 3)}.${reversed.slice(3, 6)}`
-		// 	for(let char of tempPrice){
-		// 		price = char + price;
-		// 	}
-		// }
-
-
-		for(let char of s){
-			reversed = char + reversed;
-		}
-
-		if (reversed.slice(0, 3)) {
-			console.log(`0-3`)
-			tempPriceArr.push(reversed.slice(0, 3))
-			if (reversed.slice(3, 6)) {
-				console.log(`3-6`)
-				tempPriceArr.push(reversed.slice(3, 6))
-				if (reversed.slice(6, 9)) {
-					console.log(`6-9`)
-					tempPriceArr.push(reversed.slice(6, 9))
-					if (reversed.slice(9, 12)) {
-						console.log(`6-9`)
-						tempPriceArr.push(reversed.slice(9, 12))
-						if (reversed.slice(12, 15)) {
-							console.log(`6-9`)
-							tempPriceArr.push(reversed.slice(12, 15))
-						}
-					}
-				}
-			}
-		}
-
-		tempPrice = `${reversed.slice(0, 3)}.${reversed.slice(3, 6)}.${reversed.slice(6, 9)}.${reversed.slice(9, 12)}`
-
-
-		for(let char of tempPrice){
-			price = char + price;
-		}
-
-		return `${price},00`
-	}
-
 	render() {
-
 		return (
 			<Query
 				query={GET_ART_DETAILS}
@@ -162,9 +104,9 @@ class SchilderijDetails extends Component {
 							</div>
 							<div className="details-container flex column-nowrap y-center">
 								<span className="details-title">{data.paintingByID[0].title || "TITLE"}</span>
-								<span className="details-author">
-									{this.getMakerLink(data.paintingByID[0].principalmaker)}
-								</span>
+									<span className="details-author">
+										{this.getMakerLink(data.paintingByID[0].painter, data.paintingByID[0].principalmaker)}
+									</span>
 								<span className="details-price">
 									<Currency
 										quantity={data.paintingByID[0].price}
