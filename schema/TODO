@@ -1,0 +1,1 @@
+bij inserten data in shoppingcart, eerst controleren of de time nieuwer is dan de huidige time in de DB

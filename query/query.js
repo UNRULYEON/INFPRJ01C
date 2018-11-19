@@ -305,17 +305,35 @@ var root = {
   //#endregion
   
   //#region User
-  async shoppingCart({gebruikerId,items,time}){
+  async shoppingCartInsert({gebruikerId,items,time}){
     let check = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${gebruikerId}`)
         .then(data => {return data})
         .catch(err => {throw new Error(err)})
     if(!check.length){
       throw new Error(`The provided user doesn't exist`)
     }
-    console.log(check[0])
-    return check[0]
-    // let query = db.one(`INSERT INTO shoppingcart(gebruikerid, items, timestamp) VALUES($1,$2,$3) RETURNING id`,[gebruikerId,items,timestamp])
-    // console.log(query)
+    let current = await db.manyOrNone(`SELECT * from shoppingcart WHERE gebruikerid = ${gebruikerId}`)
+    if(current.length){
+      if(current[0].timestamp <= time){
+        let query = await db.one(`UPDATE shoppingcart set 
+                items = $1,
+                timestamp = $2
+                WHERE gebruikerid = ${gebruikerId}`,[items,time])
+              .then(data => {return data})
+        console.log(query)
+        return query
+      }else{
+        return `Data in database is newer than the given data`
+      }
+    }else{
+      let query = await db.one(`INSERT INTO shoppingcart(gebruikerid, items, timestamp) VALUES($1,$2,$3) RETURNING id`,[gebruikerId,items,time])
+          .then(data => {return data})
+          .catch(err => {throw new Error(err)})
+      console.log(query.id)
+      db.one(`UPDATE gebruiker set kopenid = $1 WHERE id = ${gebruikerId}`,[query.id])
+
+      return `Inserted into row: ${query.id}`
+    }
   },
   async me (req, res, next) {
     if (!res.headers.authorization) {

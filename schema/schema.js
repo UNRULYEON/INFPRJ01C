@@ -38,7 +38,7 @@ var schema = buildSchema(`
     createBabyTabel(tabelnaam: String!, foreignkey: [RefBaby!], type: String!): String
     addToBabyTabel(id: Int!, foreignkey: [RefBaby!]): String
     removeBabyTabel(id: Int!): String
-    shoppingCart(gebruikerId: Int!, items: String!, time: String!): String
+    shoppingCartInsert(gebruikerId: Int!, items: String!, time: String!): String
   },
   input RefBaby{foreignkey: Int!},
   type PapaGet{
