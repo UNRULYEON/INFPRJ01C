@@ -38,6 +38,7 @@ import Contact from './views/contact/Contact';
 import FAQ from './views/faq/FAQ';
 import Login from './views/login/Login';
 import Cart from './views/cart/Cart';
+import Order from './views/order/Order';
 import Registreren from './views/registreren/Registreren';
 import Account from './views/account/Account';
 import Details from './views/details/Details';
