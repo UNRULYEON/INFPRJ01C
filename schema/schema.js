@@ -15,6 +15,8 @@ var schema = buildSchema(`
     checkUser(mail: String!): Boolean!
     me: User
     filterbyperiod(period: Int!): [Painting]
+    filterbypriceasc: [Painting]
+    filterbypricedesc: [Painting]
     faq: [FAQ]
     status: Int 
     papatabel: [PapaGet]
