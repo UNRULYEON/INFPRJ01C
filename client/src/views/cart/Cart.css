@@ -40,8 +40,8 @@
 
 .draggable-action-date{
   display: flex;
-  flex-flow: column nowrap;
-  justify-content: center;
+  flex-flow: row nowrap;
+  align-self: center;
 }
 
 .picker{

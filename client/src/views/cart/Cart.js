@@ -115,7 +115,7 @@ class Cart extends Component {
 	getList = id => this.state[this.id2List[id]];
 
 	componentDidMount = () => {
-		!this.props.cart.items.length >= 1 ? this.setState({buttonDisabledState: false}) : this.setState({buttonDisabledState: true})
+		this.props.order.items.length >= 1 || this.props.rental.items.length >= 1 ? this.setState({buttonDisabledState: false}) : this.setState({buttonDisabledState: true})
 	}
 
 	onDragEnd = (result) => {
@@ -150,17 +150,15 @@ class Cart extends Component {
 							destination
 					);
 
-					if (result.cart) {
-						if (!result.cart.length) {
+					if (result.cart && result.order) {
+						this.props.updateCart(result.cart)
+						this.props.updateOrder(result.order)
+
+						if (result.order.length >= 1 || this.state.rental.length >= 1) {
 							this.setState({buttonDisabledState: false})
 						} else {
 							this.setState({buttonDisabledState: true})
 						}
-					}
-
-					if (result.cart && result.order) {
-						this.props.updateCart(result.cart)
-						this.props.updateOrder(result.order)
 
 						this.setState({
 							cart: result.cart,
@@ -170,6 +168,12 @@ class Cart extends Component {
 						this.props.updateCart(result.cart)
 						this.props.updateRental(result.rental)
 
+						if (result.rental.length >= 1 || this.state.order.length >= 1) {
+							this.setState({buttonDisabledState: false})
+						} else {
+							this.setState({buttonDisabledState: true})
+						}
+
 						this.setState({
 							cart: result.cart,
 							rental: result.rental
@@ -177,6 +181,12 @@ class Cart extends Component {
 					} else if (result.order && result.rental) {
 						this.props.updateOrder(result.order)
 						this.props.updateRental(result.rental)
+
+						if (result.order.length >= 1 || result.rental.length >= 1) {
+							this.setState({buttonDisabledState: false})
+						} else {
+							this.setState({buttonDisabledState: true})
+						}
 
 						this.setState({
 							order: result.order,
@@ -444,6 +454,7 @@ class Cart extends Component {
 																							locale={nlLocale}
 																						>
 																						<div>
+																							Van: 
  																							<Tooltip title="Wijzig start-datum" enterDelay={500} leaveDelay={200}>
 																								<Button onClick={() => {this.openPicker('start')}}>
 																									<Moment
@@ -472,6 +483,7 @@ class Cart extends Component {
 																							</div>
 																						</div>
 																						<div>
+																							Tot:
  																							<Tooltip title="Wijzig eind-datum" enterDelay={500} leaveDelay={200}>
 																								<Button onClick={() => {this.openPicker('end')}}>
 																									<Moment
