@@ -17,7 +17,7 @@ var root = {
     return db.manyOrNone(query)
   },
   async paintingOrderedByPagination ({ page }) {
-    let offset = (page - 1) * 10
+    let offset = (page - 1) * 12
     // let query = (`SELECT * FROM schilderijen LIMIT 10 OFFSET ${offset}`)
 
     const total = await db.manyOrNone('SELECT COUNT(*) from schilderijen')
@@ -25,7 +25,7 @@ var root = {
                           return data
                         })
 
-    const preQuery = await db.manyOrNone(`SELECT * FROM schilderijen LIMIT 10 OFFSET ${offset}`)
+    const preQuery = await db.manyOrNone(`SELECT * FROM schilderijen LIMIT 12 OFFSET ${offset}`)
                         .then( data => {
                           return data
                         })
