@@ -87,12 +87,18 @@ var root = {
     return db.manyOrNone(query)
   },
   filterbypriceasc:() => { 
-    let query = (`SELECT * from schilderijen ORDER BY price DESC`)
+    let query = (`SELECT * from schilderijen ORDER BY price asc`)
     return db.manyOrNone(query)
   },
   filterbypricedesc:() => {
-    let query = (`SELECT * from schilderijen ORDER BY price ASC`)
+    let query = (`SELECT * from schilderijen ORDER BY price desc`)
     return db.manyOrNone(query)
+  },
+  filterbytitleasc:()=>{
+    return db.manyOrNone(`SELECT * FROM schilderijen ORDER BY title asc`)
+  },
+  filterbytitledesc:()=>{
+    return db.manyOrNone(`SELECT * FROM schilderijen ORDER BY title desc`)
   },
   //#endregion
   faq: () => {
@@ -299,6 +305,18 @@ var root = {
   //#endregion
   
   //#region User
+  async shoppingCart({gebruikerId,items,time}){
+    let check = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${gebruikerId}`)
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
+    if(!check.length){
+      throw new Error(`The provided user doesn't exist`)
+    }
+    console.log(check[0])
+    return check[0]
+    // let query = db.one(`INSERT INTO shoppingcart(gebruikerid, items, timestamp) VALUES($1,$2,$3) RETURNING id`,[gebruikerId,items,timestamp])
+    // console.log(query)
+  },
   async me (req, res, next) {
     if (!res.headers.authorization) {
       console.log(`\nUser not authenticated!\n`)

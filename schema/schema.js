@@ -17,6 +17,8 @@ var schema = buildSchema(`
     filterbyperiod(period: Int!): [Painting]
     filterbypriceasc: [Painting]
     filterbypricedesc: [Painting]
+    filterbytitleasc: [Painting]
+    filterbytitledesc: [Painting]
     faq: [FAQ]
     status: Int 
     papatabel: [PapaGet]
@@ -36,6 +38,7 @@ var schema = buildSchema(`
     createBabyTabel(tabelnaam: String!, foreignkey: [RefBaby!], type: String!): String
     addToBabyTabel(id: Int!, foreignkey: [RefBaby!]): String
     removeBabyTabel(id: Int!): String
+    shoppingCart(gebruikerId: Int!, items: String!, time: String!): String
   },
   input RefBaby{foreignkey: Int!},
   type PapaGet{
@@ -87,8 +90,7 @@ var schema = buildSchema(`
     width: Int,
     height: Int,
     principalmaker: String,
-    price: Int,
-    painter: Int
+    price: Int
   },
   type Painter{
     name: String,
