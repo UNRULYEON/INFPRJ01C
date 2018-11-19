@@ -34,9 +34,29 @@ var root = {
       collection: preQuery
     }
   },
-  paintingByID: ({id}) => {
-    let query = (`SELECT * from schilderijen where id_number = ${id}`)
-    return db.manyOrNone(query)
+  async paintingByID ({id}){
+    let queryPainting = await db.manyOrNone(`SELECT * from schilderijen where id_number = ${id}`)
+    let painting = queryPainting[0]
+    let queryPainter = await db.manyOrNone(`SELECT schilder from schilderschilderij where schilderij = ${id}`)
+    let painter = queryPainter[0].schilder
+    return[{
+            id: painting.id,
+            title: painting.title,
+            releasedate: painting.releasedate,
+            period: painting.period,
+            description: painting.description,
+            physicalmedium: painting.physicalmedium,
+            amountofpaintings: painting.amountofpaintings,
+            src: painting.src,
+            bigsrc: painting.bigsrc,
+            plaquedescriptiondutch: painting.plaquedescriptiondutch,
+            principalmakersproductionplaces: painting.principalmakersproductionplaces,
+            width: painting.width,
+            height: painting.height,
+            principalmaker: painting.principalmaker,
+            price: painting.price,
+            painter: painter
+    }]
   },
   PaintingsByPainter: ({id}) => {
     let query = (`SELECT * from schilderijen, schilder WHERE schilderijen.id_number = ${id} AND schilderijen.principalmaker = schilder.name`)
