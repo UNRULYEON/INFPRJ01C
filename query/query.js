@@ -438,6 +438,7 @@ var root = {
       address: user[0].adres,
       city: user[0].city,
       postalcode: user[0].postalcode,
+      paymentmethod: user[0].paymentmethod,
       token: token
     }
 

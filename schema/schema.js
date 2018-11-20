@@ -90,7 +90,8 @@ var schema = buildSchema(`
     width: Int,
     height: Int,
     principalmaker: String,
-    price: Int
+    price: Int,
+    painter: String
   },
   type Painter{
     name: String,
@@ -115,7 +116,8 @@ var schema = buildSchema(`
     city: String,
     postalcode: String,
     password: String,
-    aanhef: String    
+    aanhef: String,
+    paymentmethod: String
   },
   type UserWithToken { 
     id: Int,
@@ -128,7 +130,8 @@ var schema = buildSchema(`
     postalcode: String,
     password: String,
     aanhef: String,
-    token: String    
+    paymentmethod: String,
+    token: String
   },
   type FAQ{
     id: Int,
