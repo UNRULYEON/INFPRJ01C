@@ -38,7 +38,7 @@ import Contact from './views/contact/Contact';
 import FAQ from './views/faq/FAQ';
 import Login from './views/login/Login';
 import Cart from './views/cart/Cart';
-// import Order from './views/order/Order';
+import Order from './views/order/Order';
 import Registreren from './views/registreren/Registreren';
 import Account from './views/account/Account';
 import Details from './views/details/Details';
@@ -170,8 +170,10 @@ class App extends Component {
         surname: '',
         email: '',
         address: '',
+        house_number: '',
         city: '',
         postalcode: '',
+        paymentmethod: '',
         cellphone: ''
       },
       loggedIn: false,
@@ -210,8 +212,10 @@ class App extends Component {
           surname: localUser.surname,
           email: localUser.email,
           address: localUser.address,
+          house_number: localUser.house_number,
           city: localUser.city,
           postalcode: localUser.postalcode,
+          paymentmethod: localUser.paymentmethod,
           cellphone: localUser.cellphone
         },
         loggedIn: true
@@ -255,8 +259,10 @@ class App extends Component {
         surname: data.surname,
         email: data.email,
         address: data.address,
+        house_number: data.house_number,
         city: data.city,
         postalcode: data.postalcode,
+        paymentmethod: data.paymentmethod,
         cellphone: data.cellphone
       },
       loggedIn: isLoggedIn
@@ -270,8 +276,10 @@ class App extends Component {
         surname: data.surname,
         email: data.email,
         address: data.address,
+        house_number: data.house_number,
         city: data.city,
         postalcode: data.postalcode,
+        paymentmethod: data.paymentmethod,
         cellphone: data.cellphone
       }))
     } else {
@@ -520,6 +528,16 @@ class App extends Component {
                     updateCart={this.updateCart}
                     updateOrder={this.updateOrder}
                     updateRental={this.updateRental}
+                    loggedIn={this.state.loggedIn}
+                />} />
+                <Route
+                  path="/order"
+                  render={(props) => <Order
+                    {...props}
+                    user={this.state.user}
+                    cart={this.state.cart}
+                    order={this.state.order}
+                    rental={this.state.rental}
                     loggedIn={this.state.loggedIn}
                 />} />
                 <Route path="/registreren" component={Registreren} />

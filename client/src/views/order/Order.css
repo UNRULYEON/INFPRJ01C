@@ -1,18 +1,116 @@
-
-.account-title-greeting{
-  color: #808080;
-  margin: -20px 0;
-  font-size: 1.25em;
+.stepper-container{
+  width: 100%;
+  display: flex;
 }
 
-.account-title-account{
-  text-transform: capitalize;
-  font-family: "IBM Plex Sans", 'Roboto', sans-serif;
-  font-size: 1.5em;
-  margin-top: 15px;
+.stepper{
+  width: 100%;
 }
 
-.account-list{
+.order-action-container{
+display: flex;
+flex-flow: row nowrap;
+justify-content: center;
+}
+
+.stepper-content-container{
+  margin: 50px 0;
+}
+
+.order-form-details{
+  display: flex;
+  flex-flow: row nowrap;
+  margin: 0 0 20px 0;
+}
+
+.order-form-details-column{
   display: flex;
   flex-flow: column nowrap;
+  flex-basis: 100%;
+  padding: 0 20px;
+}
+
+#order-form-details-column-lables{
+  max-width: 500px;
+}
+
+.order-form-details-row{
+  display: flex;
+  flex-flow: row nowrap;
+  width: 100%;
+  justify-content: center;
+}
+
+.order-form-details-row-label{
+  display: flex;
+  flex-flow: row nowrap;
+  align-self: flex-end;
+  height: 50px;
+}
+
+.order-form-details-row-input{
+  display: flex;
+  flex-flow: row nowrap;
+  align-self: flex-start;
+  height: 50px;
+}
+
+.order-form-details-row-input > .MuiFormControl-root-1{
+  margin-top: 8px;
+}
+
+.order-form-details-radio{
+  display: flex;
+  flex-flow: row nowrap !important;
+}
+
+.order-input-divider{
+  height: 100%;
+  width: 20px;
+}
+
+.order-ov-span{
+  font-family: 'IBM Plex Sans';
+  font-size: 2em;
+}
+
+.order-ov-title{
+  background: #eeeeee;
+  padding: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.order-ov-details{
+  font-size: 1.2em;
+}
+
+.order-ov-divider{
+  width: 100%;
+  height: 10px
+}
+
+.order-item-wrapper{
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  font-size: 15px;
+  border: 1px solid #eeeeee;
+  padding: 0 20px;
+}
+
+.order-item-title{
+  font-family: 'Roboto', sans-serif;
+  text-decoration: none;
+}
+
+.order-item-price{
+  text-align: right;
+  min-width: 130px;
+}
+
+.order-item-divider{
+  width: 100%;
+  height: 1px;
+  background: #ddd;
 }

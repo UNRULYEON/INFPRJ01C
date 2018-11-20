@@ -576,7 +576,7 @@ class Cart extends Component {
 						variant="contained"
 						disabled={this.state.buttonDisabledState}
 					>
-						<Link to={"/"} className="cart-button-continue">
+						<Link to={"/order"} className="cart-button-continue">
 							Doorgaan
 						</Link>
 					</Button>

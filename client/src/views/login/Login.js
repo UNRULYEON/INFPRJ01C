@@ -36,6 +36,7 @@ const LOGIN = gql`
       city
       postalcode
       token
+      paymentmethod
     }
   }
 `;
