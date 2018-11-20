@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-// import {
-//     Link,
-//     Redirect
-// } from 'react-router-dom';
+import {
+    Redirect
+} from 'react-router-dom';
 import Currency from 'react-currency-formatter';
 import './Order.css'
 
@@ -56,7 +55,7 @@ const theme = new createMuiTheme({
 
 
 function getSteps() {
-  return ['Bestel- en huurlijst', 'Gegevens', 'Betaalwijze', 'Overzicht', 'Betaalt!'];
+  return ['Koop- en huurlijst', 'Gegevens', 'Betaalwijze', 'Overzicht', 'Betaalt!'];
 }
 class Order extends Component {
   constructor(props){
@@ -77,7 +76,8 @@ class Order extends Component {
       huisnummer: this.props.user.house_number,
       postcode: this.props.user.postalcode,
       stad: this.props.user.city,
-      betaalwijze: this.props.user.paymentmethod
+      betaalwijze: this.props.user.paymentmethod,
+      redirect: false
     }
   }
 
@@ -401,7 +401,7 @@ class Order extends Component {
       case 4:
       return (
         <div className="stepper-content-container">
-          step 5
+          <h3 className="order-payment-successfull">Betaling successvol!</h3>
         </div>
       );
       default:
@@ -452,7 +452,8 @@ class Order extends Component {
   handleBack = () => {
     if (this.state.activeStep - 1 === 0) {
       this.setState(state => ({
-        buttonDisabled: false
+        // buttonDisabled: false
+        redirect: true
       }));
     }
 
@@ -473,6 +474,9 @@ class Order extends Component {
     const { activeStep } = this.state;
     return (
       <section className="section-container">
+      {this.state.redirect ? (
+        <Redirect to="/winkelwagen" push />
+      ) : null}
         <PageTitle title="Orderprocess"/>
         <div className="stepper-container">
           <Stepper activeStep={activeStep} alternativeLabel className="stepper">
@@ -495,7 +499,7 @@ class Order extends Component {
               <Typography className={classes.instructions}>{this.getStepContent(activeStep)}</Typography>
               <div className="order-action-container">
                 <div>
-                  {activeStep === 0 ? null : (
+                  {activeStep === 0 | activeStep === 4 ? null : (
                     <Button
                     variant="outlined"
                     disabled={activeStep === 0}
@@ -505,6 +509,7 @@ class Order extends Component {
                     Terug
                     </Button>
                   )}
+                  {activeStep === 4 ? null : (
                   <MuiThemeProvider theme={theme}>
                     <Button
                       variant="contained"
@@ -514,6 +519,7 @@ class Order extends Component {
                       {activeStep === steps.length - 2 ? 'Betaal' : 'Volgende'}
                     </Button>
                   </MuiThemeProvider>
+                  )}
                 </div>
               </div>
             </div>

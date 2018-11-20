@@ -281,9 +281,9 @@ class Cart extends Component {
   render() {
     return (
       <section className="section-container">
-        <PageTitle title="Winkelwagen"/>
+        <PageTitle title="Mijn lijst"/>
 				<DragDropContext onDragEnd={this.onDragEnd}>
-					<h3>Winkelwagen</h3>
+					<h3>Mijn lijst</h3>
 					<Droppable droppableId="cart" className="droppable-component">
 							{(provided, snapshot) => (
 									<div
@@ -342,7 +342,7 @@ class Cart extends Component {
 									</div>
 							)}
 					</Droppable>
-					<h3>Bestellijst</h3>
+					<h3>Kooplijst</h3>
 					<Droppable droppableId="order">
 							{(provided, snapshot) => (
 									<div

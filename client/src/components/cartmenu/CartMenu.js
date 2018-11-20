@@ -56,7 +56,7 @@ class CartMenu extends Component {
         pose={this.props.menu ? 'open' : 'closed'}
         className="dropdown-cart"
       >
-        <span className="menu-title">Winkelwagen</span>
+        <span className="menu-title">Mijn lijst</span>
         <div className="cart-container">
           {this.props.cart.items.length ? (
             <CartList
@@ -64,16 +64,16 @@ class CartMenu extends Component {
               closeModal={this.props.closeModal}
               />
           ) : (
-            <p className="cart-no-items">Je hebt niks in je winkelwagen!</p>
+            <p className="cart-no-items">Je hebt niks in je lijst!</p>
           )}
-          <p className="cart-type-title">Bestellijst</p>
+          <p className="cart-type-title">Kooplijst</p>
           {this.props.order.items.length ? (
             <CartList
               list={this.props.order}
               closeModal={this.props.closeModal}
               />
           ) : (
-            <p className="cart-no-items">Je hebt niks in je bestelllijst!</p>
+            <p className="cart-no-items">Je hebt niks in je kooplijst!</p>
           )}
           <p className="cart-type-title">Huurlijst</p>
           {this.props.rental.items.length ? (
@@ -94,7 +94,7 @@ class CartMenu extends Component {
                 variant="outlined"
                 fullWidth
               >
-                Bekijk je winkelwagen
+                Bekijk je lijst
               </Button>
             </Link>
           </MuiThemeProvider>
