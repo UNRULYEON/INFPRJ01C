@@ -117,8 +117,7 @@ var schema = buildSchema(`
     postalcode: String,
     paymentmethod: String,
     password: String,
-    aanhef: String,
-    paymentmethod: String
+    aanhef: String
   },
   type UserWithToken { 
     id: Int,
@@ -129,7 +128,6 @@ var schema = buildSchema(`
     housenumber: String,
     city: String,
     postalcode: String,
-    paymentmethod: String,
     password: String,
     aanhef: String,
     paymentmethod: String,
