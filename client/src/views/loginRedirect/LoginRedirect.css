@@ -1,0 +1,44 @@
+.login-container{
+  max-width: 350px;
+  display: block;
+  margin: 0 auto;
+  border: 1px solid #eeeeee;
+  padding: 20px;
+  display: flex;
+  flex-flow: column nowrap;
+}
+.menu-title{
+  font-family: "IBM Plex Sans", 'Roboto', sans-serif;
+  font-size: 1.5em;
+  margin: 15px;
+}
+
+.login-form{
+  display: flex;
+  flex-flow: column nowrap;
+  margin: 10px 15px 10px 15px;
+}
+
+.login-form > .login-input{
+  margin-bottom: 15px;
+}
+
+.login-button{
+  margin: 0 15px 15px 15px !important;
+  width: calc(100% - 30px);
+}
+
+.onboarding-link-login{
+  width: 100%;
+}
+
+.continue-without-login{
+  max-width: 392px;
+  display: block;
+  margin: 20px auto 0 auto;
+}
+
+.continue-without-link-login{
+  width: 100%;
+  margin: 0 !important;
+}

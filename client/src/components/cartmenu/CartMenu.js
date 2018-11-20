@@ -87,7 +87,7 @@ class CartMenu extends Component {
         </div>
         <div className="cart-actions">
           <MuiThemeProvider theme={theme}>
-            <Link to={`/winkelwagen`} onClick={this.props.closeModal}>
+            <Link to={`/mijnlijst`} onClick={this.props.closeModal}>
               <Button
                 color="primary"
                 className="cart-action-order"

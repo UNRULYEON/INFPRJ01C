@@ -12,7 +12,6 @@ import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Input from '@material-ui/core/Input';
 import FormControl from '@material-ui/core/FormControl';
@@ -73,7 +72,7 @@ class Order extends Component {
       naam: this.props.user.name,
       achternaam: this.props.user.surname,
       straat: this.props.user.address,
-      huisnummer: this.props.user.house_number,
+      huisnummer: this.props.user.housenumber,
       postcode: this.props.user.postalcode,
       stad: this.props.user.city,
       betaalwijze: this.props.user.paymentmethod,
@@ -410,7 +409,6 @@ class Order extends Component {
   }
 
   handleNext = () => {
-
     if (this.state.activeStep + 1 === 0) {
       this.setState(state => ({
         buttonDisabled: false
@@ -475,9 +473,9 @@ class Order extends Component {
     return (
       <section className="section-container">
       {this.state.redirect ? (
-        <Redirect to="/winkelwagen" push />
+        <Redirect to="/mijnlijst" push />
       ) : null}
-        <PageTitle title="Orderprocess"/>
+        <PageTitle title="Bestellen"/>
         <div className="stepper-container">
           <Stepper activeStep={activeStep} alternativeLabel className="stepper">
             {steps.map(label => {
@@ -496,7 +494,7 @@ class Order extends Component {
             </div>
           ) : (
             <div>
-              <Typography className={classes.instructions}>{this.getStepContent(activeStep)}</Typography>
+              <div className={classes.instructions}>{this.getStepContent(activeStep)}</div>
               <div className="order-action-container">
                 <div>
                   {activeStep === 0 | activeStep === 4 ? null : (
@@ -516,7 +514,7 @@ class Order extends Component {
                       color={activeStep === steps.length - 2 ? 'primary' : 'secondary'}
                       onClick={this.handleNext}
                       disabled={this.state.buttonDisabled}>
-                      {activeStep === steps.length - 2 ? 'Betaal' : 'Volgende'}
+                      {activeStep === steps.length - 2 ? 'Betalen' : 'Volgende'}
                     </Button>
                   </MuiThemeProvider>
                   )}

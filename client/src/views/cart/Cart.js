@@ -571,15 +571,27 @@ class Cart extends Component {
 			</div>
 			<div className="cart-button-next">
 			<MuiThemeProvider theme={theme}>
+			{this.props.loggedIn ? (
+				<Link to={"/order"} className="cart-button-continue">
 					<Button
 						color="primary"
 						variant="contained"
 						disabled={this.state.buttonDisabledState}
 					>
-						<Link to={"/order"} className="cart-button-continue">
-							Doorgaan
-						</Link>
+						Doorgaan
 					</Button>
+				</Link>
+			) : (
+				<Link to={"/login-redirect"} className="cart-button-continue">
+					<Button
+						color="primary"
+						variant="contained"
+						disabled={this.state.buttonDisabledState}
+					>
+						Doorgaan
+					</Button>
+				</Link>
+			)}
 			</MuiThemeProvider>
 			</div>
       </section>

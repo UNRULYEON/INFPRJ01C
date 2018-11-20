@@ -33,6 +33,7 @@ const LOGIN = gql`
       surname
       email
       address
+      housenumber
       city
       postalcode
       token

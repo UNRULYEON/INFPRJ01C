@@ -37,6 +37,7 @@ import Search from './views/search/Search';
 import Contact from './views/contact/Contact';
 import FAQ from './views/faq/FAQ';
 import Login from './views/login/Login';
+import LoginRedirect from './views/loginRedirect/LoginRedirect';
 import Cart from './views/cart/Cart';
 import Order from './views/order/Order';
 import Registreren from './views/registreren/Registreren';
@@ -170,7 +171,7 @@ class App extends Component {
         surname: '',
         email: '',
         address: '',
-        house_number: '',
+        housenumber: '',
         city: '',
         postalcode: '',
         paymentmethod: '',
@@ -212,7 +213,7 @@ class App extends Component {
           surname: localUser.surname,
           email: localUser.email,
           address: localUser.address,
-          house_number: localUser.house_number,
+          housenumber: localUser.housenumber,
           city: localUser.city,
           postalcode: localUser.postalcode,
           paymentmethod: localUser.paymentmethod,
@@ -259,7 +260,7 @@ class App extends Component {
         surname: data.surname,
         email: data.email,
         address: data.address,
-        house_number: data.house_number,
+        housenumber: data.housenumber,
         city: data.city,
         postalcode: data.postalcode,
         paymentmethod: data.paymentmethod,
@@ -276,7 +277,7 @@ class App extends Component {
         surname: data.surname,
         email: data.email,
         address: data.address,
-        house_number: data.house_number,
+        housenumber: data.housenumber,
         city: data.city,
         postalcode: data.postalcode,
         paymentmethod: data.paymentmethod,
@@ -364,7 +365,7 @@ class App extends Component {
           this.setState({
             snackbarOpen: true,
             snackbarVariant: "error",
-            snackbarMessage: "Het item zit al in je winkelwagen"
+            snackbarMessage: "Het item zit al in je lijst"
           });
         } else if (alreadyInOrder) {
           this.setState({
@@ -382,7 +383,7 @@ class App extends Component {
           this.setState({
             snackbarOpen: true,
             snackbarVariant: "success",
-            snackbarMessage: "Het item is toegevoegd aan je winkelwagen"
+            snackbarMessage: "Het item is toegevoegd aan je lijst"
           });
         }
         break;
@@ -516,8 +517,15 @@ class App extends Component {
                     loggedIn={this.state.loggedIn}
                     setUser={this.setUser}
                   />} />
+                  <Route
+                    path="/login-redirect"
+                    render={(props) => <LoginRedirect
+                      {...props}
+                      loggedIn={this.state.loggedIn}
+                      setUser={this.setUser}
+                    />} />
                 <Route
-                  path="/winkelwagen"
+                  path="/mijnlijst"
                   render={(props) => <Cart
                     {...props}
                     user={this.state.user}

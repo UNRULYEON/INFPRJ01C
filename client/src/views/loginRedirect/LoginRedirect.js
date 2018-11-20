@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
 import {
-    Link,
-    Redirect
+    Link
 } from 'react-router-dom';
 
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
-
-import posed from "react-pose";
 
 // Material-UI
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
@@ -22,31 +19,34 @@ import FormControl from '@material-ui/core/FormControl';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
-import './AccountMenu.css';
+import './LoginRedirect.css'
 
-const Menu = posed.div({
-  open: {
-    opacity: 1,
-    transition: {
-      duration: '200'
-    },
-    applyAtStart: { display: 'flex', margin: '10px 0 0 -260px' }
-  },
-  closed: {
-    opacity: 0,
-    transition: {
-      duration: '200'
-    },
-    applyAtEnd: { display: 'none', margin: '0 0 0 0' },
+// Components
+import PageTitle from '../../components/pageLink/PageLink'
+
+const LOGIN = gql`
+  mutation Login($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      id
+      aanhef
+      name
+      surname
+      email
+      address
+      housenumber
+      city
+      postalcode
+      token
+      paymentmethod
+    }
   }
-})
+`;
 
 const theme = new createMuiTheme({
   palette: {
     primary: {
       main: '#43a047'
     },
-    type: 'dark'
   },
   typography: {
     useNextVariants: true,
@@ -60,40 +60,16 @@ const theme = new createMuiTheme({
   },
 });
 
-const LOGIN = gql`
-  mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-      id
-      aanhef
-      name
-      surname
-      email
-      address
-      city
-      postalcode
-      token
-      paymentmethod
-    }
-  }
-`;
-
-class AccountMenu extends Component {
+class LoginRedirect extends Component {
   constructor(props){
     super(props);
     this.state = {
       email: '',
       password: '',
       showPassword: false,
-      buttonDisabled: false,
+      buttonState: false,
       snackbar: false,
-      redirect: false
-    };
-  }
-
-  componentWillMount() {
-    this.setState({
-      redirect: false,
-    });
+    }
   }
 
   handleChange = name => event => {
@@ -122,76 +98,25 @@ class AccountMenu extends Component {
     this.setState(state => ({ showPassword: !state.showPassword }));
   }
 
-  closeModal() {
-    this.props.closeModal()
-    this.setState({
-      buttonDisabled: false
-    });
-  }
-
   setUserApp(user, isLoggedIn) {
     this.props.setUser(user, isLoggedIn)
   }
 
-  getTime() {
-    let t = new Date().getHours()
-
-    if (t >= 0 & t < 6) {
-      return "Goedenavond"
-    } else if (t >= 6 && t < 12) {
-      return "Goedemorgen"
-    } else if (t >= 12 && t < 18) {
-      return "Goedemiddag"
-    } else {
-      return "Goedenavond"
+  componentDidMount = () => {
+    if (this.props.loggedIn) {
+      console.log(`User is logged in, directing to account page`)
+      this.props.history.push('/mijnlijst')
     }
   }
 
   render() {
-    const emptyUser = {
-      id: '',
-      aanhef: '',
-      name: '',
-      surname: '',
-      email: '',
-      address: '',
-      city: '',
-      postalcode: '',
-      cellphone: ''
-    }
-
     return (
-      <Menu
-        pose={this.props.menu ? 'open' : 'closed'}
-        className="dropdown"
-      >
-      {this.state.redirect ? (
-        <Redirect to="/" push />
-      ) : null}
-      {this.props.loggedIn ? (
-        <div className="dropdown-account">
-          <p className="menu-title-greeting">{this.getTime()}</p>
-          <p className="menu-title-account">{this.props.user.name}</p>
-          <Link to={`/user/${this.props.user.name}/gegevens`} onClick={this.props.closeModal} className="menu-account-link">Mijn gegevens</Link>
-          <Link to={`/user/${this.props.user.name}/bestellijst`} onClick={this.props.closeModal} className="menu-account-link">Mijn bestellijst</Link>
-          <Link to={`/user/${this.props.user.name}/huurlijst`} onClick={this.props.closeModal} className="menu-account-link">Mijn huurlijst</Link>
-
-          <Button
-            color="primary"
-            className="logout-button"
-            variant="outlined"
-            onClick={() => this.setUserApp(emptyUser, false)}
-            disabled={this.state.buttonState}
-          >
-            Log uit
-          </Button>
-        </div>
-      ) : (
-        <div className="dropdown-login">
-          <p className="menu-title">Account</p>
-          <form className="dropdown-form">
+      <section className="section-container">
+        <PageTitle title="Login" center={true}/>
+        <div className="login-container">
+          <form className="login-form">
             <TextField
-              id="account-menu-input-email"
+              id="input-email"
               className="login-input"
               label="Email"
               type="email"
@@ -199,7 +124,6 @@ class AccountMenu extends Component {
               autoComplete="email"
               value={this.state.email}
               onChange={this.handleChange('email')}
-              autoFocus={this.props.menu}
               inputProps={{
                 'aria-label': 'Email'
               }}
@@ -207,7 +131,7 @@ class AccountMenu extends Component {
             <FormControl className="login-input">
               <InputLabel htmlFor="adornment-password">Wachtwoord</InputLabel>
               <Input
-                id="account-menu-adornment-password"
+                id="adornment-password"
                 type={this.state.showPassword ? 'text' : 'password'}
                 value={this.state.password}
                 autoComplete="current-password"
@@ -233,23 +157,16 @@ class AccountMenu extends Component {
               mutation={LOGIN}
               ignoreResults={false}
               onCompleted={(data) => {
-                this.props.closeModal
-                this.setUserApp(data.login, true)
-                this.setState({
-                  email: '',
-                  password: '',
-                  buttonDisabled: false
-                })
+                console.log(`Query completed: ${data.login}`)
                 localStorage.setItem('AUTH_TOKEN', data.login.token)
-                this.setState({
-                  redirect: true
-                })
+                this.setUserApp(data.login, true)
+                this.props.history.push('/order')
               }}
               onError={(error) => {
                 console.error(`Query failed: ${error}`)
                 this.handleSnackbarClick()
                 this.setState({
-                  buttonDisabled: false
+                  buttonState: false
                 });
               }}
             >
@@ -258,19 +175,19 @@ class AccountMenu extends Component {
                   color="primary"
                   className="login-button"
                   variant="contained"
-                  disabled={this.state.buttonDisabled}
+                  disabled={this.state.buttonState}
                   onClick={e => {
                     e.preventDefault();
                     // Set buttons to disabled
                     this.setState({
-                      buttonDisabled: true,
+                      buttonState: true,
                     });
 
                     // Check email and password
                     if(!(/\S+@\S+\.\S+/).test(this.state.email)) {
                       this.handleSnackbarClick()
                       this.setState({
-                        buttonDisabled: false,
+                        buttonState: false,
                       });
                       return
                     }
@@ -286,29 +203,47 @@ class AccountMenu extends Component {
                 </Button>
               )}
             </Mutation>
+
+          <Link to={"/registreren"} className="onboarding-link-login">
+            <Button
+              color="primary"
+              className="login-button"
+              variant="outlined"
+              disabled={this.state.buttonState}
+            >
+              Maak een account aan
+            </Button>
+          </Link>
           </MuiThemeProvider>
-          <div className="onboarding-container">
-            <span>Nieuw bij ARTIC?</span>
-            <Link to={"/registreren"} onClick={this.props.closeModal} className="onboarding-link">Maak een account aan</Link>
-          </div>
-          <Snackbar
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
-            }}
-            open={this.state.snackbar}
-            autoHideDuration={6000}
-            onClose={this.handleSnackbarClose}
-            ContentProps={{
-              'aria-describedby': 'message-id',
-            }}
-            message={<span id="message-id">Het email en/of het wachtwoord is onjuist.<br/>Probeer het opnieuw.</span>}
-          />
         </div>
-      )}
-      </Menu>
+        <div className="continue-without-login">
+          <Link to={"/order"} className="continue-without-link-login">
+            <Button
+              color="primary"
+              className="continue-without-link-login"
+              variant="outlined"
+              disabled={this.state.buttonState}
+            >
+              Doorgaan zonder inloggen
+            </Button>
+          </Link>
+        </div>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          open={this.state.snackbar}
+          autoHideDuration={6000}
+          onClose={this.handleSnackbarClose}
+          ContentProps={{
+            'aria-describedby': 'message-id',
+          }}
+          message={<span id="message-id">Het email en/of het wachtwoord is onjuist.<br/>Probeer het opnieuw.</span>}
+        />
+      </section>
     );
   }
 }
 
-export default AccountMenu;
+export default LoginRedirect;
