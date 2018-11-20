@@ -179,14 +179,14 @@ var root = {
   //#endregion
   //#region alter users
   //Add user
-  async addUser({name, surname, mail, password, aanhef, adres = null, city = null, postalcode = null, housenumber = null}){
+  async addUser({name, surname, mail, password, aanhef, adres = null, city = null, postalcode = null, housenumber = null, paymentmethod = null}){
     const saltedPassword = await bcrypt.hash(password,10)
     const user = await db.manyOrNone(`SELECT mail from gebruiker where mail = $1`,[mail])
     if(user.length){
       throw new Error('User with this email already exists')
     }
-    return await db.one(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber) 
-    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`, 
+    return await db.one(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod) 
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`, 
     [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber])
     .then(data => {console.log(`\nUser ID: ${data.id}`)
                     return data.id})
@@ -210,9 +210,10 @@ var root = {
                           adres = $6,
                           city = $7,
                           postalcode = $8,
-                          housenumber = $9
+                          housenumber = $9,
+                          paymentmethod = $10
                           WHERE id = ${id}`,
-                          [name,surname,mail,saltedPassword,aanhef,adres,city,postalcode,housenumber])
+                          [name,surname,mail,saltedPassword,aanhef,adres,city,postalcode,housenumber,paymentmethod])
                         .then(data => {return data})
   },
   //Delete user
@@ -360,7 +361,7 @@ var root = {
       return false;
     }
   },
-  async signup ({ name, surname, mail, password, aanhef, adres, housenumber, city, postalcode}) {
+  async signup ({ name, surname, mail, password, aanhef, adres, housenumber, city, postalcode, paymentmethod}) {
     // Salt password
     const saltedPassword =  await bcrypt.hash(password, 10)
 
@@ -374,9 +375,9 @@ var root = {
 
     // Generate token when insertion is complete
 
-    return await db.one('INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, housenumber, city, postalcode) \
-    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id', 
-    [name, surname, mail, saltedPassword, aanhef, adres, housenumber, city, postalcode])
+    return await db.one('INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, housenumber, city, postalcode, paymentmethod) \
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id', 
+    [name, surname, mail, saltedPassword, aanhef, adres, housenumber, city, postalcode, paymentmethod])
       .then( data => {
         console.log(`\nUser ID: ${data.id}`)
         let tokens = jwt.sign(
@@ -395,6 +396,7 @@ var root = {
           city: city,
           postalcode: postalcode,
           housenumber: housenumber,
+          paymentmethod: paymentmethod,
           token: tokens
         }
       })
@@ -438,6 +440,7 @@ var root = {
       address: user[0].adres,
       city: user[0].city,
       postalcode: user[0].postalcode,
+      paymentmethod: user[0].paymentmethod,
       token: token
     }
 
