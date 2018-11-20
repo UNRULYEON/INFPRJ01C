@@ -25,11 +25,11 @@ var schema = buildSchema(`
   },
   type Mutation {
     signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String, adres: String, housenumber: String, city: String, 
-      postalcode: String): UserWithToken!
+      postalcode: String, paymentmethod: String): UserWithToken!
     login(email: String!, password: String!): UserWithToken!
     merge(id_number: Int!, id: Int!): String
     merging: String
-    addUser(name: String!, surname: String!, mail: String!, password: String!, aanhef: String!, adres: String, city: String, postalcode: String, housenumber: String): String!
+    addUser(name: String!, surname: String!, mail: String!, password: String!, aanhef: String!, adres: String, city: String, postalcode: String, housenumber: String, paymentmethod: String): String!
     alterUser(id: Int!, name: String!, surname: String!, aanhef: String!, mail: String!, password: String!, adres: String!, city: String!, postalcode: String!, housenumber: String!): String!
     deleteUser(id: Int!): String
     addProduct(id: String!, title: String!, releasedate: Int!, period: Int!, description: String!, physicalmedium: String!, amountofpaintings: Int!, src: String!, bigsrc: String!, plaguedescdutch: String!, prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!): String!
@@ -115,6 +115,7 @@ var schema = buildSchema(`
     housenumber: String,
     city: String,
     postalcode: String,
+    paymentmethod: String,
     password: String,
     aanhef: String,
     paymentmethod: String
@@ -128,6 +129,7 @@ var schema = buildSchema(`
     housenumber: String,
     city: String,
     postalcode: String,
+    paymentmethod: String,
     password: String,
     aanhef: String,
     paymentmethod: String,
