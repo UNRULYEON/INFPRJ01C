@@ -59,7 +59,7 @@ var root = {
     }]
   },
   PaintingsByPainter: ({id}) => {
-    let query = (`SELECT * from schilderijen, schilder WHERE schilderijen.id_number = ${id} AND schilderijen.principalmaker = schilder.name`)
+    let query = (`SELECT * from schilderijen, schilder WHERE schilder.id = ${id} AND schilderijen.principalmaker = schilder.name`)
     return db.manyOrNone(query)
   },
   //#endregion
@@ -229,17 +229,17 @@ var root = {
   //#endregion
   //#region alter products
   //Add product
-  async addProduct({id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescdutch, prodplace, width, height, principalmaker,price}){
-    return await db.one(`INSERT INTO schilderijen(id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescriptiondutch, principalmakersproductionplaces, principalmaker, width, height, price) 
-    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id_number`, 
-    [id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescdutch, prodplace, principalmaker, width, height, price])
+  async addProduct({id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescdutch, prodplace, width, height, principalmaker,price,rented=false}){
+    return await db.one(`INSERT INTO schilderijen(id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescriptiondutch, principalmakersproductionplaces, principalmaker, width, height, price,rented) 
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING id_number`, 
+    [id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescdutch, prodplace, principalmaker, width, height, price, rented])
     .then(data => {console.log(`\nPainting ID: ${data.id_number}`)
                     return data.id_number})
       .catch(err => {console.error(err)
         throw new Error(err)})
   },
   //Alter products
-  async alterProduct({id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescdutch, prodplace, width, height, principalmaker, price}){
+  async alterProduct({id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescdutch, prodplace, width, height, principalmaker, price, rented}){
     const prod = await db.manyOrNone(`SELECT * from schilderijen where id_number = ${id_number}`)
     .then(data => {return data})
     .catch(err => {console.err(err)
@@ -262,9 +262,10 @@ var root = {
                           width = $12,
                           height = $13,
                           principalmaker = $14,
-                          price = $15
+                          price = $15,
+                          rented = $16
                           WHERE id_number = ${id_number}`,
-                          [id,title,releasedate,period,description,physicalmedium,amountofpaintings,src,bigsrc,plaquedescdutch,prodplace,width,height,principalmaker,price])
+                          [id,title,releasedate,period,description,physicalmedium,amountofpaintings,src,bigsrc,plaquedescdutch,prodplace,width,height,principalmaker,price,rented])
                         .then(data => {return data})
   },
   //Delete products
@@ -331,10 +332,37 @@ var root = {
           .then(data => {return data})
           .catch(err => {throw new Error(err)})
       console.log(query.id)
-      db.one(`UPDATE gebruiker set kopenid = $1 WHERE id = ${gebruikerId}`,[query.id])
 
       return `Inserted into row: ${query.id}`
     }
+  },
+  async orderListSelect({buyerId}){
+    let t = await db.manyOrNone(`SELECT * FROM orderlist
+              WHERE buyerid = ${buyerId}`)
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
+    // console.log(t.length)
+    // for (let i = 0; i < t.length; i++) {
+    //   console.log(t[i].purchasedate);
+    // }
+    t.forEach(element => {
+      // console.log(new Date(element.purchasedate))
+      // console.log(element.purchasedate)
+      console.log(element.purchasedate)
+    });
+    return t
+  },
+  async orderListInsert({buyerId = 166, items, purchaseDate}){
+
+    items.forEach(element => {      
+    db.one(`INSERT INTO orderlist(buyerid, items, purchasedate) VALUES($1,$2,$3) RETURNING ID`,[buyerId,element.foreignkey,purchaseDate])
+        .then(data => {console.log(`Inserted into row: ${data.id}`)})
+        .catch(err => {console.log("oeps"+err+'Oeps')
+            throw new Error(err)})
+    })
+  },
+  async rentalListInsert({gebruikerId, items, purchaseDate, rentStart, rentStop}){
+
   },
   async me (req, res, next) {
     if (!res.headers.authorization) {
