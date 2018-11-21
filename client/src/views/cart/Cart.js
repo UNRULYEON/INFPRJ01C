@@ -201,10 +201,14 @@ class Cart extends Component {
 			case 'CART':
 				let newArrCart = []
 				for (let i = 0; i < this.state.cart.length; i++) {
-					if (!this.state.cart[i].id === id) {
+					if (this.state.cart[i].id === id) {
+						console.log(`Item to remove: ${this.state.cart[i]}`)
+					} else {
+						console.log(`pushing to cart: ${this.state.cart[i]}`)
 						newArrCart.push(this.state.cart[i])
 					}
 				}
+				console.log(newArrCart)
 				this.props.updateCart(newArrCart)
 				this.setState({
 					cart: newArrCart
@@ -213,10 +217,14 @@ class Cart extends Component {
 			case 'ORDER':
 				let newArrOrder = []
 				for (let i = 0; i < this.state.order.length; i++) {
-					if (!this.state.order[i].id === id) {
+					if (this.state.order[i].id === id) {
+						console.log(`Item to remove: ${this.state.order[i]}`)
+					} else {
+						console.log(`pushing to cart: ${this.state.order[i]}`)
 						newArrOrder.push(this.state.order[i])
 					}
 				}
+				console.log(newArrOrder)
 				this.props.updateOrder(newArrOrder)
 				this.setState({
 					order: newArrOrder
@@ -225,10 +233,14 @@ class Cart extends Component {
 			case 'RENTAL':
 				let newArrRental = []
 				for (let i = 0; i < this.state.rental.length; i++) {
-					if (!this.state.rental[i].id === id) {
+					if (this.state.rental[i].id === id) {
+						console.log(`Item to remove: ${this.state.rental[i]}`)
+					} else {
+						console.log(`pushing to cart: ${this.state.rental[i]}`)
 						newArrRental.push(this.state.rental[i])
 					}
 				}
+				console.log(newArrRental)
 				this.props.updateRental(newArrRental)
 				this.setState({
 					rental: newArrRental
