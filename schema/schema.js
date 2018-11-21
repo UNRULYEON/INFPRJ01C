@@ -22,6 +22,7 @@ var schema = buildSchema(`
     faq: [FAQ]
     status: Int 
     papatabel: [PapaGet]
+    orderListSelect: [Orders]
   },
   type Mutation {
     signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String, adres: String, housenumber: String, city: String, 
@@ -32,26 +33,38 @@ var schema = buildSchema(`
     addUser(name: String!, surname: String!, mail: String!, password: String!, aanhef: String!, adres: String, city: String, postalcode: String, housenumber: String, paymentmethod: String): String!
     alterUser(id: Int!, name: String!, surname: String!, aanhef: String!, mail: String!, password: String!, adres: String!, city: String!, postalcode: String!, housenumber: String!): String!
     deleteUser(id: Int!): String
-    addProduct(id: String!, title: String!, releasedate: Int!, period: Int!, description: String!, physicalmedium: String!, amountofpaintings: Int!, src: String!, bigsrc: String!, plaguedescdutch: String!, prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!): String!
-    alterProduct(id_number: Int!, id: String!, title: String!, releasedate: Int!, period: Int! description: String!, physicalmedium: String!, amountofpaintings: Int!, src: String!, bigsrc: String!, plaguedescdutch: String!, prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!): String
+    addProduct(id: String!, title: String!, releasedate: Int!, period: Int!, description: String!, physicalmedium: String!, amountofpaintings: Int!, src: String!, bigsrc: String!, plaguedescdutch: String!, prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!, rented: Boolean!): String!
+    alterProduct(id_number: Int!, id: String!, title: String!, releasedate: Int!, period: Int! description: String!, physicalmedium: String!, amountofpaintings: Int!, src: String!, bigsrc: String!, plaguedescdutch: String!, prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!, rented: Boolean!): String
     deleteProduct(id: Int!): String
     createBabyTabel(tabelnaam: String!, foreignkey: [RefBaby!], type: String!): String
     addToBabyTabel(id: Int!, foreignkey: [RefBaby!]): String
     removeBabyTabel(id: Int!): String
     shoppingCartInsert(gebruikerId: Int!, items: String!, time: String!): String
+    orderListInsert(gebruikerId: Int, items: [PaintRef!], purchaseDate: String!): String
+    rentalListInsert(gebruikerId: Int!, items : [PaintRef!], purchaseDate: String!, rentStart: String!, rentStop: String!): String
   },
+  input PaintRef{foreignkey: Int!},
   input RefBaby{foreignkey: Int!},
   type PapaGet{
     id: Int,
     naam: String,
     type: String
   },
+  type Orders{
+    id: Int,
+    buyerid: Int,
+    items: Int,
+    purchasedate: String
+  },
   type ret{
     id_number: Int,
     title: String,
     principalmaker: String,
     name: String,
-    id: Int,
+    src: String,
+    width: Int,
+    height: Int,
+    price: Int
   },
   type Collection {
     id: ID,
