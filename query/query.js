@@ -193,7 +193,7 @@ var root = {
       .catch(err => {throw new Error(err)})    
   },
   //Alter user
-  async alterUser({id, name, surname, mail, password, aanhef, adres, city, postalcode, housenumber}){
+  async alterUser({id, name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod}){
     const user = await db.manyOrNone(`SELECT * from gebruiker where id = ${[id]}`)
     .then(data => {return data})
     .catch(err => {throw new Error(err)})
@@ -335,6 +335,22 @@ var root = {
 
       return `Inserted into row: ${query.id}`
     }
+  },
+  async orderListSelect({buyerId}){
+    let t = await db.manyOrNone(`SELECT * FROM orderlist
+              WHERE buyerid = ${buyerId}`)
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
+    // console.log(t.length)
+    // for (let i = 0; i < t.length; i++) {
+    //   console.log(t[i].purchasedate);
+    // }
+    t.forEach(element => {
+      // console.log(new Date(element.purchasedate))
+      // console.log(element.purchasedate)
+      console.log(element.purchasedate)
+    });
+    return t
   },
   async orderListInsert({buyerId = 166, items, purchaseDate}){
 
