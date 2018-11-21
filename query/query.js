@@ -193,7 +193,7 @@ var root = {
       .catch(err => {throw new Error(err)})    
   },
   //Alter user
-  async alterUser({id, name, surname, mail, password, aanhef, adres, city, postalcode, housenumber}){
+  async alterUser({id, name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod}){
     const user = await db.manyOrNone(`SELECT * from gebruiker where id = ${[id]}`)
     .then(data => {return data})
     .catch(err => {throw new Error(err)})
