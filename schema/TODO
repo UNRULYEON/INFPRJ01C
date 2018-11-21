@@ -2,16 +2,12 @@ bij inserten data in shoppingcart, eerst controleren of de time nieuwer is dan d
 
 query om na betaling de bestelling toe te voegen aan de bestellijst
 
-bij koop/huur lijst moet meegegeven worden op welke datum het is gedaan
-
-
 orderList kolommen
 
 id (primary key) Int
 BuyerId (foreign key) Int
 items (foreign key) Int
 purchaseDate timeStamp
-
 
 rentalList kolommen
 
@@ -21,3 +17,5 @@ items (foreign key) Int
 rentalDate timeStamp
 rentStart timeStamp
 rentStop timeStamp
+
+dateToInt & dateToCompare afmaken

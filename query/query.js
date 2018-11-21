@@ -3,6 +3,7 @@ const db = pgp('postgres://projectc:pc@188.166.94.83:5432/project_dev')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
+
 var root = {
   status: () => {
     return 200
@@ -355,6 +356,13 @@ var root = {
     }
     let current = await db.manyOrNone(`SELECT * from shoppingcart WHERE gebruikerid = ${gebruikerId}`)
     if(current.length){
+      if(this.dateCompare(current[0].timestamp,new Date(time))){
+        console.log('given date newer')
+        throw new Error('given date newer')
+      }else{
+        console.log('given date older')
+        throw new Error('given date older')
+      }
       if(current[0].timestamp <= time){
         let query = await db.one(`UPDATE shoppingcart set 
                 items = $1,
@@ -375,33 +383,47 @@ var root = {
       return `Inserted into row: ${query.id}`
     }
   },
+  dateToInt: (givenDate) => {
+    let DateDB = givenDate.toString()
+    let year = DateDB.slice(11,15)
+    let month = DateDB.slice(4,7)
+    if(month=="Jan"){month=01}else if(month=="Feb"){month=02}else if(month=="Mar"){month=03}else if(month=="Apr"){month=04}else if(month=="May"){month=05}else if(month=="Jun"){month=06}else if(month=="Jul"){month=07}else if(month=="Aug"){month=08}else if(month=="Sep"){month=09}else if(month=="Oct"){month=10}else if(month=="Nov"){month=11}else if(month=="Dec"){month=12}else{throw new Error(`Invalid month.`)}
+    let day = DateDB.slice(8,10)
+    return `${year}-${month}-${day}`
+  },
+  dateCompare: (dateDB,dateNew) => {
+    let old = this.dateToInt(dateDB)
+    let newer = this.dateToInt(dateNew)
+    console.log(old)
+    console.log(newer)
+  },
   async orderListSelect({buyerId}){
-    let t = await db.manyOrNone(`SELECT * FROM orderlist
+    let Lijst = await db.manyOrNone(`SELECT * FROM orderlist
               WHERE buyerid = ${buyerId}`)
         .then(data => {return data})
         .catch(err => {throw new Error(err)})
-    // console.log(t.length)
-    // for (let i = 0; i < t.length; i++) {
-    //   console.log(t[i].purchasedate);
-    // }
-    t.forEach(element => {
-      // console.log(new Date(element.purchasedate))
-      // console.log(element.purchasedate)
-      console.log(element.purchasedate)
+    Lijst.forEach(element => {
+      element.purchasedate = this.dateToInt(element.purchasedate)
     });
-    return t
+    return Lijst
   },
   async orderListInsert({buyerId = 166, items, purchaseDate}){
-
     items.forEach(element => {      
-    db.one(`INSERT INTO orderlist(buyerid, items, purchasedate) VALUES($1,$2,$3) RETURNING ID`,[buyerId,element.foreignkey,purchaseDate])
-        .then(data => {console.log(`Inserted into row: ${data.id}`)})
-        .catch(err => {console.log("oeps"+err+'Oeps')
-            throw new Error(err)})
+      db.one(`INSERT INTO orderlist(buyerid, items, purchasedate) VALUES($1,$2,$3) RETURNING ID`,[buyerId,element.foreignkey,purchaseDate])
+          .then(data => {console.log(`Inserted into row: ${data.id}`)})
+          .catch(err => {console.log("oeps"+err+'Oeps')
+                throw new Error(err)})
     })
+    return "Succes"
   },
-  async rentalListInsert({gebruikerId, items, purchaseDate, rentStart, rentStop}){
-
+  async rentalListInsert({buyerId, items, purchaseDate, rentStart, rentStop}){
+    items.forEach(element => {
+      db.one(`INSERT INTO rentallist(buyerid,items,purchasedate,rentstart,rentstop) VALUES($1,$2,$3,$3,$4,$5) RETURNING ID`,[buyerId,element.foreignkey,purchaseDate,rentStart,rentStop])
+          .then(data => {console.log(`Inserted into row: ${data.id}`)})
+          .catch(err => {console.log("oeps"+err+'Oeps')
+                throw new Error(err)})
+    })
+    return "Succes"
   },
   async me (req, res, next) {
     if (!res.headers.authorization) {
