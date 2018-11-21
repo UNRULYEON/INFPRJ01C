@@ -18,7 +18,6 @@ import AccountMenu from '../accountmenu/AccountMenu';
 
 // Icons
 import logo from '../../icons/logo.svg';
-import cart from '../../icons/cart.svg';
 import search from '../../icons/search.svg';
 import close from '../../icons/close.svg';
 import list from '../../icons/list.svg';
@@ -175,10 +174,14 @@ class Header extends Component {
 						</div>
 						<div className="header-dropdownmenu-container">
 							<Tooltip title="Mijn lijst" enterDelay={500} leaveDelay={200}>
-								<button onClick={this.toggleCart} className="pointer header-button" id="cart-icon"><img src={list} alt="Cart" width="32" /></button>
+								<button onClick={this.toggleCart} className="pointer header-button" id="cart-icon">
+									<img src={list} alt="Cart" width="32" />
+								</button>
 							</Tooltip>
 							<Route render={({ history }) => (
-								<button onClick={() => { history.push('/mijnlijst') }} className="pointer header-button" id="cart-icon-mobile"><img src={list} alt="Cart" width="32" /></button>
+								<button onClick={() => { history.push('/mijnlijst') }} className="pointer header-button" id="cart-icon-mobile">
+									<img src={list} alt="Cart" width="32" />
+								</button>
 							)} />
 							<OutsideClickHandler
 								onOutsideClick={() => {
