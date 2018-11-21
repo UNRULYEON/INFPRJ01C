@@ -280,23 +280,43 @@ var root = {
   },
   //#endregion
   //searchfunction 
-  async searchbar({title}){
+  async searchbar({query, page}){
+    let offset = (page - 1) * 12
+
     // let search = await db.manyOrNone('SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery(`$1`)', [title])
-    let search = await db.manyOrNone(`SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery('${title}')`)
+    let search = await db.manyOrNone(`SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery('${query}') LIMIT 12 OFFSET ${offset}`)
+    .then(data => {
+      return data
+    })
+
+    let total_search = await db.manyOrNone(`SELECT COUNT(*) FROM schilderijen WHERE document_vectors @@ to_tsquery('${query}')`)
     .then(data => {
       return data
     })
     .catch(err => {throw new Error(err)})
+
     if (search.length === 0){
       // search = await db.manyOrNone(`SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery('${title}:*'`)
-      search = await db.manyOrNone(`SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery('${title}:*')`)
+      search = await db.manyOrNone(`SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery('${query}:*') LIMIT 12 OFFSET ${offset}`)
       .then(data => {
         return data
       })
       .catch(err => {throw new Error(err)})
+
+      total_search = await db.manyOrNone(`SELECT COUNT(*) FROM schilderijen WHERE document_vectors @@ to_tsquery('${query}:*')`)
+      .then(data => {
+        return data
+      })
+      .catch(err => {throw new Error(err)})
+
+      console.log(search)
+      console.log(total_search)
     }
 
-    return search
+    return {
+      total: total_search[0].count,
+      paintings: search
+    }
   },
   //#endregion  
   
