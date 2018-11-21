@@ -59,7 +59,7 @@ var root = {
     }]
   },
   PaintingsByPainter: ({id}) => {
-    let query = (`SELECT * from schilderijen, schilder WHERE schilderijen.id_number = ${id} AND schilderijen.principalmaker = schilder.name`)
+    let query = (`SELECT * from schilderijen, schilder WHERE schilder.id = ${id} AND schilderijen.principalmaker = schilder.name`)
     return db.manyOrNone(query)
   },
   //#endregion
