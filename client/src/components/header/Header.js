@@ -15,6 +15,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 // Components
 import CartMenu from '../cartmenu/CartMenu';
 import AccountMenu from '../accountmenu/AccountMenu';
+import Gallery from '../../components/gallery/Gallery'
 
 // Icons
 import logo from '../../icons/logo.svg';
@@ -23,6 +24,29 @@ import close from '../../icons/close.svg';
 import list from '../../icons/list.svg';
 
 const SearchbarContainer = posed.div({
+  open: {
+    y: '0%',
+    transition: {
+      y: {
+        type: 'tween',
+        ease: 'easeOut',
+        duration: '250'
+      }
+    }
+  },
+  closed: {
+    y: '-100%',
+    transition: {
+      y: {
+        type: 'tween',
+        ease: 'easeIn',
+        duration: '200'
+      }
+    }
+  }
+});
+
+const SearchbarResultContainer = posed.div({
   open: {
     y: '0%',
     transition: {
@@ -117,23 +141,27 @@ class Header extends Component {
 					className="searchbar-container"
 					pose={this.state.searchBar ? 'open' : 'closed'}
 				>
-					<TextField
-						id="searchbar-input"
-						label="Waar bent u naar opzoek?"
-						// placeholder="Waar bent u naar opzoek?"
-						inputProps={searchInputProps}
-						fullWidth
-						type="search"
-						margin="normal"
-						variant="outlined"
-					/>
-					{/* <input
-						id="searchbar-input"
-						placeholder="Waar bent u naar opzoek?"
-						ref={this.searchbarInput}
-					></input> */}
-				<button id="searchbar-close" onClick={this.toggleSearchBar} className="pointer header-button ml-3"><img src={close} alt="Close" width="32" /></button>
+					<div className="searchbar-input-container">
+						<TextField
+							id="searchbar-input"
+							label="Waar bent u naar opzoek?"
+							// placeholder="Waar bent u naar opzoek?"
+							inputProps={searchInputProps}
+							fullWidth
+							type="search"
+							margin="normal"
+							variant="outlined"
+						/>
+						<button id="searchbar-close" onClick={this.toggleSearchBar} className="pointer header-button ml-3"><img src={close} alt="Close" width="32" /></button>
+					</div>
 				</SearchbarContainer>
+				<SearchbarResultContainer
+					className="searchbar-results-container"
+					pose={this.state.searchBar ? 'open' : 'closed'}
+				>
+					{/* <Gallery images={data} /> */}
+					
+				</SearchbarResultContainer>
 				<div id="header-container-primary">
 					<div id="header-name">
 						<Link to="/"><img src={logo} alt="Logo" height="32" /></Link>
