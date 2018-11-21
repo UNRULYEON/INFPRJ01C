@@ -22,7 +22,7 @@ var schema = buildSchema(`
     faq: [FAQ]
     status: Int 
     papatabel: [PapaGet]
-    orderListSelect: [Orders]
+    orderListSelect(buyerId: Int!): [Orders]
   },
   type Mutation {
     signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String, adres: String, housenumber: String, city: String, 
