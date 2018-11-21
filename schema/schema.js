@@ -95,6 +95,7 @@ var schema = buildSchema(`
   },
   type Painting{
     id: String,
+    id_number: Int,
     title: String,
     releasedate: Int,
     period: Int,
