@@ -599,7 +599,7 @@ class Registreren extends Component {
       }
     }
     else if (this.state.activeStep === 1) {
-      return (<span id="message-id">Niet alles if ingevuld.<br /> Vul alles in en probeer het opnieuw.</span>)
+      return (<span id="message-id">Niet alles is ingevuld.<br /> Vul alles in en probeer het opnieuw.</span>)
     }
   }
 
