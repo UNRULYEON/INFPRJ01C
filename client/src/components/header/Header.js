@@ -6,6 +6,10 @@ import {
 } from 'react-router-dom';
 import posed from "react-pose";
 import OutsideClickHandler from 'react-outside-click-handler';
+import Pagination from 'rc-pagination';
+import nl_NL from 'rc-pagination/lib/locale/nl_NL';
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
 import './Header.css';
 
 // Material-UI
@@ -69,6 +73,22 @@ const SearchbarResultContainer = posed.div({
   }
 });
 
+
+const SEARCH = gql`
+	query searchbar($query: String!) {
+		searchbar(query: $query) {
+			id_number
+			title
+			src
+			width
+			height
+			price
+			id_number
+		}
+	}
+`;
+
+
 class Header extends Component {
 	constructor(props){
 		super(props);
@@ -76,6 +96,7 @@ class Header extends Component {
 			searchBar: false,
 			accountMenuToggle: false,
 			cartMenuToggle: false,
+			query: 'rem'
 		};
 		this.toggleSearchBar = this.toggleSearchBar.bind(this);
 		this.toggleAccount = this.toggleAccount.bind(this);
@@ -129,6 +150,12 @@ class Header extends Component {
 		}, false);
 	}
 
+  handleChange = name => event => {
+    this.setState({
+      [name]: event.target.value,
+    });
+  };
+
 	render() {
 
 		const searchInputProps = {
@@ -147,6 +174,8 @@ class Header extends Component {
 							label="Waar bent u naar opzoek?"
 							// placeholder="Waar bent u naar opzoek?"
 							inputProps={searchInputProps}
+							value={this.state.query}
+							onChange={this.handleChange('query')}
 							fullWidth
 							type="search"
 							margin="normal"
@@ -159,8 +188,38 @@ class Header extends Component {
 					className="searchbar-results-container"
 					pose={this.state.searchBar ? 'open' : 'closed'}
 				>
-					{/* <Gallery images={data} /> */}
-					
+
+        <Query
+          query={SEARCH}
+          variables={{ query: this.state.query }}>
+            {({ loading, error, data }) => {
+              if (loading) return <p>Loading... :)</p>;
+              if (error) return <p>Error :(</p>;
+
+              return (
+                <div>
+                  {/* <Pagination
+                    showTotal={(total, range) => `${range[0]} - ${range[1]} van ${total} items`}
+                    pageSize={12}
+                    total={data.paintingOrderedByPagination.total}
+                    onChange={this.onChange}
+                    current={this.state.page}
+                    locale={nl_NL}
+                  /> */}
+                  <Gallery images={data.searchbar}/>
+                  {/* <Pagination
+                    showTotal={(total, range) => `${range[0]} - ${range[1]} van ${total} items`}
+                    pageSize={12}
+                    total={data.paintingOrderedByPagination.total}
+                    onChange={this.onChange}
+                    current={this.state.page}
+                    locale={nl_NL}
+                  /> */}
+                </div>
+              )
+            }}
+          </Query>
+
 				</SearchbarResultContainer>
 				<div id="header-container-primary">
 					<div id="header-name">

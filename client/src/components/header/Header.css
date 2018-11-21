@@ -171,8 +171,9 @@ header{
 .searchbar-results-container{
   position: absolute;
   top: 0;
+  bottom: 0;
   width: 100vw;
-  height: 100vh;
+  height: 100%;
   padding: 124px;
   z-index: 2;
   background: rgba(220, 220, 220, 1);

@@ -280,16 +280,16 @@ var root = {
   },
   //#endregion
   //searchfunction 
-  async searchbar({title}){
+  async searchbar({query}){
     // let search = await db.manyOrNone('SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery(`$1`)', [title])
-    let search = await db.manyOrNone(`SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery('${title}')`)
+    let search = await db.manyOrNone(`SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery('${query}')`)
     .then(data => {
       return data
     })
     .catch(err => {throw new Error(err)})
     if (search.length === 0){
       // search = await db.manyOrNone(`SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery('${title}:*'`)
-      search = await db.manyOrNone(`SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery('${title}:*')`)
+      search = await db.manyOrNone(`SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery('${query}:*')`)
       .then(data => {
         return data
       })

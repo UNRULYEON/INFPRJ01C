@@ -23,7 +23,7 @@ var schema = buildSchema(`
     status: Int 
     papatabel: [PapaGet]
     orderListSelect(buyerId: Int!): [Orders]
-    searchbar(title: String!): [Painting]
+    searchbar(query: String!): [Painting]
   },
   type Mutation {
     signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String, adres: String, housenumber: String, city: String, 
@@ -91,6 +91,7 @@ var schema = buildSchema(`
   },
   type Painting{
     id: String,
+    id_number: Int,
     title: String,
     releasedate: Int,
     period: Int,
