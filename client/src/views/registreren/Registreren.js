@@ -17,6 +17,8 @@ import FormControl from '@material-ui/core/FormControl';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
 
 //steppers
@@ -87,7 +89,7 @@ class Registreren extends Component {
       housenumber: '',
       city: '',
       postalcode: '',
-      paymentmethod: 'not specified',
+      paymentmethod: 'Geen betaalwijze',
 
       emailFilledInCorrect: false,
       emailIsEmpty: true,
@@ -95,13 +97,22 @@ class Registreren extends Component {
       passwordRepeatIsEmpty: true,
       nameIsEmpty: true,
       surnameIsEmpty: true,
+      adresIsEmpty: true,
+      housenumberIsEmpty: true,
+      postalcodeIsEmpty: true,
+      cityIsEmpty: true,
 
-      // these two witholds the error of the inputs: email and password when first opening the page
+      // these witholds the error of the inputs initially
       baseInputEmail: true,
       baseInputPassword: true,
       baseInputPasswordRepeat: true,
       baseInputName: true,
       baseInputSurname: true,
+      baseInputAdres: true,
+      baseInputHousenumber: true,
+      baseInputPostalcode: true,
+      baseInputCity: true,
+
 
       //snackbar to show the error pop-up
       snackbar: false,
@@ -114,7 +125,7 @@ class Registreren extends Component {
   //methods
   //show the text in the stepper
   getSteps() {
-    return ['Email en wachtwoord', 'Naam en adres', 'Betaalwijze toevoegen'];
+    return ['Email en wachtwoord', 'Naam en adres', 'Betaalwijze toevoegen', 'Overzicht'];
   }
 
   //show the content per stepper case
@@ -126,10 +137,14 @@ class Registreren extends Component {
         return this.showNaamAdres();
       case 2:
         return this.showBetaalInfo();
+      case 3:
+        return this.showOverzicht();
       default:
         return 'Uknown stepIndex';
     }
   }
+
+
 
   QueryExecutedSuccessfully() {
     this.setState({
@@ -159,7 +174,7 @@ class Registreren extends Component {
     }
     else if (this.state.activeStep === 1) {
       //check is the required inputs have been filled in correctly
-      if (this.state.nameIsEmpty === false && this.state.surnameIsEmpty === false) {
+      if (this.state.nameIsEmpty === false && this.state.surnameIsEmpty === false && this.state.adresIsEmpty === false && this.state.housenumberIsEmpty === false && this.state.postalcodeIsEmpty === false && this.state.cityIsEmpty === false) {
         this.setState(state => ({
           activeStep: state.activeStep + 1,
           snackbar: false,
@@ -169,7 +184,7 @@ class Registreren extends Component {
         this.handleSnackbarClick()
       }
     }
-    else if (this.state.activeStep === 2) {
+    else if (this.state.activeStep >= 2) {
       this.setState(state => ({
         activeStep: state.activeStep + 1,
       }))
@@ -220,11 +235,36 @@ class Registreren extends Component {
 
 
   //handles change of the MAIL state
-  handleChangeEmail = name => event => {
+  handleChange = name => event => {
     this.setState({
       [name]: event.target.value.trim(),//calling trim makes it so email input doesnt register the spacebar
     })
-    this.checkMailInput()
+    this.getHandleChange(name)
+  }
+
+  getHandleChange(state) {
+    switch (state) {
+      case 'mail':
+        return this.checkMailInput();
+      case 'password':
+        return this.checkPasswordInput();
+      case 'passwordRepeat':
+        return this.checkPasswordRepeatInput();
+      case 'name':
+        return this.checkNameInput();
+      case 'surname':
+        return this.checkSurnameInput();
+      case 'adres':
+        return this.checkAdresInput();
+      case 'housenumber':
+        return this.checkHousenumberInput();
+      case 'postalcode':
+        return this.checkPostalcodeInput();
+      case 'city':
+        return this.checkCityInput();
+      default:
+        return 'bad handle change';
+    }
   }
 
   //checks if the input of mail is correctly filled in. if it is, change the state of emailFilledInCorrect to true && calls handleMailError() at the end of the method
@@ -251,6 +291,7 @@ class Registreren extends Component {
       this.setState({
         emailIsEmpty: false,
       })
+
     }
   }
 
@@ -268,14 +309,6 @@ class Registreren extends Component {
   }
 
 
-
-  //handles change of the PASSWORD state
-  handleChangePassword = name => event => {
-    this.setState({
-      [name]: event.target.value.trim(),//calling trim makes it so password input doesnt register the spacebar
-    })
-    this.checkPasswordInput()
-  }
 
   //returns passwordIsEmpty state
   checkPasswordInput() {
@@ -309,13 +342,6 @@ class Registreren extends Component {
 
 
 
-  handleChangePasswordRepeat = name => event => {
-    this.setState({
-      [name]: event.target.value.trim(),//calling trim makes it so password input doesnt register the spacebar
-    })
-    this.checkPasswordRepeatInput()
-  }
-
   checkPasswordRepeatInput() {
     this.setState({
       baseInputPasswordRepeat: false
@@ -345,14 +371,6 @@ class Registreren extends Component {
   }
 
 
-
-  //handle name changes
-  handleChangeName = name => event => {
-    this.setState({
-      [name]: event.target.value.trim(),
-    })
-    this.checkNameInput()
-  }
 
   // check if the input is not empty
   checkNameInput() {
@@ -385,13 +403,6 @@ class Registreren extends Component {
 
 
 
-  handleChangeSurname = name => event => {
-    this.setState({
-      [name]: event.target.value.trim(),
-    })
-    this.checkSurnameInput()
-  }
-
   checkSurnameInput() {
     this.setState({
       baseInputSurname: false,
@@ -419,23 +430,147 @@ class Registreren extends Component {
 
 
 
-  toggleHelperTextEmail() {
-    if (this.state.mail === '') {
-      return 'Email is leeg'
-    } else if (!this.state.emailFilledInCorrect) {
-      return 'email is fout'
+  checkAdresInput() {
+    this.setState({
+      baseInputAdres: false,
+    })
+    if (this.state.adres === '') {
+      this.setState({
+        adresIsEmpty: true,
+      })
+    }
+    else {
+      this.setState({
+        adresIsEmpty: false,
+      })
     }
   }
 
-  toggleHelperTextName() {
-    if (this.state.name === '') {
-      return 'Naam is verplicht'
+  handleAdresError() {
+    if (this.state.adresIsEmpty === true) {
+      if (this.state.baseInputAdres === true) {
+        return false
+      }
+      return true
     }
   }
 
-  toggleHelperTextSurname() {
-    if (this.state.surname === '') {
-      return 'Achternaam is verplicht'
+
+
+  checkHousenumberInput() {
+    this.setState({
+      baseInputHousenumber: false,
+    })
+    if (this.state.housenumber === '') {
+      this.setState({
+        housenumberIsEmpty: true,
+      })
+    }
+    else {
+      this.setState({
+        housenumberIsEmpty: false,
+      })
+    }
+  }
+
+  handleHousenumberError() {
+    if (this.state.housenumberIsEmpty === true) {
+      if (this.state.baseInputHousenumber === true) {
+        return false
+      }
+      return true
+    }
+  }
+
+
+
+  checkPostalcodeInput() {
+    this.setState({
+      baseInputPostalcode: false,
+    })
+    if (this.state.postalcode === '') {
+      this.setState({
+        postalcodeIsEmpty: true,
+      })
+    }
+    else {
+      this.setState({
+        postalcodeIsEmpty: false,
+      })
+    }
+  }
+
+  handlePostalcodeError() {
+    if (this.state.postalcodeIsEmpty === true) {
+      if (this.state.baseInputPostalcode === true) {
+        return false
+      }
+      return true
+    }
+  }
+
+
+
+  checkCityInput() {
+    this.setState({
+      baseInputCity: false,
+    })
+    if (this.state.city === '') {
+      this.setState({
+        cityIsEmpty: true,
+      })
+    }
+    else {
+      this.setState({
+        cityIsEmpty: false,
+      })
+    }
+  }
+
+  handleCityError() {
+    if (this.state.cityIsEmpty === true) {
+      if (this.state.baseInputCity === true) {
+        return false
+      }
+      return true
+    }
+  }
+
+  toggleHelperText(state) {
+    switch (state) {
+      case 'mail':
+        if (this.state.mail === '') {
+          return 'Email is leeg'
+        } else if (!this.state.emailFilledInCorrect) {
+          return 'Email is fout'
+        } break;
+
+      case 'name':
+        if (this.state.name === '') {
+          return 'Naam is verplicht'
+        } break;
+      case 'surname':
+        if (this.state.surname === '') {
+          return 'Achternaam is verplicht'
+        } break;
+      case 'adres':
+        if (this.state.adres === '') {
+          return 'Adres is verplicht'
+        } break;
+      case 'housenumber':
+        if (this.state.housenumber === '') {
+          return 'Huisnummer is verplicht'
+        } break;
+      case 'postalcode':
+        if (this.state.postalcode === '') {
+          return 'Postcode is verplicht'
+        } break;
+      case 'city':
+        if (this.state.city === '') {
+          return 'Stad is verplicht'
+        } break;
+      default:
+        return 'how did it get here (default of togglehelpertext';
     }
   }
 
@@ -464,7 +599,7 @@ class Registreren extends Component {
       }
     }
     else if (this.state.activeStep === 1) {
-      return (<span id="message-id">Naam en/of achternaam is onjuist.<br />Probeer het opnieuw.</span>)
+      return (<span id="message-id">Niet alles is ingevuld.<br /> Vul alles in en probeer het opnieuw.</span>)
     }
   }
 
@@ -480,12 +615,12 @@ class Registreren extends Component {
             <Input
               error={this.handleMailError()}
               name="mail"
-              onChange={this.handleChangeEmail('mail')}
-              onBlur={this.handleChangeEmail('mail')}
+              onChange={this.handleChange('mail')}
+              onBlur={this.handleChange('mail')}
               value={this.state.mail}
             />
             <FormHelperText id="component-error-text">
-              {this.toggleHelperTextEmail()}
+              {this.toggleHelperText('mail')}
             </FormHelperText>
           </FormControl>
           <br></br>
@@ -496,8 +631,8 @@ class Registreren extends Component {
               error={this.handlePasswordError()}
               name="password"
               type={this.state.showPassword ? 'text' : 'password'}
-              onChange={this.handleChangePassword('password')}
-              onBlur={this.handleChangePassword('password')}
+              onChange={this.handleChange('password')}
+              onBlur={this.handleChange('password')}
               value={this.state.password}
               endAdornment={
                 <InputAdornment position="end">
@@ -516,8 +651,8 @@ class Registreren extends Component {
               error={this.handlePasswordRepeatError()}
               name="passwordRepeat"
               type={this.state.showPasswordRepeat ? 'text' : 'password'}
-              onChange={this.handleChangePasswordRepeat('passwordRepeat')}
-              onBlur={this.handleChangePasswordRepeat('passwordRepeat')}
+              onChange={this.handleChange('passwordRepeat')}
+              onBlur={this.handleChange('passwordRepeat')}
               value={this.state.passwordRepeat}
               endAdornment={
                 <InputAdornment position="end">
@@ -573,12 +708,12 @@ class Registreren extends Component {
             <Input
               error={this.handleNameError()}
               name="name"
-              onChange={this.handleChangeName('name')}
-              onBlur={this.handleChangeName('name')}
+              onChange={this.handleChange('name')}
+              onBlur={this.handleChange('name')}
               value={this.state.name}
             />
             <FormHelperText id="component-error-text">
-              {this.toggleHelperTextName()}
+              {this.toggleHelperText('name')}
             </FormHelperText>
           </FormControl>
 
@@ -587,12 +722,12 @@ class Registreren extends Component {
             <Input
               error={this.handleSurnameError()}
               name="surname"
-              onChange={this.handleChangeSurname('surname')}
-              onBlur={this.handleChangeSurname('surname')}
+              onChange={this.handleChange('surname')}
+              onBlur={this.handleChange('surname')}
               value={this.state.surname}
             />
             <FormHelperText id="component-error-text">
-              {this.toggleHelperTextSurname()}
+              {this.toggleHelperText('surname')}
             </FormHelperText>
           </FormControl>
         </div>
@@ -602,33 +737,61 @@ class Registreren extends Component {
         <div id="adres">
           <h1 id="adresHeader">Adres</h1>
 
-          <TextField
-            name="adres"
-            label="Straat"
-            onChange={e => this.onChange(e)}
-            value={this.state.adres}
-          />
+          <FormControl aria-describedby="component-error-text">
+            <InputLabel>Straat</InputLabel>
+            <Input
+              error={this.handleAdresError()}
+              name="adres"
+              onChange={this.handleChange('adres')}
+              onBlur={this.handleChange('adres')}
+              value={this.state.adres}
+            />
+            <FormHelperText id="component-error-text">
+              {this.toggleHelperText('adres')}
+            </FormHelperText>
+          </FormControl>
 
-          <TextField
-            name="housenumber"
-            label="Huisnummer"
-            onChange={e => this.onChange(e)}
-            value={this.state.housenumber}
-          />
+          <FormControl aria-describedby="component-error-text">
+            <InputLabel>Huisnummer</InputLabel>
+            <Input
+              error={this.handleHousenumberError()}
+              name="housenumber"
+              onChange={this.handleChange('housenumber')}
+              onBlur={this.handleChange('housenumber')}
+              value={this.state.housenumber}
+            />
+            <FormHelperText id="component-error-text">
+              {this.toggleHelperText('housenumber')}
+            </FormHelperText>
+          </FormControl>
 
-          <TextField
-            name="postalcode"
-            label="Postcode"
-            onChange={e => this.onChange(e)}
-            value={this.state.postalcode}
-          />
+          <FormControl aria-describedby="component-error-text">
+            <InputLabel>Postcode</InputLabel>
+            <Input
+              error={this.handlePostalcodeError()}
+              name="postalcode"
+              onChange={this.handleChange('postalcode')}
+              onBlur={this.handleChange('postalcode')}
+              value={this.state.postalcode}
+            />
+            <FormHelperText id="component-error-text">
+              {this.toggleHelperText('postalcode')}
+            </FormHelperText>
+          </FormControl>
 
-          <TextField
-            name="city"
-            label="Stad"
-            onChange={e => this.onChange(e)}
-            value={this.state.city}
-          />
+          <FormControl aria-describedby="component-error-text">
+            <InputLabel>Stad</InputLabel>
+            <Input
+              error={this.handleCityError()}
+              name="city"
+              onChange={this.handleChange('city')}
+              onBlur={this.handleChange('city')}
+              value={this.state.city}
+            />
+            <FormHelperText id="component-error-text">
+              {this.toggleHelperText('city')}
+            </FormHelperText>
+          </FormControl>
 
         </div>
 
@@ -640,11 +803,10 @@ class Registreren extends Component {
   showBetaalInfo() {
     return (
       <div id="showBetaalInfo">
-        <h1>Betaalwijze toevoegen</h1>
         <p>Alvast de betaalmethode toevoegen?</p>
         <form>
           <select name="paymentmethod" ref="paymentmethod" onChange={e => this.onChange(e)} value={this.state.value}>
-            <option value="not specified">geen betaalwijze</option>
+            <option value="Geen betaalwijze">geen betaalwijze</option>
             <option value="IDEAL">IDEAL</option>
             <option value="Achteraf">Achteraf betalen</option>
             <option value="Creditcard">Creditcard</option>
@@ -655,13 +817,129 @@ class Registreren extends Component {
     )
   }
 
+  showOverzicht() {
+    return (
+      <div className="stepper-content-container">
+        <form className="order-form-details">
+          <div className="order-form-details-column" id="order-form-details-column-lables">
+            <div className="order-form-details-row-label">
+              <p>Aanhef</p>
+            </div>
+            <div className="order-form-details-row-label">
+              <p>Naam</p>
+            </div>
+            <div className="order-form-details-row-label">
+              <p>Email</p>
+            </div>
+            <div className="order-form-details-row-label">
+              <p>Straat en huisnummer</p>
+            </div>
+            <div className="order-form-details-row-label">
+              <p>Postcode</p>
+            </div>
+            <div className="order-form-details-row-label">
+              <p>Stad</p>
+            </div>
+          </div>
+          <div className="order-form-details-column">
+            <div className="order-form-details-row-input">
+              <div className="order-form-details-radio">
+                <FormControl component="fieldset" className="order-form-details-radio">
+                  <RadioGroup
+                    className="order-form-details-radio"
+                    aria-label="Aanhef"
+                    name="aanhef"
+                    value={this.state.aanhef}
+                    readOnly={true}
+                  >
+                    <FormControlLabel value="Dhr." control={<Radio color="primary" />} label="Dhr." />
+                    <FormControlLabel value="Mevr." control={<Radio color="primary" />} label="Mevr." />
+                  </RadioGroup>
+                </FormControl>
+              </div>
+            </div>
+            <div className="order-form-details-row-input">
+              <TextField
+                id="order-input-name"
+                type="text"
+                name="naam"
+                placeholder="Naam"
+                value={this.state.name}
+                readOnly={true}
+              />
+              <div className="order-input-divider" />
+              <TextField
+                id="order-input-achternaam"
+                type="text"
+                name="achternaam"
+                placeholder="Achternaam"
+                value={this.state.surname}
+                readOnly={true}
+              />
+            </div>
+            <div className="order-form-details-row-input">
+              <TextField
+                id="order-input-email"
+                label="Email"
+                type="email"
+                name="email"
+                placeholder="Email"
+                autoComplete="email"
+                value={this.state.mail}
+                readOnly={true} />
+            </div>
+            <div className="order-form-details-row-input">
+              <TextField
+                id="order-input-straat"
+                type="text"
+                name="straat"
+                placeholder="Straat"
+                value={this.state.adres}
+                readOnly={true}
+              />
+              <div className="order-input-divider" />
+              <TextField
+                id="order-input-huisnummer"
+                type="text"
+                name="Huisnummer"
+                placeholder="Huisnummer"
+                value={this.state.housenumber}
+                readOnly={true}
+              />
+            </div>
+            <div className="order-form-details-row-input">
+              <TextField
+                id="order-input-postcode"
+                type="text"
+                name="Postcode"
+                placeholder="Postcode"
+                value={this.state.postalcode}
+                readOnly={true}
+              />
+            </div>
+            <div className="order-form-details-row-input">
+              <TextField
+                id="order-input-stad"
+                type="text"
+                name="Stad"
+                placeholder="Stad"
+                value={this.state.city}
+                readOnly={true}
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+    );
+  }
+
   render() {
     const { activeStep } = this.state;
     return (
 
       <section className="section-container">
 
-      
+
         {/* to not show the stepper at the beginning */}
         <Stepper activeStep={activeStep} alternativeLabel>
           {this.getSteps().map(label => {
@@ -675,16 +953,23 @@ class Registreren extends Component {
           })}
         </Stepper>
 
-        <PageTitle title={'Registreren'}center={true}></PageTitle>
+        {
+          this.state.activeStep === 0 | this.state.activeStep === 1 ?
+            <PageTitle title={'Registreren'} center={true}></PageTitle> :
+            this.state.activeStep === 2 ?
+              <PageTitle title={'Betaalwijze toevoegen?'} center={true}></PageTitle> :
+              this.state.activeStep === 3 ?
+                <PageTitle title={'Overzicht registratie formulier'} center={true}></PageTitle> :
+                null
+        }
+
 
 
         {activeStep === this.getSteps().length ?
           (
             <div>
-              <PageTitle title={'Done!'}center={true}></PageTitle>
-            {/* <div id="getStepsDone">{this.getStepContent(0)}</div>
-            <div id="getStepsDone">{this.getStepContent(1)}</div>
-            <div id="getStepsDone">{this.getStepContent(2)}</div> */}
+              <PageTitle title={'Klaar!'} center={true}></PageTitle>
+              <p id="showBetaalInfo">U kunt nu inloggen met: {this.state.mail}</p>
             </div>
           )
           :
@@ -708,7 +993,7 @@ class Registreren extends Component {
                   Terug
                   </Button>
 
-                {activeStep !== 2 ?
+                {activeStep !== 3 ?
                   <ApolloConsumer>
 
                     {client => (

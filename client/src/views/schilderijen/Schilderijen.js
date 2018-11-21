@@ -53,6 +53,14 @@ class Schilderijen extends Component {
 
               return (
                 <div>
+                  <Pagination
+                    showTotal={(total, range) => `${range[0]} - ${range[1]} van ${total} items`}
+                    pageSize={12}
+                    total={data.paintingOrderedByPagination.total}
+                    onChange={this.onChange}
+                    current={this.state.page}
+                    locale={nl_NL}
+                  />
                   <Gallery images={data.paintingOrderedByPagination.collection}/>
                   <Pagination
                     showTotal={(total, range) => `${range[0]} - ${range[1]} van ${total} items`}

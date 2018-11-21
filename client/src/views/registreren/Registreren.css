@@ -3,7 +3,6 @@
 #showRegister{
   display: flex;
   justify-content: center;
-  align-items: center;
   
 }
 
@@ -34,19 +33,16 @@
 #showNaamAdres{
   display: flex;
   justify-content: center;
-  align-items: center;
 }
 
 #naam{
   display:flex;
-  justify-content: center;
   flex-direction: column;
   
 }
 
 #adres{
   display:flex;
-  justify-content: center;
   flex-direction: column;
 }
 
@@ -62,6 +58,29 @@
   align-items: center;
   flex-direction: column;
   margin: 0px 0px 34px 0px;
+}
+
+#showOverzicht{
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 0px 0px 34px 0px;
+  max-width:300px;
+}
+
+#orderTextFieldNaam{
+  margin: 10px 15px 10px 0px;
+  display: flex;
+  flex-direction: row;
+
+}
+
+#orderTextFieldAdres{
+  margin: 10px 15px 10px 0px;
+  display: flex;
+  flex-direction: row;
 }
 
 /* done with steps */

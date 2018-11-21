@@ -19,12 +19,14 @@ const GET_PAINTER_DETAILS = gql`
 `
 
 const GET_PAINTER_WORKS = gql`
-  query Paintings($id: String!){
-    workByPainter(id: $id){
-      name
-      id
-      headerimage
-      description
+  query PaintingsByPainter($id: String!){
+    PaintingsByPainter(id: $id){
+          id_number
+          title
+          src
+          width
+          height
+          price
     }
   }
 `
@@ -33,7 +35,8 @@ class SchilderDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: ''
+      id: '',
+      name: ''
     }
   }
 
@@ -62,6 +65,7 @@ class SchilderDetails extends Component {
                   name={data.painterByID[0].name}
                 />
                 <PainterDescription content={data.painterByID[0].description} />
+                    <h1>Werken van {data.painterByID[0].name}</h1>
               </div>
             )
           }}
@@ -69,6 +73,7 @@ class SchilderDetails extends Component {
 
         <Query
           query={GET_PAINTER_WORKS}
+          variables={{ id: this.state.id }}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading...</p>;
@@ -76,10 +81,10 @@ class SchilderDetails extends Component {
 
             return (
               <div>
-                {data.length ?
+                {data.PaintingsByPainter.length ?
                   <div id="showGallery">
-                    <h1>Werken van {this.state.painter.name}</h1>
-                    <Gallery images={this.state.works} />
+                    {/* <h1>Werken van {this.state.painter.name}</h1> */}
+                    <Gallery images={data.PaintingsByPainter} />
                   </div> :
                   (<h1>Geen schilderijen beschikbaar</h1>)}
               </div>

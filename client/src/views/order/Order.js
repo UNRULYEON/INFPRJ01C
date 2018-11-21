@@ -37,6 +37,9 @@ const styles = theme => ({
     marginTop: theme.spacing.unit,
     marginBottom: theme.spacing.unit,
   },
+  typography: {
+    useNextVariants: true,
+  },
 });
 
 
