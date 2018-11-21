@@ -7,7 +7,7 @@ import './SchilderijDetails.css'
 
 // Material-UI
 import IconButton from '@material-ui/core/IconButton';
-import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+import Icon from '@material-ui/core/Icon';
 import Tooltip from '@material-ui/core/Tooltip';
 
 // Components
@@ -116,7 +116,7 @@ class SchilderijDetails extends Component {
 									/>
 								</span>
 								<div className="details-buttons flex row-nowrap">
-									<Tooltip title="Voeg to aan winkelwagen" enterDelay={500} leaveDelay={200}>
+									<Tooltip title="Voeg toe aan je lijst" enterDelay={500} leaveDelay={200}>
 										<IconButton
 											color="primary"
 											aria-label="Add to shopping cart"
@@ -147,7 +147,9 @@ class SchilderijDetails extends Component {
 												this.setCart(item)
 											}}
 											>
-											<AddShoppingCartIcon />
+											<Icon>
+												playlist_add
+											</Icon>
 										</IconButton>
 									</Tooltip>
 								</div>
