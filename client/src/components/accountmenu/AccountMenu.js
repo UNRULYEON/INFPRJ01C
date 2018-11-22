@@ -233,7 +233,7 @@ class AccountMenu extends Component {
               mutation={LOGIN}
               ignoreResults={false}
               onCompleted={(data) => {
-                this.props.closeModal
+                this.props.closeModal()
                 this.setUserApp(data.login, true)
                 this.setState({
                   email: '',

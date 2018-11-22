@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import {
 		Link,
 		Route,
-    NavLink
+		NavLink,
+		Redirect
 } from 'react-router-dom';
 import posed from "react-pose";
 import OutsideClickHandler from 'react-outside-click-handler';
-import Pagination from 'rc-pagination';
-import nl_NL from 'rc-pagination/lib/locale/nl_NL';
-import { Query } from "react-apollo";
+// import Pagination from 'rc-pagination';
+// import nl_NL from 'rc-pagination/lib/locale/nl_NL';
+// import { Query } from "react-apollo";
 import gql from "graphql-tag";
 import './Header.css';
 
@@ -19,7 +20,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 // Components
 import CartMenu from '../cartmenu/CartMenu';
 import AccountMenu from '../accountmenu/AccountMenu';
-import Gallery from '../../components/gallery/Gallery'
+// import Gallery from '../../components/gallery/Gallery'
 
 // Icons
 import logo from '../../icons/logo.svg';
@@ -50,43 +51,45 @@ const SearchbarContainer = posed.div({
   }
 });
 
-const SearchbarResultContainer = posed.div({
-  open: {
-    y: '0%',
-    transition: {
-      y: {
-        type: 'tween',
-        ease: 'easeOut',
-        duration: '250'
-      }
-    }
-  },
-  closed: {
-    y: '-100%',
-    transition: {
-      y: {
-        type: 'tween',
-        ease: 'easeIn',
-        duration: '200'
-      }
-    }
-  }
-});
+// const SearchbarResultContainer = posed.div({
+//   open: {
+//     y: '0%',
+//     transition: {
+//       y: {
+//         type: 'tween',
+//         ease: 'easeOut',
+//         duration: '250'
+//       }
+//     }
+//   },
+//   closed: {
+//     y: '-100%',
+//     transition: {
+//       y: {
+//         type: 'tween',
+//         ease: 'easeIn',
+//         duration: '200'
+//       }
+//     }
+//   }
+// });
 
 
-const SEARCH = gql`
-	query searchbar($query: String!) {
-		searchbar(query: $query) {
-			id_number
-			title
-			src
-			width
-			height
-			price
-			id_number
-		}
-	}
-`;
+// const SEARCH = gql`
+// 	query Searchbar($query: String!, $page: Int!) {
+// 		searchbar(query: $query, page: $page) {
+// 			total
+// 			paintings{
+// 				id_number
+// 				title
+// 				src
+// 				width
+// 				height
+// 				price
+// 			}
+// 		}
+// 	}
+// `;
 
 
 class Header extends Component {
@@ -96,7 +99,9 @@ class Header extends Component {
 			searchBar: false,
 			accountMenuToggle: false,
 			cartMenuToggle: false,
-			query: 'rem'
+			query: 'rem',
+			page: 1,
+			redirectSearch: false
 		};
 		this.toggleSearchBar = this.toggleSearchBar.bind(this);
 		this.toggleAccount = this.toggleAccount.bind(this);
@@ -111,7 +116,6 @@ class Header extends Component {
 			accountMenuToggle: false
 		}));
 		this.searchbarInput.current.focus();
-		// console.log("Search bar is now: " + !this.state.searchBar);
 	}
 
 	toggleAccount() {
@@ -154,7 +158,18 @@ class Header extends Component {
     this.setState({
       [name]: event.target.value,
     });
-  };
+	};
+
+	keyPress = e => {
+		if(e.keyCode === 13){
+			console.log('value', e.target.value);
+			this.props.setQuery(e.target.value)
+			this.setState({
+				redirectSearch: true
+			})
+			this.toggleSearchBar()
+		}
+	}
 
 	render() {
 
@@ -164,6 +179,9 @@ class Header extends Component {
 
 		return (
 			<header>
+				{this.state.redirectSearch ? (
+					<Redirect to={`/zoeken?q=${this.state.query}`} push />
+				) : null}
 				<SearchbarContainer
 					className="searchbar-container"
 					pose={this.state.searchBar ? 'open' : 'closed'}
@@ -172,10 +190,10 @@ class Header extends Component {
 						<TextField
 							id="searchbar-input"
 							label="Waar bent u naar opzoek?"
-							// placeholder="Waar bent u naar opzoek?"
 							inputProps={searchInputProps}
 							value={this.state.query}
 							onChange={this.handleChange('query')}
+							onKeyDown={this.keyPress}
 							fullWidth
 							type="search"
 							margin="normal"
@@ -184,43 +202,43 @@ class Header extends Component {
 						<button id="searchbar-close" onClick={this.toggleSearchBar} className="pointer header-button ml-3"><img src={close} alt="Close" width="32" /></button>
 					</div>
 				</SearchbarContainer>
-				<SearchbarResultContainer
+				{/* <SearchbarResultContainer
 					className="searchbar-results-container"
 					pose={this.state.searchBar ? 'open' : 'closed'}
 				>
 
         <Query
           query={SEARCH}
-          variables={{ query: this.state.query }}>
+          variables={{ query: this.state.query, page: this.state.page }}>
             {({ loading, error, data }) => {
               if (loading) return <p>Loading... :)</p>;
               if (error) return <p>Error :(</p>;
 
               return (
-                <div>
-                  {/* <Pagination
+                <div className="searchbar-results-wrapper">
+									<Pagination
+										showTotal={(total, range) => `${range[0]} - ${range[1]} van ${total} items`}
+										pageSize={12}
+										total={data.searchbar.total}
+										onChange={this.onChange}
+										current={this.state.page}
+										locale={nl_NL}
+									/>
+                  <Gallery images={data.searchbar.paintings}/>
+                  <Pagination
                     showTotal={(total, range) => `${range[0]} - ${range[1]} van ${total} items`}
                     pageSize={12}
-                    total={data.paintingOrderedByPagination.total}
+                    total={data.searchbar.total}
                     onChange={this.onChange}
                     current={this.state.page}
                     locale={nl_NL}
-                  /> */}
-                  <Gallery images={data.searchbar}/>
-                  {/* <Pagination
-                    showTotal={(total, range) => `${range[0]} - ${range[1]} van ${total} items`}
-                    pageSize={12}
-                    total={data.paintingOrderedByPagination.total}
-                    onChange={this.onChange}
-                    current={this.state.page}
-                    locale={nl_NL}
-                  /> */}
+                  />
                 </div>
               )
             }}
           </Query>
 
-				</SearchbarResultContainer>
+				</SearchbarResultContainer> */}
 				<div id="header-container-primary">
 					<div id="header-name">
 						<Link to="/"><img src={logo} alt="Logo" height="32" /></Link>

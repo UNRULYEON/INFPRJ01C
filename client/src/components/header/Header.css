@@ -154,6 +154,10 @@ header{
   height: 124px;
   background: rgba(238, 238, 238, 1);
   z-index: 3;
+  /* top: 0;
+  right: 0;
+  left: 0;
+  position: fixed; */
 }
 
 .searchbar-container > div > label{
@@ -168,20 +172,22 @@ header{
   align-items: center;
 }
 
-.searchbar-results-container{
-  position: absolute;
+/* .searchbar-results-container{
   top: 0;
+  right: 0;
   bottom: 0;
+  left: 0;
+  position: fixed;
+  overflow-y: scroll;
   width: 100vw;
-  height: 100%;
-  padding: 124px;
+  padding-top: 124px;
   z-index: 2;
   background: rgba(220, 220, 220, 1);
 }
 
-.searchbar-results-container{
-
-}
+.searchbar-results-wrapper{
+  overflow-y: scroll;
+} */
 
 #searchbar-input{
   height: 40px;

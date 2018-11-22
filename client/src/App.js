@@ -196,7 +196,9 @@ class App extends Component {
       current_item: '',
       snackbarOpen: false,
       snackbarVariant: "",
-      snackbarMessage: ""
+      snackbarMessage: "",
+      query: '',
+      page: 1
     }
   }
 
@@ -477,6 +479,18 @@ class App extends Component {
     });
   };
 
+  setQuery = (q) => {
+    this.setState({
+      query: q
+    })
+  }
+
+  setPage = (p) => {
+    this.setState({
+      page: p
+    })
+  }
+
   render() {
     return (
       <ApolloProvider client={client}>
@@ -490,6 +504,7 @@ class App extends Component {
                 rental={this.state.rental}
                 setUser={this.setUser}
                 setCart={this.setCart}
+                setQuery={this.setQuery}
                 loggedIn={this.state.loggedIn}
               />
               <Switch>
@@ -507,7 +522,15 @@ class App extends Component {
                 <Route
                 path="/schilder/:id"
                 component={SchilderDetails}/>
-                <Route path="/zoeken" component={Search} />
+                <Route path="/zoeken"
+                  render={(props) => <Search
+                    {...props}
+                    query={this.state.query}
+                    setQuery={this.setQuery}
+                    page={this.state.page}
+                    setPage={this.setPage}
+                    setLastLocal={this.setLastLocal}
+                />} />
                 <Route path="/contact" component={Contact} />
                 <Route path="/faq" component={FAQ} />
                 <Route
