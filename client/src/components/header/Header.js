@@ -99,7 +99,7 @@ class Header extends Component {
 			searchBar: false,
 			accountMenuToggle: false,
 			cartMenuToggle: false,
-			query: 'rem',
+			query: '',
 			page: 1,
 			redirectSearch: false
 		};

@@ -28,3 +28,20 @@
   background: #eeeeee;
   transition: background-color .3s;
 }
+
+.searchbar-results-wrapper{
+  height: 500px;
+}
+
+.no-search-res{
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  margin-top: -50px;
+}
+
+.no-search-res-big{
+  font-size: 1.5em;
+}
