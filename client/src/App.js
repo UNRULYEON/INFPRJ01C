@@ -373,7 +373,7 @@ class App extends Component {
           this.setState({
             snackbarOpen: true,
             snackbarVariant: "error",
-            snackbarMessage: "Het item zit al in je bestellijst"
+            snackbarMessage: "Het item zit al in je kooplijst "
           });
         } else if (alreadyInRental) {
           this.setState({
