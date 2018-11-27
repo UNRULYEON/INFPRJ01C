@@ -1,0 +1,36 @@
+.header-wrapper{
+  min-height: 64px;
+  background: #424242;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.header-title{
+  margin-left: 10px;
+  flex-grow: 1;
+}
+
+.header-icon > span > svg{
+  fill: white
+}
+
+.header-status-indicator{
+  background: orange;
+  width: 10px;
+  height: 10px;
+  margin-right: 10px;
+  border-radius: 50%;
+  transform: 2s all ease-in-out;
+}
+
+.header-status-indicator-green{
+  background: green;
+  transform: 2s all ease-in-out;
+}
+
+.header-status-indicator-red{
+  background: red;
+  transform: 2s all ease-in-out;
+}
