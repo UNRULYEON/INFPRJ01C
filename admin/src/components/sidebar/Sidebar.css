@@ -1,0 +1,21 @@
+.sidebar-container{
+  min-width: 225px;
+  border-right: 1px solid #545454;
+  margin: 20px 0;
+}
+
+.list-link{
+  text-decoration-line: none;
+}
+
+.list-item-icon > svg{
+  fill: white !important;
+}
+
+.list-item-text > span{
+  color: white;
+}
+
+.active{
+  background: black !important;
+}

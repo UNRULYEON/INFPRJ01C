@@ -1,0 +1,37 @@
+.login-container{
+  position: relative;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: #616161;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-wrapper{
+  display: flex;
+  flex-flow: column nowrap;
+  padding: 50px;
+}
+
+.login-logo{
+  fill: white;
+}
+
+.login-wrapper > h1{
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.login-wrapper > h2{
+  margin-bottom: 0;
+}
+
+.login-form{
+  display: flex;
+  flex-flow: column nowrap;
+  margin-bottom: 25px;
+}
