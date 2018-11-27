@@ -9,5 +9,11 @@ $ npm install
 
 $ cd ..
 
+$ cd admin
+
+$ npm install
+
+$ cd ..
+
 $ npm run dev
 ```
