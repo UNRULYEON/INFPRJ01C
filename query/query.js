@@ -102,6 +102,47 @@ var root = {
     return db.manyOrNone(`SELECT * FROM schilderijen ORDER BY title desc`)
   },
   //#endregion
+  //#region Search
+  //searchfunction 
+  async searchbar({query, page}){
+    let offset = (page - 1) * 12
+
+    // let search = await db.manyOrNone('SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery(`$1`)', [title])
+    let search = await db.manyOrNone(`SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery('${query}') LIMIT 12 OFFSET ${offset}`)
+    .then(data => {
+      return data
+    })
+
+    let total_search = await db.manyOrNone(`SELECT COUNT(*) FROM schilderijen WHERE document_vectors @@ to_tsquery('${query}')`)
+    .then(data => {
+      return data
+    })
+    .catch(err => {throw new Error(err)})
+
+    if (search.length === 0){
+      // search = await db.manyOrNone(`SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery('${title}:*'`)
+      search = await db.manyOrNone(`SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery('${query}:*') LIMIT 12 OFFSET ${offset}`)
+      .then(data => {
+        return data
+      })
+      .catch(err => {throw new Error(err)})
+
+      total_search = await db.manyOrNone(`SELECT COUNT(*) FROM schilderijen WHERE document_vectors @@ to_tsquery('${query}:*')`)
+      .then(data => {
+        return data
+      })
+      .catch(err => {throw new Error(err)})
+
+      console.log(search)
+      console.log(total_search)
+    }
+
+    return {
+      total: total_search[0].count,
+      paintings: search
+    }
+  },
+  //#endregion
   faq: () => {
     let query = ('SELECT * from faq')
     return db.manyOrNone(query)
@@ -280,45 +321,6 @@ var root = {
     }
   },
   //#endregion
-  //searchfunction 
-  async searchbar({query, page}){
-    let offset = (page - 1) * 12
-
-    // let search = await db.manyOrNone('SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery(`$1`)', [title])
-    let search = await db.manyOrNone(`SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery('${query}') LIMIT 12 OFFSET ${offset}`)
-    .then(data => {
-      return data
-    })
-
-    let total_search = await db.manyOrNone(`SELECT COUNT(*) FROM schilderijen WHERE document_vectors @@ to_tsquery('${query}')`)
-    .then(data => {
-      return data
-    })
-    .catch(err => {throw new Error(err)})
-
-    if (search.length === 0){
-      // search = await db.manyOrNone(`SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery('${title}:*'`)
-      search = await db.manyOrNone(`SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery('${query}:*') LIMIT 12 OFFSET ${offset}`)
-      .then(data => {
-        return data
-      })
-      .catch(err => {throw new Error(err)})
-
-      total_search = await db.manyOrNone(`SELECT COUNT(*) FROM schilderijen WHERE document_vectors @@ to_tsquery('${query}:*')`)
-      .then(data => {
-        return data
-      })
-      .catch(err => {throw new Error(err)})
-
-      console.log(search)
-      console.log(total_search)
-    }
-
-    return {
-      total: total_search[0].count,
-      paintings: search
-    }
-  },
   //#endregion  
   
   //#region Merging Painter & Paintings
@@ -356,7 +358,7 @@ var root = {
     }
     let current = await db.manyOrNone(`SELECT * from shoppingcart WHERE gebruikerid = ${gebruikerId}`)
     if(current.length){
-      if(this.dateCompare(current[0].timestamp,new Date(time))){
+      if(await this.IsGivenDateNewer(current[0].timestamp.toString(),new Date(time).toString())){
         console.log('given date newer')
         throw new Error('given date newer')
       }else{
@@ -383,19 +385,33 @@ var root = {
       return `Inserted into row: ${query.id}`
     }
   },
-  dateToInt: (givenDate) => {
-    let DateDB = givenDate.toString()
+  dateToString: (givenDate) => {
+    // let DateDB = givenDate.toString()
+    console.log(givenDate)
+    let DateDB = givenDate
     let year = DateDB.slice(11,15)
     let month = DateDB.slice(4,7)
     if(month=="Jan"){month=01}else if(month=="Feb"){month=02}else if(month=="Mar"){month=03}else if(month=="Apr"){month=04}else if(month=="May"){month=05}else if(month=="Jun"){month=06}else if(month=="Jul"){month=07}else if(month=="Aug"){month=08}else if(month=="Sep"){month=09}else if(month=="Oct"){month=10}else if(month=="Nov"){month=11}else if(month=="Dec"){month=12}else{throw new Error(`Invalid month.`)}
     let day = DateDB.slice(8,10)
     return `${year}-${month}-${day}`
   },
-  dateCompare: (dateDB,dateNew) => {
-    let old = this.dateToInt(dateDB)
-    let newer = this.dateToInt(dateNew)
-    console.log(old)
-    console.log(newer)
+  IsGivenDateNewer: (DateDB,dateNew) => {
+    let DateDBYear = DateDB.slice(11,15)
+    let DateDBMonth = DateDB.slice(4,7)
+    if(DateDBMonth=="Jan"){DateDBMonth=01}else if(DateDBMonth=="Feb"){DateDBMonth=02}else if(DateDBMonth=="Mar"){DateDBMonth=03}else if(DateDBMonth=="Apr"){DateDBMonth=04}else if(DateDBMonth=="May"){DateDBMonth=05}else if(DateDBMonth=="Jun"){DateDBMonth=06}else if(DateDBMonth=="Jul"){DateDBMonth=07}else if(DateDBMonth=="Aug"){DateDBMonth=08}else if(DateDBMonth=="Sep"){DateDBMonth=09}else if(DateDBMonth=="Oct"){DateDBMonth=10}else if(DateDBMonth=="Nov"){DateDBMonth=11}else if(DateDBMonth=="Dec"){DateDBMonth=12}else{throw new Error(`Invalid month.`)}
+    let DateDBDay = DateDB.slice(8,10)
+    
+    let DateNewYear = dateNew.slice(11,15)
+    let DateNewMonth = dateNew.slice(4,7)
+    if(DateNewMonth=="Jan"){DateNewMonth=01}else if(DateNewMonth=="Feb"){DateNewMonth=02}else if(DateNewMonth=="Mar"){DateNewMonth=03}else if(DateNewMonth=="Apr"){DateNewMonth=04}else if(DateNewMonth=="May"){DateNewMonth=05}else if(DateNewMonth=="Jun"){DateNewMonth=06}else if(DateNewMonth=="Jul"){DateNewMonth=07}else if(DateNewMonth=="Aug"){DateNewMonth=08}else if(DateNewMonth=="Sep"){DateNewMonth=09}else if(DateNewMonth=="Oct"){DateNewMonth=10}else if(DateNewMonth=="Nov"){DateNewMonth=11}else if(DateNewMonth=="Dec"){DateNewMonth=12}else{throw new Error(`Invalid month.`)}
+    let DateNewDay = dateNew.slice(8,10)
+    if(DateNewYear >= DateDBYear){
+      if(DateNewMonth >= DateDBMonth){
+        if(DateNewDay >= DateDBDay){
+          return true
+        }else{return false}
+      }else{return false}
+    }else{return false}
   },
   async orderListSelect({buyerId}){
     let Lijst = await db.manyOrNone(`SELECT * FROM orderlist
@@ -403,7 +419,7 @@ var root = {
         .then(data => {return data})
         .catch(err => {throw new Error(err)})
     Lijst.forEach(element => {
-      element.purchasedate = this.dateToInt(element.purchasedate)
+      element.purchasedate = this.dateToString(element.purchasedate)
     });
     return Lijst
   },
