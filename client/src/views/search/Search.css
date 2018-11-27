@@ -30,11 +30,11 @@
 }
 
 .searchbar-results-wrapper{
-  height: 500px;
+  height: 100%;
 }
 
 .no-search-res{
-  height: 100%;
+  height: 500px;
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
