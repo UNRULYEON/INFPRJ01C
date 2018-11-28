@@ -150,7 +150,8 @@ var schema = buildSchema(`
     password: String,
     aanhef: String,
     paymentmethod: String,
-    token: String
+    token: String,
+    admin: Boolean
   },
   type FAQ{
     id: Int,

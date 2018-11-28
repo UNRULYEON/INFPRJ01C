@@ -547,7 +547,8 @@ var root = {
       city: user[0].city,
       postalcode: user[0].postalcode,
       paymentmethod: user[0].paymentmethod,
-      token: token
+      token: token,
+      admin: user[0].admin
     }
 
     return userWithToken
