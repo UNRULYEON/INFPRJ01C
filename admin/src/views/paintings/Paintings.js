@@ -425,7 +425,15 @@ class Paintings extends Component {
                   <TableBody>
                     {data.collection.map(row => {
                       return (
-                        <TableRow key={row.id_number}>
+                        <TableRow
+                          hover
+                          onClick={() => {
+                            console.log(`Clicked on ${row.id_number}`)
+                            this.props.history.push(`/schilderij/${row.id_number}`)
+                          }}
+                          tabIndex={-1}
+                          key={row.id_number}
+                        >
                           <TableCell component="th" scope="row">
                             {row.title}
                           </TableCell>
