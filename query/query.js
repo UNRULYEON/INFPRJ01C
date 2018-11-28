@@ -101,6 +101,10 @@ var root = {
   filterbytitledesc:()=>{
     return db.manyOrNone(`SELECT * FROM schilderijen ORDER BY title desc`)
   },
+  //#region users
+  selectsallusers:()=>{
+    return db.manyOrNone(`SELECT * FROM gebruiker`)
+  },
   //#endregion
   //#region Search
   //searchfunction 

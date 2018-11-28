@@ -19,6 +19,7 @@ var schema = buildSchema(`
     filterbypricedesc: [Painting]
     filterbytitleasc: [Painting]
     filterbytitledesc: [Painting]
+    selectsallusers: [User]
     faq: [FAQ]
     status: Int 
     papatabel: [PapaGet]
@@ -136,7 +137,8 @@ var schema = buildSchema(`
     postalcode: String,
     paymentmethod: String,
     password: String,
-    aanhef: String
+    aanhef: String,
+    admin: Boolean
   },
   type UserWithToken { 
     id: Int,
