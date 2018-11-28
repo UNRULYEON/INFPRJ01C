@@ -137,8 +137,8 @@ var root = {
       })
       .catch(err => {throw new Error(err)})
 
-      console.log(search)
-      console.log(total_search)
+      //console.log(search)
+      //console.log(total_search)
     }
 
     return {
