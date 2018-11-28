@@ -40,6 +40,7 @@ import Login from './views/login/Login';
 import Users from './views/users/Users';
 import Paintings from './views/paintings/Paintings';
 import Painters from './views/painters/Painters';
+import FAQ from './views/faq/FAQ';
 import NoMatch from './views/404/404';
 
 // API URL
@@ -204,6 +205,20 @@ class App extends Component {
 
   handleSnackbarOpen = (type) => {
     switch (type) {
+      case 'ADD_USER_SUCCESS':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "De gebruiker is successvol aangemaakt"
+        });
+        break;
+      case 'ADD_USER_ERROR':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "error",
+          snackbarMessage: "Er is een fout opgetreden bij het aanmaken van de gebruiker"
+        });
+        break;
       case 'ADD_PAINTING_SUCCESS':
         this.setState({
           snackbarOpen: true,
@@ -218,20 +233,34 @@ class App extends Component {
           snackbarMessage: "Er is een fout opgetreden bij het toevoegen van een schilderij"
         });
         break;
-        case 'ADD_USER_SUCCESS':
-          this.setState({
-            snackbarOpen: true,
-            snackbarVariant: "success",
-            snackbarMessage: "De gebruiker is successvol toegevoegd"
-          });
-          break;
-        case 'ADD_USER_ERROR':
-          this.setState({
-            snackbarOpen: true,
-            snackbarVariant: "error",
-            snackbarMessage: "Er is een fout opgetreden bij het aanmaken van een gebruiker"
-          });
-          break;
+      case 'ADD_PAINTER_SUCCESS':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "De schilder is successvol aangemaakt"
+        });
+        break;
+      case 'ADD_PAINTER_ERROR':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "error",
+          snackbarMessage: "Er is een fout opgetreden bij het aanmaken van de schilder"
+        });
+        break;
+      case 'ADD_FAQ_SUCCESS':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "De FAQ is successvol aangemaakt"
+        });
+        break;
+      case 'ADD_FAQ_ERROR':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "error",
+          snackbarMessage: "Er is een fout opgetreden bij het aanmaken van de FAQ"
+        });
+        break;
       default:
         break;
     }
@@ -263,6 +292,7 @@ class App extends Component {
                 <PrivateRoute
                   exact
                   path="/gebruikers"
+                  handleSnackbarOpen={this.handleSnackbarOpen}
                   component={Users}/>
                 <PrivateRoute
                   exact
@@ -273,7 +303,13 @@ class App extends Component {
                 <PrivateRoute
                   exact
                   path="/schilders"
+                  handleSnackbarOpen={this.handleSnackbarOpen}
                   component={Painters}/>
+                  <PrivateRoute
+                    exact
+                    path="/faq"
+                    handleSnackbarOpen={this.handleSnackbarOpen}
+                    component={FAQ}/>
                 <Route path="/login" component={Login} />
                 <Route component={NoMatch} />
               </Switch>
