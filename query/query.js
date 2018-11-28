@@ -274,17 +274,17 @@ var root = {
   //#endregion
   //#region alter products
   //Add product
-  async addProduct({id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescdutch, prodplace, width, height, principalmaker,price,rented=false}){
-    return await db.one(`INSERT INTO schilderijen(id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescriptiondutch, principalmakersproductionplaces, principalmaker, width, height, price,rented) 
-    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING id_number`, 
-    [id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescdutch, prodplace, principalmaker, width, height, price, rented])
+  async addProduct({id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker,price,rented=false}){
+    return await db.one(`INSERT INTO schilderijen(id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, principalmakersproductionplaces, principalmaker, width, height, price,rented) 
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id_number`, 
+    [id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, principalmaker, width, height, price, rented])
     .then(data => {console.log(`\nPainting ID: ${data.id_number}`)
                     return data.id_number})
       .catch(err => {console.error(err)
         throw new Error(err)})
   },
   //Alter products
-  async alterProduct({id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescdutch, prodplace, width, height, principalmaker, price, rented}){
+  async alterProduct({id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker, price, rented}){
     const prod = await db.manyOrNone(`SELECT * from schilderijen where id_number = ${id_number}`)
     .then(data => {return data})
     .catch(err => {console.err(err)
@@ -302,7 +302,6 @@ var root = {
                           amountofpaintings = $7,
                           src = $8,
                           bigsrc = $9,
-                          plaquedescriptiondutch = $10,
                           principalmakersproductionplaces = $11,
                           width = $12,
                           height = $13,
@@ -310,7 +309,7 @@ var root = {
                           price = $15,
                           rented = $16
                           WHERE id_number = ${id_number}`,
-                          [id,title,releasedate,period,description,physicalmedium,amountofpaintings,src,bigsrc,plaquedescdutch,prodplace,width,height,principalmaker,price,rented])
+                          [id,title,releasedate,period,description,physicalmedium,amountofpaintings,src,bigsrc,prodplace,width,height,principalmaker,price,rented])
                         .then(data => {return data})
   },
   //Delete products
