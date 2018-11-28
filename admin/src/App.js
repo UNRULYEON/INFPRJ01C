@@ -218,6 +218,20 @@ class App extends Component {
           snackbarMessage: "Er is een fout opgetreden bij het toevoegen van een schilderij"
         });
         break;
+        case 'ADD_USER_SUCCESS':
+          this.setState({
+            snackbarOpen: true,
+            snackbarVariant: "success",
+            snackbarMessage: "De gebruiker is successvol toegevoegd"
+          });
+          break;
+        case 'ADD_USER_ERROR':
+          this.setState({
+            snackbarOpen: true,
+            snackbarVariant: "error",
+            snackbarMessage: "Er is een fout opgetreden bij het aanmaken van een gebruiker"
+          });
+          break;
       default:
         break;
     }
