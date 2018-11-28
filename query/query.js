@@ -101,6 +101,10 @@ var root = {
   filterbytitledesc:()=>{
     return db.manyOrNone(`SELECT * FROM schilderijen ORDER BY title desc`)
   },
+  //#region users
+  selectsallusers:()=>{
+    return db.manyOrNone(`SELECT * FROM gebruiker`)
+  },
   //#endregion
   //#region Search
   //searchfunction 
@@ -551,7 +555,8 @@ var root = {
       city: user[0].city,
       postalcode: user[0].postalcode,
       paymentmethod: user[0].paymentmethod,
-      token: token
+      token: token,
+      admin: user[0].admin
     }
 
     return userWithToken
