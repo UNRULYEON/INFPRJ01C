@@ -101,10 +101,6 @@ var root = {
   filterbytitledesc:()=>{
     return db.manyOrNone(`SELECT * FROM schilderijen ORDER BY title desc`)
   },
-  //#region users
-  selectsallusers:()=>{
-    return db.manyOrNone(`SELECT * FROM gebruiker`)
-  },
   //#endregion
   //#region Search
   //searchfunction 
@@ -325,12 +321,16 @@ var root = {
     }
   },
   //#endregion
+  //#region alter users
+  selectsallusers:()=>{
+    return db.manyOrNone(`SELECT * FROM gebruiker`)
+  },
+  //#endregion
   //#endregion  
   
   //#region Merging Painter & Paintings
   //Merge schilder met schilderij 1 at a time
   async merge({id_number,id}){
-    // console.log(`schilderijen = ${id_number} & schilder = ${id}`)
     if(id_number != null != id || id_number != 0 != id){
        return await db.one(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${id}, ${id_number})`)
     }
@@ -342,7 +342,7 @@ var root = {
     // for (let i = 1; i <= amount[0].count; i++){
     //   // console.log(i)
     //   let schilderNum = await db.manyOrNone(`SELECT schilder.id from schilderijen, schilder WHERE schilderijen.id_number = ${i} AND schilderijen.principalmaker = schilder.name`)
-    //                                        .then( data => {return data})
+    //  .then( data => {return data})
     //   // console.log(schilderNum[0].id)
     //   // Commented for safety reasons, only uncomment when the entire collection of painters is to be inserted
     //   await db.one(`INSERT INTO schilderschilderij (schilder, schilderij) values(${schilderNum[0].id}, ${i}) RETURNING id`).then(data => {return data})  
@@ -362,8 +362,6 @@ var root = {
     }
     let current = await db.manyOrNone(`SELECT * from shoppingcart WHERE gebruikerid = ${gebruikerId}`)
     if(current.length){
-      // niet controleren of de datum nieuwer is, gewoon inserten
-      // moet nog
       db.one(`UPDATE shoppingcart set items = $1, timestamp = $2
               WHERE gebruikerid = ${gebruikerId}`,[items,time])
       return `The shoppingcart of user '${gebruikerId}' has been updated`
@@ -555,8 +553,8 @@ var root = {
       city: user[0].city,
       postalcode: user[0].postalcode,
       paymentmethod: user[0].paymentmethod,
-      token: token,
-      admin: user[0].admin
+      admin: user[0].admin,
+      token: token
     }
 
     return userWithToken
