@@ -221,6 +221,9 @@ var root = {
   //#endregion
   //#region alter users
   //Add user
+  selectsallusers:()=>{
+    return db.manyOrNone(`SELECT * FROM gebruiker`)
+  },
   async addUser({name, surname, mail, password, aanhef, adres = null, city = null, postalcode = null, housenumber = null, paymentmethod = null}){
     const saltedPassword = await bcrypt.hash(password,10)
     const user = await db.manyOrNone(`SELECT mail from gebruiker where mail = $1`,[mail])
@@ -228,8 +231,8 @@ var root = {
       throw new Error('User with this email already exists')
     }
     return await db.one(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod) 
-    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`, 
-    [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber])
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`, 
+    [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber, paymentmethod])
     .then(data => {console.log(`\nUser ID: ${data.id}`)
                     return data.id})
       .catch(err => {throw new Error(err)})    
@@ -321,9 +324,16 @@ var root = {
     }
   },
   //#endregion
-  //#region alter users
-  selectsallusers:()=>{
-    return db.manyOrNone(`SELECT * FROM gebruiker`)
+  //#region alter painters
+  async addPainter({name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description}){
+    const painter = await db.manyOrNone(`SELECT name from schilder where name = $1`,[name])
+    if(painter.length){
+      throw new Error(`Painter with the given name already exists`)
+    }
+    return await db.one(`INSERT INTO schilder(name, city, dateofbirth, dateofdeath, placeofdeath, occupation, nationality, headerimage, thumbnail, description)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`, [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description])
+          .then(data => {return data.id})
+          .catch(err => {throw new Error(err)})
   },
   //#endregion
   //#endregion  
