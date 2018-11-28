@@ -32,6 +32,16 @@ import FormGroup from '@material-ui/core/FormGroup';
 import { Query, Mutation } from "react-apollo";
 import gql from "graphql-tag";
 
+//Edit icon
+import Edit from '../../icons/Edit.svg';
+
+//Linking to userdetail page
+import {Link} from 'react-router-dom';
+
+//other route imports (testing)
+import {Route} from 'react-router';
+import { Redirect } from 'react-router-dom'
+
 const ALL_USERS = gql`
   query AllUsers{
     selectsallusers{
@@ -191,9 +201,21 @@ function getStepContent(stepIndex, state, handleChange) {
   }
 }
 
+const USERS = gql`
+  query users{
+    selectsallusers{
+      id
+      name
+      surname
+      mail
+      adres
+    }
+  }
+`;
+
 class Users extends Component {
   constructor(props) {
-    super (props);
+    super(props);
     this.state = {
       activeStep: 0,
       dialogAddUser: false,
@@ -225,8 +247,13 @@ class Users extends Component {
       paymentmethod: '',
       paymentmethodError: false,
       paymentmethodErrorMsg: '',
-      admin: false
+      admin: false,
+      ID: 404
     }
+  }
+
+  gotolink(id){
+    return "/gebruiker/" + id;
   }
 
   // Handle input change
@@ -275,7 +302,7 @@ class Users extends Component {
           </Button>
         </div>
         <Query
-          query={ALL_USERS}
+          query={USERS}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading... :)</p>;
@@ -286,6 +313,8 @@ class Users extends Component {
                 <Table>
                   <TableHead>
                     <TableRow>
+                    <TableCell></TableCell>
+                      <TableCell>ID</TableCell>
                       <TableCell>Voornaam</TableCell>
                       <TableCell>Achternaam</TableCell>
                       <TableCell>Email</TableCell>
@@ -295,8 +324,14 @@ class Users extends Component {
                   <TableBody>
                     {data.selectsallusers.map(row => {
                       return (
-                        <TableRow key={row.email}>
-                          <TableCell component="th" scope="row">
+                        <TableRow key={row.id}>
+                          <TableCell>
+                            <Link to={this.gotolink(row.id)}><img src={Edit} alt="Edit" /></Link>
+                          </TableCell>
+                          <TableCell >
+                            {row.id}
+                          </TableCell>
+                          <TableCell>
                             {row.name}
                           </TableCell>
                           <TableCell>
@@ -405,5 +440,8 @@ class Users extends Component {
     );
   }
 }
+
+// <img src={Edit} alt="Edit" />
+// <Link to={this.gotolink(row.id)}/>
 
 export default Users;

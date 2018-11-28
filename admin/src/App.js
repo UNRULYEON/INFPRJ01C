@@ -38,6 +38,7 @@ import Sidebar from './components/sidebar/Sidebar'
 import Dashboard from './views/dashboard/Dashboard';
 import Login from './views/login/Login';
 import Users from './views/users/Users';
+import GebruikerDetails from './views/gebruikerDetails/GebruikerDetails';
 import Paintings from './views/paintings/Paintings';
 import Painters from './views/painters/Painters';
 import FAQ from './views/faq/FAQ';
@@ -311,6 +312,9 @@ class App extends Component {
                     handleSnackbarOpen={this.handleSnackbarOpen}
                     component={FAQ}/>
                 <Route path="/login" component={Login} />
+                <Route
+                path="/gebruiker/:id"
+                component={GebruikerDetails}/>
                 <Route component={NoMatch} />
               </Switch>
             </div>
