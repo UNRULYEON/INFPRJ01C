@@ -7,46 +7,108 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import './Users.css';
 
-class Users extends Component {
-  constructor(props) {
-    super (props);
-    this.state = {
+//Edit icon
+import Edit from '../../icons/Edit.svg';
+
+//Linking to userdetail page
+import {Link} from 'react-router-dom';
+
+//other route imports (testing)
+import {Route} from 'react-router';
+import  { Redirect } from 'react-router-dom'
+
+// Apollo
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
+
+
+const USERS = gql`
+  query users{
+    selectsallusers{
+      id
+      name
+      surname
+      mail
+      adres
     }
   }
+`;
+
+class Users extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ID: 404
+    }
+  }
+
+  gotolink(id){
+    return "/gebruiker/" + id;
+  }
+
+  
 
   render() {
     return (
       <section>
-        <Paper>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Voornaam</TableCell>
-                <TableCell>Achternaam</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Adres</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {/* {rows.map(row => {
-                return (
-                  <TableRow key={row.id}>
-                    <TableCell component="th" scope="row">
-                      {row.name}
-                    </TableCell>
-                    <TableCell numeric>{row.calories}</TableCell>
-                    <TableCell numeric>{row.fat}</TableCell>
-                    <TableCell numeric>{row.carbs}</TableCell>
-                    <TableCell numeric>{row.protein}</TableCell>
-                  </TableRow>
-                );
-              })} */}
-            </TableBody>
-          </Table>
-        </Paper>
+        <Query
+          query={USERS}
+        >
+          {({ loading, error, data }) => {
+            if (loading) return <p>Loading... :)</p>;
+            if (error) return <p>Error :(</p>;
+
+            return (
+              <Paper>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                    <TableCell></TableCell>
+                      <TableCell>ID</TableCell>
+                      <TableCell>Voornaam</TableCell>
+                      <TableCell>Achternaam</TableCell>
+                      <TableCell>Email</TableCell>
+                      <TableCell>Adres</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {data.selectsallusers.map(row => {
+                      return (
+                        <TableRow key={row.id}>
+                          <TableCell>
+                            <Link to={this.gotolink(row.id)}><img src={Edit} alt="Edit" /></Link>
+                          </TableCell>
+                          <TableCell >
+                            {row.id}
+                          </TableCell>
+                          <TableCell>
+                            {row.name}
+                          </TableCell>
+                          <TableCell>
+                            {row.surname}
+                          </TableCell>
+                          <TableCell>
+                            {row.mail}
+                          </TableCell>
+                          <TableCell>
+                            {row.adres}
+                          </TableCell>
+                          
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </Paper>
+            )
+          }}
+        </Query>
       </section>
     );
   }
 }
+
+// <img src={Edit} alt="Edit" />
+// <Link to={this.gotolink(row.id)}/>
 
 export default Users;

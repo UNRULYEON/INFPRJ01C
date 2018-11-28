@@ -7,9 +7,26 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import './Painters.css';
 
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
+
+const PAINTERS = gql`
+query collectionPainters{
+  painters{
+    id
+    name
+    city
+    dateofbirth
+    dateofdeath
+    occupation
+    nationality
+  }
+}
+`;
+
 class Painters extends Component {
   constructor(props) {
-    super (props);
+    super(props);
     this.state = {
     }
   }
@@ -17,32 +34,62 @@ class Painters extends Component {
   render() {
     return (
       <section>
-        <Paper>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Voornaam</TableCell>
-                <TableCell>Achternaam</TableCell>
-                <TableCell>Schilderijen</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {/* {rows.map(row => {
-                return (
-                  <TableRow key={row.id}>
-                    <TableCell component="th" scope="row">
-                      {row.name}
-                    </TableCell>
-                    <TableCell numeric>{row.calories}</TableCell>
-                    <TableCell numeric>{row.fat}</TableCell>
-                    <TableCell numeric>{row.carbs}</TableCell>
-                    <TableCell numeric>{row.protein}</TableCell>
-                  </TableRow>
-                );
-              })} */}
-            </TableBody>
-          </Table>
-        </Paper>
+        <Query
+          query={PAINTERS}
+        >
+          {({ loading, error, data }) => {
+            if (loading) return <p>Loading... :)</p>;
+            if (error) return <p>Error :(</p>;
+
+            return (
+              <Paper>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Naam</TableCell>
+                      <TableCell>Stad</TableCell>
+                      <TableCell>Geboortedatum</TableCell>
+                      <TableCell>Datum van overlijden</TableCell>
+                      <TableCell>Beroep</TableCell>
+                      <TableCell>Nationaliteit</TableCell>
+                      {/* <TableCell>Beschrijving</TableCell> */}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {data.painters.map(row => {
+                      return (
+                        <TableRow key={row.id}>
+                          <TableCell component="th" scope="row">
+                            {row.name}
+                          </TableCell>
+                          <TableCell>
+                            {row.city}
+                          </TableCell>
+                          <TableCell>
+                            {row.dateofbirth}
+                          </TableCell>
+                          <TableCell>
+                            {row.dateofdeath}
+                          </TableCell>
+                          <TableCell>
+                            {row.occupation}
+                          </TableCell>
+                          <TableCell>
+                            {row.nationality}
+                          </TableCell>
+                          {/* find a way to wrap the description text */}
+                          {/* <TableCell >
+                            {row.description}
+                          </TableCell> */}
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </Paper>
+            )
+          }}
+        </Query>
       </section>
     );
   }
