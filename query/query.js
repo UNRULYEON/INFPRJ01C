@@ -101,10 +101,6 @@ var root = {
   filterbytitledesc:()=>{
     return db.manyOrNone(`SELECT * FROM schilderijen ORDER BY title desc`)
   },
-  //#region users
-  selectsallusers:()=>{
-    return db.manyOrNone(`SELECT * FROM gebruiker`)
-  },
   //#endregion
   //#region Search
   //searchfunction 
@@ -325,12 +321,16 @@ var root = {
     }
   },
   //#endregion
+  //#region alter users
+  selectsallusers:()=>{
+    return db.manyOrNone(`SELECT * FROM gebruiker`)
+  },
+  //#endregion
   //#endregion  
   
   //#region Merging Painter & Paintings
   //Merge schilder met schilderij 1 at a time
   async merge({id_number,id}){
-    // console.log(`schilderijen = ${id_number} & schilder = ${id}`)
     if(id_number != null != id || id_number != 0 != id){
        return await db.one(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${id}, ${id_number})`)
     }
@@ -342,7 +342,7 @@ var root = {
     // for (let i = 1; i <= amount[0].count; i++){
     //   // console.log(i)
     //   let schilderNum = await db.manyOrNone(`SELECT schilder.id from schilderijen, schilder WHERE schilderijen.id_number = ${i} AND schilderijen.principalmaker = schilder.name`)
-    //                                        .then( data => {return data})
+    //  .then( data => {return data})
     //   // console.log(schilderNum[0].id)
     //   // Commented for safety reasons, only uncomment when the entire collection of painters is to be inserted
     //   await db.one(`INSERT INTO schilderschilderij (schilder, schilderij) values(${schilderNum[0].id}, ${i}) RETURNING id`).then(data => {return data})  
@@ -362,31 +362,14 @@ var root = {
     }
     let current = await db.manyOrNone(`SELECT * from shoppingcart WHERE gebruikerid = ${gebruikerId}`)
     if(current.length){
-      if(await this.IsGivenDateNewer(current[0].timestamp.toString(),new Date(time).toString())){
-        console.log('given date newer')
-        throw new Error('given date newer')
-      }else{
-        console.log('given date older')
-        throw new Error('given date older')
-      }
-      if(current[0].timestamp <= time){
-        let query = await db.one(`UPDATE shoppingcart set 
-                items = $1,
-                timestamp = $2
-                WHERE gebruikerid = ${gebruikerId}`,[items,time])
-              .then(data => {return data})
-        console.log(query)
-        return query
-      }else{
-        return `Data in database is newer than the given data`
-      }
+      db.one(`UPDATE shoppingcart set items = $1, timestamp = $2
+              WHERE gebruikerid = ${gebruikerId}`,[items,time])
+      return `The shoppingcart of user '${gebruikerId}' has been updated`
     }else{
-      let query = await db.one(`INSERT INTO shoppingcart(gebruikerid, items, timestamp) VALUES($1,$2,$3) RETURNING id`,[gebruikerId,items,time])
-          .then(data => {return data})
-          .catch(err => {throw new Error(err)})
-      console.log(query.id)
-
-      return `Inserted into row: ${query.id}`
+      db.one(`INSERT INTO shoppingcart(gebruikerid, items, timestamp) 
+              VALUES($1,$2,$3) RETURNING id`,[gebruikerId,items,time])
+        .catch(err => {throw new Error(err)})
+      return `The shoppingcart of user '${gebruikerId}' has been created`
     }
   },
   dateToString: (givenDate) => {
@@ -395,27 +378,46 @@ var root = {
     let DateDB = givenDate
     let year = DateDB.slice(11,15)
     let month = DateDB.slice(4,7)
-    if(month=="Jan"){month=01}else if(month=="Feb"){month=02}else if(month=="Mar"){month=03}else if(month=="Apr"){month=04}else if(month=="May"){month=05}else if(month=="Jun"){month=06}else if(month=="Jul"){month=07}else if(month=="Aug"){month=08}else if(month=="Sep"){month=09}else if(month=="Oct"){month=10}else if(month=="Nov"){month=11}else if(month=="Dec"){month=12}else{throw new Error(`Invalid month.`)}
+    switch (month) {
+      case "Jan":
+        month = 01
+        break;
+      case "Feb":
+        month = 02
+        break;
+      case "Mar":
+        month = 03
+        break;
+      case "Apr":
+        month = 04
+        break;
+      case "May":
+        month = 05
+        break;
+      case "Jun":
+        month = 06
+        break;
+      case "Jul":
+        month = 07
+        break;
+      case "Aug":
+        month = 08
+        break;
+      case "Sep":
+        month = 09
+        break;
+      case "Oct":
+        month = 10
+        break;
+      case "Nov":
+        month = 11
+        break;
+      default:
+        month = 12
+        break;
+    }
     let day = DateDB.slice(8,10)
     return `${year}-${month}-${day}`
-  },
-  IsGivenDateNewer: (DateDB,dateNew) => {
-    let DateDBYear = DateDB.slice(11,15)
-    let DateDBMonth = DateDB.slice(4,7)
-    if(DateDBMonth=="Jan"){DateDBMonth=01}else if(DateDBMonth=="Feb"){DateDBMonth=02}else if(DateDBMonth=="Mar"){DateDBMonth=03}else if(DateDBMonth=="Apr"){DateDBMonth=04}else if(DateDBMonth=="May"){DateDBMonth=05}else if(DateDBMonth=="Jun"){DateDBMonth=06}else if(DateDBMonth=="Jul"){DateDBMonth=07}else if(DateDBMonth=="Aug"){DateDBMonth=08}else if(DateDBMonth=="Sep"){DateDBMonth=09}else if(DateDBMonth=="Oct"){DateDBMonth=10}else if(DateDBMonth=="Nov"){DateDBMonth=11}else if(DateDBMonth=="Dec"){DateDBMonth=12}else{throw new Error(`Invalid month.`)}
-    let DateDBDay = DateDB.slice(8,10)
-    
-    let DateNewYear = dateNew.slice(11,15)
-    let DateNewMonth = dateNew.slice(4,7)
-    if(DateNewMonth=="Jan"){DateNewMonth=01}else if(DateNewMonth=="Feb"){DateNewMonth=02}else if(DateNewMonth=="Mar"){DateNewMonth=03}else if(DateNewMonth=="Apr"){DateNewMonth=04}else if(DateNewMonth=="May"){DateNewMonth=05}else if(DateNewMonth=="Jun"){DateNewMonth=06}else if(DateNewMonth=="Jul"){DateNewMonth=07}else if(DateNewMonth=="Aug"){DateNewMonth=08}else if(DateNewMonth=="Sep"){DateNewMonth=09}else if(DateNewMonth=="Oct"){DateNewMonth=10}else if(DateNewMonth=="Nov"){DateNewMonth=11}else if(DateNewMonth=="Dec"){DateNewMonth=12}else{throw new Error(`Invalid month.`)}
-    let DateNewDay = dateNew.slice(8,10)
-    if(DateNewYear >= DateDBYear){
-      if(DateNewMonth >= DateDBMonth){
-        if(DateNewDay >= DateDBDay){
-          return true
-        }else{return false}
-      }else{return false}
-    }else{return false}
   },
   async orderListSelect({buyerId}){
     let Lijst = await db.manyOrNone(`SELECT * FROM orderlist
@@ -551,8 +553,8 @@ var root = {
       city: user[0].city,
       postalcode: user[0].postalcode,
       paymentmethod: user[0].paymentmethod,
-      token: token,
-      admin: user[0].admin
+      admin: user[0].admin,
+      token: token
     }
 
     return userWithToken
