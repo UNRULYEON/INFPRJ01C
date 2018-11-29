@@ -22,3 +22,7 @@ section {
   width: 100%;
   height: calc(100% - 40px)
 }
+
+.section-actions{
+  margin-bottom: 25px;
+}

@@ -8,8 +8,10 @@ import {
 import './App.css';
 
 // Apollo
+import { ApolloLink } from 'apollo-link';
 import { ApolloClient } from 'apollo-client';
 import { createHttpLink } from 'apollo-link-http';
+import { onError } from "apollo-link-error";
 import { setContext } from 'apollo-link-context';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloProvider } from "react-apollo";
@@ -36,14 +38,28 @@ import Sidebar from './components/sidebar/Sidebar'
 import Dashboard from './views/dashboard/Dashboard';
 import Login from './views/login/Login';
 import Users from './views/users/Users';
+import GebruikerDetails from './views/gebruikerDetails/GebruikerDetails';
 import Paintings from './views/paintings/Paintings';
 import Painters from './views/painters/Painters';
+import FAQ from './views/faq/FAQ';
 import NoMatch from './views/404/404';
 
 // API URL
-const link = createHttpLink({
-  uri: 'http://localhost:3001/graphql',
-});
+const link = ApolloLink.from([
+  new onError(({ graphQLErrors, networkError }) => {
+    if (graphQLErrors)
+      graphQLErrors.map(({ message, locations, path }) =>
+        console.log(
+          `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
+        ),
+      );
+
+    if (networkError) console.log(`[Network error]: ${networkError}`);
+  }),
+  new createHttpLink({
+    uri: 'http://localhost:3001/graphql',
+  })
+])
 
 // Authentication token if it exists
 const token = localStorage.getItem('ADMIN_AUTH_TOKEN');
@@ -77,15 +93,19 @@ const variantIcon = {
 
 const snackbarStyle = theme => ({
   success: {
+    color: '#FFFFFF',
     backgroundColor: green[600],
   },
   error: {
+    color: '#FFFFFF',
     backgroundColor: theme.palette.error.dark,
   },
   info: {
+    color: '#FFFFFF',
     backgroundColor: theme.palette.primary.dark,
   },
   warning: {
+    color: '#FFFFFF',
     backgroundColor: amber[700],
   },
   icon: {
@@ -139,7 +159,10 @@ function PrivateRoute({ component: Component, ...rest }) {
       {...rest}
       render={props =>
         token ? (
-          <Component {...props} />
+          <Component
+            {...rest}
+            {...props}
+          />
         ) : (
           <Redirect
             to={{
@@ -181,6 +204,69 @@ class App extends Component {
     localStorage.setItem('ADMIN_AUTH_TOKEN', true)
   }
 
+  handleSnackbarOpen = (type) => {
+    switch (type) {
+      case 'ADD_USER_SUCCESS':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "De gebruiker is successvol aangemaakt"
+        });
+        break;
+      case 'ADD_USER_ERROR':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "error",
+          snackbarMessage: "Er is een fout opgetreden bij het aanmaken van de gebruiker"
+        });
+        break;
+      case 'ADD_PAINTING_SUCCESS':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "Het schilderij is successvol toegevoegd"
+        });
+        break;
+      case 'ADD_PAINTING_ERROR':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "error",
+          snackbarMessage: "Er is een fout opgetreden bij het toevoegen van een schilderij"
+        });
+        break;
+      case 'ADD_PAINTER_SUCCESS':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "De schilder is successvol aangemaakt"
+        });
+        break;
+      case 'ADD_PAINTER_ERROR':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "error",
+          snackbarMessage: "Er is een fout opgetreden bij het aanmaken van de schilder"
+        });
+        break;
+      case 'ADD_FAQ_SUCCESS':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "De FAQ is successvol aangemaakt"
+        });
+        break;
+      case 'ADD_FAQ_ERROR':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "error",
+          snackbarMessage: "Er is een fout opgetreden bij het aanmaken van de FAQ"
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
   handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -193,7 +279,7 @@ class App extends Component {
 
   render() {
     return (
-        <ApolloProvider client={client}>
+      <ApolloProvider client={client}>
         <Router>
           <div className="App">
             <Header/>
@@ -207,16 +293,28 @@ class App extends Component {
                 <PrivateRoute
                   exact
                   path="/gebruikers"
+                  handleSnackbarOpen={this.handleSnackbarOpen}
                   component={Users}/>
                 <PrivateRoute
                   exact
                   path="/schilderijen"
-                  component={Paintings}/>
+                  handleSnackbarOpen={this.handleSnackbarOpen}
+                  component={Paintings}
+                />
                 <PrivateRoute
                   exact
                   path="/schilders"
+                  handleSnackbarOpen={this.handleSnackbarOpen}
                   component={Painters}/>
+                  <PrivateRoute
+                    exact
+                    path="/faq"
+                    handleSnackbarOpen={this.handleSnackbarOpen}
+                    component={FAQ}/>
                 <Route path="/login" component={Login} />
+                <Route
+                path="/gebruiker/:id"
+                component={GebruikerDetails}/>
                 <Route component={NoMatch} />
               </Switch>
             </div>
