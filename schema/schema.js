@@ -25,6 +25,7 @@ var schema = buildSchema(`
     status: Int 
     papatabel: [PapaGet]
     orderListSelect(buyerId: Int!): [Orders]
+    selectShoppingCart(userId: Int!): [Cart]
     searchbar(query: String!, page: Int!): searchResult
   },
   type Mutation {
@@ -48,6 +49,7 @@ var schema = buildSchema(`
     shoppingCartInsert(gebruikerId: Int!, items: String!, time: String!): String
     orderListInsert(gebruikerId: Int, items: [PaintRef!], purchaseDate: String!): String
     rentalListInsert(gebruikerId: Int!, items : [PaintRef!], purchaseDate: String!, rentStart: String!, rentStop: String!): String
+    orderListUpdate(id: Int!, buyerId: Int!, newStatus: String!): String
   },
   input PaintRef{foreignkey: Int!},
   input RefBaby{foreignkey: Int!},
@@ -56,11 +58,18 @@ var schema = buildSchema(`
     naam: String,
     type: String
   },
+  type Cart{
+    id: Int,
+    gebruikerid: Int,
+    items: String,
+    timestamp: String
+  }
   type Orders{
     id: Int,
     buyerid: Int,
     items: Int,
-    purchasedate: String
+    purchasedate: String,
+    status: String
   },
   type ret{
     id_number: Int,

@@ -353,7 +353,8 @@ var root = {
                           nationality = $7,
                           headerimage = $8,
                           thumbnail = $9,
-                          description = $10`,
+                          description = $10
+                          WHERE name = ${name}`,
                           [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description])
                         .then(data => {return data})
   },
@@ -393,6 +394,21 @@ var root = {
   //#endregion
   
   //#region User
+  async selectShoppingCart({userId}){
+    let check = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${userId}`)
+    .then(data => {return data})
+    .catch(err => {throw new Error(err)})
+    if(!check.length){
+      throw new Error(`The provided user doesn't exist`)
+    }
+    let cart = await db.manyOrNone(`SELECT * from shoppingcart WHERE gebruikerid = ${userId}`)
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
+    cart.forEach(element => {
+      element.timestamp = this.dateToString(element.timestamp)
+    })
+    return cart
+  },
   async shoppingCartInsert({gebruikerId,items,time}){
     let check = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${gebruikerId}`)
         .then(data => {return data})
@@ -413,9 +429,7 @@ var root = {
     }
   },
   dateToString: (givenDate) => {
-    // let DateDB = givenDate.toString()
-    console.log(givenDate)
-    let DateDB = givenDate
+    let DateDB = givenDate.toString()
     let year = DateDB.slice(11,15)
     let month = DateDB.slice(4,7)
     switch (month) {
@@ -469,6 +483,21 @@ var root = {
     });
     return Lijst
   },
+  async orderListUpdate({id, buyerId, newStatus}){
+    let selection = await db.manyOrNone(`SELECT * from orderlist WHERE id = ${id} AND buyerid = ${buyerId}`)
+            .then(data => {console.log(data)
+                  return data})
+            .catch(err => {throw new Error(err)})
+    if(!selection.length){
+      throw new Error("The given combination of 'ID' and 'buyerId' doesn't exist")
+    }
+    db.one(`UPDATE orderlist SET
+              status = $1
+              WHERE id = $2
+              AND buyerid = $3`,[newStatus, id, buyerId])
+          .catch(err => {throw new Error(err)})
+    return `The status of the selected order has been changed to: ${newStatus}`
+  },
   async orderListInsert({buyerId = 166, items, purchaseDate}){
     items.forEach(element => {      
       db.one(`INSERT INTO orderlist(buyerid, items, purchasedate) VALUES($1,$2,$3) RETURNING ID`,[buyerId,element.foreignkey,purchaseDate])
@@ -502,9 +531,8 @@ var root = {
     return await db.manyOrNone(query)
   },
   //user signup
-  async checkUser({ mail }){
+  async checkUser({mail}){
     const user = await db.manyOrNone('SELECT mail from gebruiker where mail = $1', [mail])
-
     // Throw an error when a user with the same email exists
     if (user.length) {
       return true;

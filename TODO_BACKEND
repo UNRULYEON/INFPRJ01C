@@ -1,3 +1,1 @@
-bij inserten data in shoppingcart, eerst controleren of de time nieuwer is dan de huidige time in de DB
-
-query om na betaling de bestelling toe te voegen aan de bestellijst
+status van bestelling visualiseren (In orderlist staat een status)
