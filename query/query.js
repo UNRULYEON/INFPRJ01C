@@ -108,12 +108,12 @@ var root = {
     let offset = (page - 1) * 12
 
     // let search = await db.manyOrNone('SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery(`$1`)', [title])
-    let search = await db.manyOrNone(`SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery('${query}') UNION SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery('${query}:*') LIMIT 12 OFFSET ${offset}`)
+    let search = await db.manyOrNone(` SELECT * FROM schilderijen WHERE document_vectors @@ plainto_tsquery('${query}:*') LIMIT 12 OFFSET ${offset}`)
     .then(data => {
       return data
     })
 
-    let total_search = await db.manyOrNone(`SELECT COUNT(*) FROM schilderijen WHERE document_vectors @@ to_tsquery('${query}') UNION SELECT COUNT(*) FROM schilderijen WHERE document_vectors @@ to_tsquery('${query}:*')`)
+    let total_search = await db.manyOrNone(`SELECT COUNT(*) FROM schilderijen WHERE document_vectors @@ plainto_tsquery('${query}:*')`)
     .then(data => {
       return data
     })
