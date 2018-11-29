@@ -221,8 +221,18 @@ var root = {
   //#endregion
   //#region alter users
   //Add user
-  selectsallusers:()=>{
+  selectAllUsers:()=>{
     return db.manyOrNone(`SELECT * FROM gebruiker`)
+  },
+  async selectOneUser({id,mail}){
+    let search
+    if(id.length){
+
+    }else if(mail.length){
+
+    }else{
+      throw new Error(`There is nothing to search by`)
+    }
   },
   async addUser({name, surname, mail, password, aanhef, adres = null, city = null, postalcode = null, housenumber = null, paymentmethod = null}){
     const saltedPassword = await bcrypt.hash(password,10)
@@ -237,13 +247,12 @@ var root = {
                     return data.id})
       .catch(err => {throw new Error(err)})    
   },
-  //Alter user
   async alterUser({id, name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod}){
     const user = await db.manyOrNone(`SELECT * from gebruiker where id = ${[id]}`)
     .then(data => {return data})
     .catch(err => {throw new Error(err)})
-    if(user[0].id != id){
-      throw new Error('No user with that ID!')
+    if(!user.length){
+      throw new Error('No user with the given ID!')
     }
     const saltedPassword = await bcrypt.hash(password,10)
     return await db.one(`UPDATE gebruiker set 
@@ -261,7 +270,6 @@ var root = {
                           [name,surname,mail,saltedPassword,aanhef,adres,city,postalcode,housenumber,paymentmethod])
                         .then(data => {return data})
   },
-  //Delete user
   async deleteUser({id}){
     let user = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${id}`)
     if(user.length){
@@ -289,7 +297,7 @@ var root = {
     .then(data => {return data})
     .catch(err => {console.err(err)
                     throw new Error(err)})
-    if(prod[0].id_number != id_number){
+    if(!prod.length){
       throw new Error(`No product with the given ID!`)
     }
     return await db.one(`UPDATE schilderijen set
@@ -334,6 +342,35 @@ var root = {
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`, [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description])
           .then(data => {return data.id})
           .catch(err => {throw new Error(err)})
+  },
+  async alterPainter({name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description}){
+    const painter = await db.manyOrNone(`SELECT * from schilder WHERE name = ${name}`)
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
+    if (!painter.length){
+      throw new Error(`No painter with the given name exists`)
+    }
+    return await db.one(`UPDATE schilder set
+                          name = $1,
+                          city = $2,
+                          dateofbirth = $3,
+                          dateofdeath = $4,
+                          placeofdeath = $5,
+                          occupation = $6,
+                          nationality = $7,
+                          headerimage = $8,
+                          thumbnail = $9,
+                          description = $10`,
+                          [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description])
+                        .then(data => {return data})
+  },
+  async deletePainter({name}){
+    let painter = await db.manyOrNone(`SELECT * from schilder WHERE name = ${name}`)
+    if(painter.length){
+      return await db.one(`DELETE from schilder WHERE name = ${name}`)
+    }else{
+      throw new Error(`The specified Painter doesn't exist!`)
+    }
   },
   //#endregion
   //#endregion  
