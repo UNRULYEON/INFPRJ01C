@@ -16,6 +16,7 @@ import {Link} from 'react-router-dom';
 //other route imports (testing)
 import {Route} from 'react-router';
 import  { Redirect } from 'react-router-dom'
+import {BrowserRouter} from 'react-router';
 
 // Apollo
 import { Query } from "react-apollo";
@@ -74,7 +75,10 @@ class Users extends Component {
                   <TableBody>
                     {data.selectsallusers.map(row => {
                       return (
-                        <TableRow key={row.id}>
+                        <TableRow key={row.id} hover onClick={() => {
+                          console.log(`clicked on ${row.id}`)
+                          this.props.history.push('/gebruiker/' + row.id)
+                        }}>
                           <TableCell>
                             <Link to={this.gotolink(row.id)}><img src={Edit} alt="Edit" /></Link>
                           </TableCell>
