@@ -144,9 +144,6 @@ class FAQ extends Component {
         if (!items[i][1]) {
           next = false
           console.error(`item: ${items[i][0]} is empty`)
-          if (items[1][1] > new Date().getFullYear()) {
-            return
-          }
           let err = items[i][0] + "Error"
           let errMsg = err + "Msg"
           this.setState(state => ({

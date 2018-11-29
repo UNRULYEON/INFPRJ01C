@@ -44,7 +44,7 @@ import { Redirect } from 'react-router-dom'
 
 const ALL_USERS = gql`
   query AllUsers{
-    selectsallusers{
+    selectAllUsers{
       name
       surname
       mail
@@ -159,7 +159,7 @@ function getStepContent(stepIndex, state, handleChange) {
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth error={state.postalcodeError}>
-              <InputLabel htmlFor="add-postalcode">Stad</InputLabel>
+              <InputLabel htmlFor="add-postalcode">Postcode</InputLabel>
               <Input id="add-postalcode" value={state.postalcode} onChange={handleChange('postalcode')} />
               <FormHelperText id="add-postalcode-error-text">{state.postalcodeErrorMsg}</FormHelperText>
             </FormControl>
@@ -195,7 +195,47 @@ function getStepContent(stepIndex, state, handleChange) {
         </Grid>
       )
     case 1:
-      return 't'
+      return (
+        <Grid>
+          <Grid container spacing={24}>
+            <Grid item xs={12} className="add-user-review-container">
+              <span className="add-user-name-surname">{state.aanhef} {state.name} {state.surname}</span>
+              <span className="add-user-role">{state.admin ? 'Admin' : 'Gebruiker'}</span>
+            </Grid>
+            <Grid item xs={3} className="add-user-review-container">
+              <span className="add-user-column-left">Mail</span>
+            </Grid>
+            <Grid item xs={7} className="add-user-review-container">
+              <span className="add-user-column-right">{state.mail}</span>
+            </Grid>
+            <Grid item xs={12} className="add-user-review-container-divider" />
+            <Grid item xs={3} className="add-user-review-container">
+              <span className="add-user-column-left">Wachtwoord</span>
+            </Grid>
+            <Grid item xs={7} className="add-user-review-container">
+              <span className="add-user-column-right">{state.password}</span>
+            </Grid>
+            <Grid item xs={12} className="add-user-review-container-divider" />
+            <Grid item xs={3} className="add-user-review-container">
+              <span className="add-user-column-left">Adres</span>
+            </Grid>
+            <Grid item xs={7} className="add-user-review-container">
+              <span className="add-user-column-right">{state.adres} {state.housenumber}</span>
+            </Grid>
+            <Grid item xs={3} className="add-user-review-container"></Grid>
+            <Grid item xs={7} className="add-user-review-container" style={{padding: '0 12px 12px 12px'}}>
+              <span className="add-user-column-right">{state.postalcode} {state.city}</span>
+            </Grid>
+            <Grid item xs={12} className="add-user-review-container-divider" />
+            <Grid item xs={3} className="add-user-review-container">
+              <span className="add-user-column-left">Betaalwijze</span>
+            </Grid>
+            <Grid item xs={7} className="add-user-review-container">
+              <span className="add-user-column-right">{state.paymentmethod}</span>
+            </Grid>
+          </Grid>
+        </Grid>
+      )
     default:
       return 'Uknown stepIndex';
   }
@@ -278,7 +318,45 @@ class Users extends Component {
 
   // Handle next button for stepper and check if fields are empty before continuing
   handleNext = () => {
-    this.setState(state => ({ activeStep: state.activeStep + 1, }))
+    if (this.state.activeStep === 0) {
+      let next = true
+      let items = [ ['name', this.state.name],
+                    ['surname', this.state.surname],
+                    ['mail', this.state.mail],
+                    ['password', this.state.password],
+                    ['adres', this.state.adres],
+                    ['housenumber', this.state.housenumber],
+                    ['postalcode', this.state.postalcode],
+                    ['city', this.state.city],
+                    ['paymentmethod', this.state.paymentmethod]]
+
+      console.log(items)
+
+      for (let i = 0; i < items.length; i++) {
+        console.log(`item: ${items[i][0]} - value: ${items[i][1]}`)
+        if (!items[i][1]) {
+          next = false
+          console.error(`item: ${items[i][0]} is empty`)
+          let err = items[i][0] + "Error"
+          let errMsg = err + "Msg"
+          this.setState(state => ({
+            [err]: true,
+            [errMsg]: 'Dit veld is verplicht'
+          }));
+        } else {
+          let err = items[i][0] + "Error"
+          let errMsg = err + "Msg"
+          this.setState(state => ({
+            [err]: false,
+            [errMsg]: ''
+          }));
+        }
+      }
+
+      if (next) {
+        this.setState(state => ({ activeStep: state.activeStep + 1, }));
+      }
+    }
   }
 
   // Handle back button for stepper
@@ -302,7 +380,7 @@ class Users extends Component {
           </Button>
         </div>
         <Query
-          query={USERS}
+          query={ALL_USERS}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading... :)</p>;
@@ -322,7 +400,7 @@ class Users extends Component {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {data.selectsallusers.map(row => {
+                    {data.selectAllUsers.map(row => {
                       return (
                         <TableRow key={row.id}>
                           <TableCell>
