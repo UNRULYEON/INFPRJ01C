@@ -1,6 +1,5 @@
-status van bestelling visualiseren (In orderlist staat een status)
+status van Huren visualiseren 
 
 wat mogelijk is voor de wishlist: 
 nieuwe regel voor elk item per klant.
-
 wanneer een klant een nieuwe wishlist opslaat dan alle oude regels voor die klant verwijderen, vervolgens de nieuwe wishlist plaatsen.
