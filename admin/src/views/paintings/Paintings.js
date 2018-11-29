@@ -374,7 +374,7 @@ class Paintings extends Component {
         }
       }
 
-      if (next) { // Remove ! so the stepper doesn't continue
+      if (next) {
         this.setState(state => ({ activeStep: state.activeStep + 1, }));
       }
     }
