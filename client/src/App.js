@@ -6,8 +6,10 @@ import {
 } from 'react-router-dom';
 import './App.css';
 
+import { ApolloLink } from 'apollo-link';
 import { ApolloClient } from 'apollo-client';
 import { createHttpLink } from 'apollo-link-http';
+import { onError } from "apollo-link-error";
 import { setContext } from 'apollo-link-context';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloProvider } from "react-apollo";
@@ -51,9 +53,21 @@ import NoMatch from './views/404/404';
 import Header from './components/header/Header';
 import Footer from './components/footer/Footer';
 
-const link = createHttpLink({
-  uri: 'http://localhost:3001/graphql',
-});
+const link = ApolloLink.from([
+  new onError(({ graphQLErrors, networkError }) => {
+    if (graphQLErrors)
+      graphQLErrors.map(({ message, locations, path }) =>
+        console.log(
+          `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
+        ),
+      );
+
+    if (networkError) console.log(`[Network error]: ${networkError}`);
+  }),
+  new createHttpLink({
+    uri: 'http://localhost:3001/graphql',
+  })
+])
 
 const token = localStorage.getItem('AUTH_TOKEN');
 

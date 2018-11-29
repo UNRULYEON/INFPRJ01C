@@ -75,6 +75,17 @@ class Sidebar extends Component {
               />
             </MenuItem>
           </NavLink>
+          <NavLink
+            to="/faq"
+            className="list-link"
+          >
+            <MenuItem button>
+              <ListItemText
+                className='list-item-text'
+                primary="FAQ"
+              />
+            </MenuItem>
+          </NavLink>
         </MenuList>
       </div>
     );
