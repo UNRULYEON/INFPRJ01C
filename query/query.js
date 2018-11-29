@@ -224,15 +224,9 @@ var root = {
   selectAllUsers:()=>{
     return db.manyOrNone(`SELECT * FROM gebruiker`)
   },
-  async selectOneUser({id,mail}){
-    let search
-    if(id.length){
-
-    }else if(mail.length){
-
-    }else{
-      throw new Error(`There is nothing to search by`)
-    }
+  async selectUserById({id}){
+    return await db.one(`SELECT * FROM gebruiker where id = ${id}`)
+            .catch(err => {throw new Error(err)})
   },
   async addUser({name, surname, mail, password, aanhef, adres = null, city = null, postalcode = null, housenumber = null, paymentmethod = null}){
     const saltedPassword = await bcrypt.hash(password,10)

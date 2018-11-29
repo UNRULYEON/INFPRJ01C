@@ -7,19 +7,20 @@ var schema = buildSchema(`
     collectionSearch: [Collection]
     paintingOrderedByPagination(page: Int!): CollectionWithTotal
     paintingByID(id: String!): [Painting]
-    paintersAll: [Painter]
-    PaintingsByPainter(id: String!): [ret]
-    painters: [Painter]
-    painterByID(id: String!): [Painter]
     workByPainter(id: String!): [Painting]
-    checkUser(mail: String!): Boolean!
-    me: User
     filterbyperiod(period: Int!): [Painting]
     filterbypriceasc: [Painting]
     filterbypricedesc: [Painting]
     filterbytitleasc: [Painting]
     filterbytitledesc: [Painting]
-    selectallusers: [User]
+    paintersAll: [Painter]
+    painters: [Painter]
+    painterByID(id: String!): [Painter]
+    PaintingsByPainter(id: String!): [ret]
+    checkUser(mail: String!): Boolean!
+    me: User
+    selectUserById(id: Int!): User
+    selectAllUsers: [User]
     faq: [FAQ]
     status: Int 
     papatabel: [PapaGet]
@@ -35,7 +36,7 @@ var schema = buildSchema(`
     addUser(name: String!, surname: String!, mail: String!, password: String!, aanhef: String!, adres: String, city: String, postalcode: String, housenumber: String, paymentmethod: String): String!
     alterUser(id: Int!, name: String!, surname: String!, aanhef: String!, mail: String!, password: String!, adres: String!, city: String!, postalcode: String!, housenumber: String!, paymentmethod: String!): String!
     deleteUser(id: Int!): String
-    addProduct(id: String!, title: String!, releasedate: Int!, period: Int!, description: String!, physicalmedium: String!, amountofpaintings: Int!, src: String!, bigsrc: String!, prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!, rented: Boolean!): String!
+    addProduct(id: String!, title: String!, releasedate: Int!, period: Int!, description: String!, physicalmedium: String!, amountofpaintings: Int!, src: String!, bigsrc: String!, plaguedescdutch: String!, prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!, rented: Boolean!): String!
     alterProduct(id_number: Int!, id: String!, title: String!, releasedate: Int!, period: Int! description: String!, physicalmedium: String!, amountofpaintings: Int!, src: String!, bigsrc: String!, plaguedescdutch: String!, prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!, rented: Boolean!): String
     deleteProduct(id: Int!): String
     addPainter(name: String!, city: String!, dateBirth: String!, dateDeath: String!, placeDeath: String!, occupation: String!, nationality: String!, headerimage: String!, thumbnail: String!, description: String!): String
