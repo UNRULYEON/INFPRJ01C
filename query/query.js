@@ -118,8 +118,8 @@ var root = {
       return data
     })
     .catch(err => {throw new Error(err)})
-      console.log(search)
-      console.log(total_search)
+      //console.log(search)
+      //console.log(total_search)
 
     return {
       total: total_search[0].count,
