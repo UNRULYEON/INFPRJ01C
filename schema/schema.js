@@ -7,23 +7,25 @@ var schema = buildSchema(`
     collectionSearch: [Collection]
     paintingOrderedByPagination(page: Int!): CollectionWithTotal
     paintingByID(id: String!): [Painting]
-    paintersAll: [Painter]
-    PaintingsByPainter(id: String!): [ret]
-    painters: [Painter]
-    painterByID(id: String!): [Painter]
     workByPainter(id: String!): [Painting]
-    checkUser(mail: String!): Boolean!
-    me: User
     filterbyperiod(period: Int!): [Painting]
     filterbypriceasc: [Painting]
     filterbypricedesc: [Painting]
     filterbytitleasc: [Painting]
     filterbytitledesc: [Painting]
-    selectsallusers: [User]
+    paintersAll: [Painter]
+    painters: [Painter]
+    painterByID(id: String!): [Painter]
+    PaintingsByPainter(id: String!): [ret]
+    checkUser(mail: String!): Boolean!
+    me: User
+    selectUserById(id: Int!): User
+    selectAllUsers: [User]
     faq: [FAQ]
     status: Int 
     papatabel: [PapaGet]
     orderListSelect(buyerId: Int!): [Orders]
+    selectShoppingCart(userId: Int!): [Cart]
     searchbar(query: String!, page: Int!): searchResult
   },
   type Mutation {
@@ -38,12 +40,16 @@ var schema = buildSchema(`
     addProduct(id: String!, title: String!, releasedate: Int!, period: Int!, description: String!, physicalmedium: String!, amountofpaintings: Int!, src: String!, bigsrc: String!, plaguedescdutch: String!, prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!, rented: Boolean!): String!
     alterProduct(id_number: Int!, id: String!, title: String!, releasedate: Int!, period: Int! description: String!, physicalmedium: String!, amountofpaintings: Int!, src: String!, bigsrc: String!, plaguedescdutch: String!, prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!, rented: Boolean!): String
     deleteProduct(id: Int!): String
+    addPainter(name: String!, city: String!, dateBirth: String!, dateDeath: String!, placeDeath: String!, occupation: String!, nationality: String!, headerimage: String!, thumbnail: String!, description: String!): String
+    alterPainter(name: String!, city: String!, dateBirth: String!, dateDeath: String!, placeDeath: String!, occupation: String!, nationality: String!, headerimage: String!, thumbnail: String!, description: String!): String
+    deltePainter(name: String!): String
     createBabyTabel(tabelnaam: String!, foreignkey: [RefBaby!], type: String!): String
     addToBabyTabel(id: Int!, foreignkey: [RefBaby!]): String
     removeBabyTabel(id: Int!): String
     shoppingCartInsert(gebruikerId: Int!, items: String!, time: String!): String
     orderListInsert(gebruikerId: Int, items: [PaintRef!], purchaseDate: String!): String
     rentalListInsert(gebruikerId: Int!, items : [PaintRef!], purchaseDate: String!, rentStart: String!, rentStop: String!): String
+    orderListUpdate(id: Int!, buyerId: Int!, newStatus: String!): String
   },
   input PaintRef{foreignkey: Int!},
   input RefBaby{foreignkey: Int!},
@@ -52,11 +58,18 @@ var schema = buildSchema(`
     naam: String,
     type: String
   },
+  type Cart{
+    id: Int,
+    gebruikerid: Int,
+    items: String,
+    timestamp: String
+  }
   type Orders{
     id: Int,
     buyerid: Int,
     items: Int,
-    purchasedate: String
+    purchasedate: String,
+    status: String
   },
   type ret{
     id_number: Int,
@@ -130,15 +143,15 @@ var schema = buildSchema(`
     id: Int,
     name: String,
     surname: String,
-    email: String,
-    address: String,
-    housenumber: String,
+    mail: String,
+    adres: String,
     city: String,
     postalcode: String,
-    paymentmethod: String,
     password: String,
     aanhef: String,
-    admin: Boolean
+    housenumber: String,
+    admin: Boolean,
+    paymentmethod: String
   },
   type UserWithToken { 
     id: Int,

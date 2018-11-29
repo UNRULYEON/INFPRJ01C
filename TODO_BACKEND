@@ -1,3 +1,5 @@
-bij inserten data in shoppingcart, eerst controleren of de time nieuwer is dan de huidige time in de DB
+status van Huren visualiseren 
 
-query om na betaling de bestelling toe te voegen aan de bestellijst
+wat mogelijk is voor de wishlist: 
+nieuwe regel voor elk item per klant.
+wanneer een klant een nieuwe wishlist opslaat dan alle oude regels voor die klant verwijderen, vervolgens de nieuwe wishlist plaatsen.

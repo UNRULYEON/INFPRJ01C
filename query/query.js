@@ -205,6 +205,13 @@ var root = {
   //#endregion
   //#region alter users
   //Add user
+  selectAllUsers:()=>{
+    return db.manyOrNone(`SELECT * FROM gebruiker`)
+  },
+  async selectUserById({id}){
+    return await db.one(`SELECT * FROM gebruiker where id = ${id}`)
+            .catch(err => {throw new Error(err)})
+  },
   async addUser({name, surname, mail, password, aanhef, adres = null, city = null, postalcode = null, housenumber = null, paymentmethod = null}){
     const saltedPassword = await bcrypt.hash(password,10)
     const user = await db.manyOrNone(`SELECT mail from gebruiker where mail = $1`,[mail])
@@ -212,19 +219,18 @@ var root = {
       throw new Error('User with this email already exists')
     }
     return await db.one(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod) 
-    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`, 
-    [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber])
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`, 
+    [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber, paymentmethod])
     .then(data => {console.log(`\nUser ID: ${data.id}`)
                     return data.id})
       .catch(err => {throw new Error(err)})    
   },
-  //Alter user
   async alterUser({id, name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod}){
     const user = await db.manyOrNone(`SELECT * from gebruiker where id = ${[id]}`)
     .then(data => {return data})
     .catch(err => {throw new Error(err)})
-    if(user[0].id != id){
-      throw new Error('No user with that ID!')
+    if(!user.length){
+      throw new Error('No user with the given ID!')
     }
     const saltedPassword = await bcrypt.hash(password,10)
     return await db.one(`UPDATE gebruiker set 
@@ -242,7 +248,6 @@ var root = {
                           [name,surname,mail,saltedPassword,aanhef,adres,city,postalcode,housenumber,paymentmethod])
                         .then(data => {return data})
   },
-  //Delete user
   async deleteUser({id}){
     let user = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${id}`)
     if(user.length){
@@ -255,22 +260,22 @@ var root = {
   //#endregion
   //#region alter products
   //Add product
-  async addProduct({id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescdutch, prodplace, width, height, principalmaker,price,rented=false}){
-    return await db.one(`INSERT INTO schilderijen(id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescriptiondutch, principalmakersproductionplaces, principalmaker, width, height, price,rented) 
-    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING id_number`, 
-    [id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescdutch, prodplace, principalmaker, width, height, price, rented])
+  async addProduct({id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker,price,rented=false}){
+    return await db.one(`INSERT INTO schilderijen(id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, principalmakersproductionplaces, principalmaker, width, height, price,rented) 
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id_number`, 
+    [id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, principalmaker, width, height, price, rented])
     .then(data => {console.log(`\nPainting ID: ${data.id_number}`)
                     return data.id_number})
       .catch(err => {console.error(err)
         throw new Error(err)})
   },
   //Alter products
-  async alterProduct({id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, plaquedescdutch, prodplace, width, height, principalmaker, price, rented}){
+  async alterProduct({id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker, price, rented}){
     const prod = await db.manyOrNone(`SELECT * from schilderijen where id_number = ${id_number}`)
     .then(data => {return data})
     .catch(err => {console.err(err)
                     throw new Error(err)})
-    if(prod[0].id_number != id_number){
+    if(!prod.length){
       throw new Error(`No product with the given ID!`)
     }
     return await db.one(`UPDATE schilderijen set
@@ -283,7 +288,6 @@ var root = {
                           amountofpaintings = $7,
                           src = $8,
                           bigsrc = $9,
-                          plaquedescriptiondutch = $10,
                           principalmakersproductionplaces = $11,
                           width = $12,
                           height = $13,
@@ -291,7 +295,7 @@ var root = {
                           price = $15,
                           rented = $16
                           WHERE id_number = ${id_number}`,
-                          [id,title,releasedate,period,description,physicalmedium,amountofpaintings,src,bigsrc,plaquedescdutch,prodplace,width,height,principalmaker,price,rented])
+                          [id,title,releasedate,period,description,physicalmedium,amountofpaintings,src,bigsrc,prodplace,width,height,principalmaker,price,rented])
                         .then(data => {return data})
   },
   //Delete products
@@ -305,9 +309,46 @@ var root = {
     }
   },
   //#endregion
-  //#region alter users
-  selectsallusers:()=>{
-    return db.manyOrNone(`SELECT * FROM gebruiker`)
+  //#region alter painters
+  async addPainter({name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description}){
+    const painter = await db.manyOrNone(`SELECT name from schilder where name = $1`,[name])
+    if(painter.length){
+      throw new Error(`Painter with the given name already exists`)
+    }
+    return await db.one(`INSERT INTO schilder(name, city, dateofbirth, dateofdeath, placeofdeath, occupation, nationality, headerimage, thumbnail, description)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`, [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description])
+          .then(data => {return data.id})
+          .catch(err => {throw new Error(err)})
+  },
+  async alterPainter({name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description}){
+    const painter = await db.manyOrNone(`SELECT * from schilder WHERE name = ${name}`)
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
+    if (!painter.length){
+      throw new Error(`No painter with the given name exists`)
+    }
+    return await db.one(`UPDATE schilder set
+                          name = $1,
+                          city = $2,
+                          dateofbirth = $3,
+                          dateofdeath = $4,
+                          placeofdeath = $5,
+                          occupation = $6,
+                          nationality = $7,
+                          headerimage = $8,
+                          thumbnail = $9,
+                          description = $10
+                          WHERE name = ${name}`,
+                          [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description])
+                        .then(data => {return data})
+  },
+  async deletePainter({name}){
+    let painter = await db.manyOrNone(`SELECT * from schilder WHERE name = ${name}`)
+    if(painter.length){
+      return await db.one(`DELETE from schilder WHERE name = ${name}`)
+    }else{
+      throw new Error(`The specified Painter doesn't exist!`)
+    }
   },
   //#endregion
   //#endregion  
@@ -337,6 +378,21 @@ var root = {
   //#endregion
   
   //#region User
+  async selectShoppingCart({userId}){
+    let check = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${userId}`)
+    .then(data => {return data})
+    .catch(err => {throw new Error(err)})
+    if(!check.length){
+      throw new Error(`The provided user doesn't exist`)
+    }
+    let cart = await db.manyOrNone(`SELECT * from shoppingcart WHERE gebruikerid = ${userId}`)
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
+    cart.forEach(element => {
+      element.timestamp = this.dateToString(element.timestamp)
+    })
+    return cart
+  },
   async shoppingCartInsert({gebruikerId,items,time}){
     let check = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${gebruikerId}`)
         .then(data => {return data})
@@ -357,9 +413,7 @@ var root = {
     }
   },
   dateToString: (givenDate) => {
-    // let DateDB = givenDate.toString()
-    console.log(givenDate)
-    let DateDB = givenDate
+    let DateDB = givenDate.toString()
     let year = DateDB.slice(11,15)
     let month = DateDB.slice(4,7)
     switch (month) {
@@ -413,6 +467,21 @@ var root = {
     });
     return Lijst
   },
+  async orderListUpdate({id, buyerId, newStatus}){
+    let selection = await db.manyOrNone(`SELECT * from orderlist WHERE id = ${id} AND buyerid = ${buyerId}`)
+            .then(data => {console.log(data)
+                  return data})
+            .catch(err => {throw new Error(err)})
+    if(!selection.length){
+      throw new Error("The given combination of 'ID' and 'buyerId' doesn't exist")
+    }
+    db.one(`UPDATE orderlist SET
+              status = $1
+              WHERE id = $2
+              AND buyerid = $3`,[newStatus, id, buyerId])
+          .catch(err => {throw new Error(err)})
+    return `The status of the selected order has been changed to: ${newStatus}`
+  },
   async orderListInsert({buyerId = 166, items, purchaseDate}){
     items.forEach(element => {      
       db.one(`INSERT INTO orderlist(buyerid, items, purchasedate) VALUES($1,$2,$3) RETURNING ID`,[buyerId,element.foreignkey,purchaseDate])
@@ -446,9 +515,8 @@ var root = {
     return await db.manyOrNone(query)
   },
   //user signup
-  async checkUser({ mail }){
+  async checkUser({mail}){
     const user = await db.manyOrNone('SELECT mail from gebruiker where mail = $1', [mail])
-
     // Throw an error when a user with the same email exists
     if (user.length) {
       return true;

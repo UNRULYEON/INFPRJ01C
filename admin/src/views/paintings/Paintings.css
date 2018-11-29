@@ -1,0 +1,32 @@
+.dialog-add-painting{
+  min-width: 500px;
+}
+
+.add-painting-review-img-preview{
+  max-width: 100%;
+  max-height: 100%;
+  color: white;
+}
+
+.add-painting-review-img-preview-container{
+  display: flex;
+  flex-flow: column nowrap;
+  align-self: center;
+}
+
+.add-painting-review-details-preview{
+  display: flex;
+  flex-flow: column nowrap;
+  align-self: center;
+}
+
+.add-painting-review-container{
+  display: flex;
+  flex-flow: column nowrap;
+  color: white;
+  margin: 10px 0 !important;
+}
+
+.add-painting-review-container > span:first-child{
+  font-size: .8em;
+}
