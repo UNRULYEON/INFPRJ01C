@@ -1,0 +1,32 @@
+.add-user-review-container{
+  display: flex;
+  flex-flow: column nowrap;
+  color: white;
+  margin: 0 !important;
+  font-size: 1.1em;
+}
+
+.add-user-review-container-divider{
+  background: grey;
+  height: 1px;
+  padding: 0 !important;
+  margin: 0 20px !important;
+}
+
+.add-user-name-surname{
+  text-align: center;
+  font-size: 1.7em !important;
+}
+
+.add-user-role{
+  text-align: center;
+  margin-top: 5px;
+}
+
+.add-user-column-left{
+  text-align: right;
+}
+
+.add-user-column-right{
+
+}

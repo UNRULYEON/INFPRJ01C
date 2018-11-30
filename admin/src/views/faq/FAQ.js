@@ -132,7 +132,38 @@ class FAQ extends Component {
 
   // Handle next button for stepper and check if fields are empty before continuing
   handleNext = () => {
-    this.setState(state => ({ activeStep: state.activeStep + 1, }));
+    if (this.state.activeStep === 0) {
+      let next = true
+      let items = [ ['question', this.state.question],
+                    ['answer', this.state.answer]]
+
+      console.log(items)
+
+      for (let i = 0; i < items.length; i++) {
+        console.log(`item: ${items[i][0]} - value: ${items[i][1]}`)
+        if (!items[i][1]) {
+          next = false
+          console.error(`item: ${items[i][0]} is empty`)
+          let err = items[i][0] + "Error"
+          let errMsg = err + "Msg"
+          this.setState(state => ({
+            [err]: true,
+            [errMsg]: 'Dit veld is verplicht'
+          }));
+        } else {
+          let err = items[i][0] + "Error"
+          let errMsg = err + "Msg"
+          this.setState(state => ({
+            [err]: false,
+            [errMsg]: ''
+          }));
+        }
+      }
+
+      if (next) {
+        this.setState(state => ({ activeStep: state.activeStep + 1, }));
+      }
+    }
   };
 
   // Handle dialog when closing

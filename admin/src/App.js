@@ -282,7 +282,9 @@ class App extends Component {
       <ApolloProvider client={client}>
         <Router>
           <div className="App">
-            <Header/>
+            <Header
+              handleSnackbarOpen={this.handleSnackbarOpen}
+            />
             <div className="sidebar-view-container">
               <Sidebar/>
               <Switch>

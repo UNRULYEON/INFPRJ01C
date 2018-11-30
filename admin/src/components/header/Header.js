@@ -4,11 +4,21 @@ import './Header.css';
 // Pose
 import posed from 'react-pose';
 
+// Apollo
+import gql from "graphql-tag";
+import { Query } from "react-apollo";
+
 // Material-UI
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle'
+
+const STATUS = gql`
+{
+  status
+}
+`
 
 class Header extends Component {
   constructor(props) {
@@ -34,7 +44,18 @@ class Header extends Component {
     return (
       <div className="header-wrapper">
         <span className="header-title">ARCTIC - Admin panel</span>
-        <div className="header-status-indicator" />
+        <Query
+          query={STATUS}
+          pollInterval={300}
+        >
+          {({ loading, error, data }) => {
+            return (
+              <div className={
+                loading ? 'header-status-indicator' : error ? 'header-status-indicator-red' : data.status === 200 ? 'header-status-indicator-green' : null
+              } />
+            );
+          }}
+        </Query>
         <IconButton
           className="header-icon"
           onClick={this.handleClick}

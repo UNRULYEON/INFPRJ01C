@@ -27,10 +27,18 @@
 
 .header-status-indicator-green{
   background: green;
+  width: 10px;
+  height: 10px;
+  margin-right: 10px;
+  border-radius: 50%;
   transform: 2s all ease-in-out;
 }
 
 .header-status-indicator-red{
   background: red;
+  width: 10px;
+  height: 10px;
+  margin-right: 10px;
+  border-radius: 50%;
   transform: 2s all ease-in-out;
 }
