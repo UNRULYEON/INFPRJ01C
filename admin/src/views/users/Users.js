@@ -27,6 +27,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import FormGroup from '@material-ui/core/FormGroup';
+import Tooltip from '@material-ui/core/Tooltip';
 
 // Apollo
 import { Query, Mutation } from "react-apollo";
@@ -36,26 +37,7 @@ import gql from "graphql-tag";
 import Edit from '../../icons/Edit.svg';
 
 //Linking to userdetail page
-import {Link} from 'react-router-dom';
-
-//other route imports (testing)
-import {Route} from 'react-router';
-<<<<<<< HEAD
-import  { Redirect } from 'react-router-dom'
-import {BrowserRouter} from 'react-router';
-=======
-import { Redirect } from 'react-router-dom'
-
-const ALL_USERS = gql`
-  query AllUsers{
-    selectsallusers{
-      name
-      surname
-      mail
-      adres
-    }
-  }
-`
+import { Link } from 'react-router-dom';
 
 const ADD_USER = gql`
   mutation AddUser(
@@ -98,7 +80,6 @@ const theme = new createMuiTheme({
 function getSteps() {
   return ['Vul informatie in', 'Review gebruiker'];
 }
->>>>>>> 9936e8899217868a701df3a8139a346a2ec77184
 
 
 function getStepContent(stepIndex, state, handleChange) {
@@ -208,7 +189,7 @@ function getStepContent(stepIndex, state, handleChange) {
 
 const USERS = gql`
   query users{
-    selectsallusers{
+    selectAllUsers{
       id
       name
       surname
@@ -257,7 +238,7 @@ class Users extends Component {
     }
   }
 
-  gotolink(id){
+  gotolink(id) {
     return "/gebruiker/" + id;
   }
 
@@ -318,7 +299,7 @@ class Users extends Component {
                 <Table>
                   <TableHead>
                     <TableRow>
-                    <TableCell></TableCell>
+                      <TableCell></TableCell>
                       <TableCell>ID</TableCell>
                       <TableCell>Voornaam</TableCell>
                       <TableCell>Achternaam</TableCell>
@@ -327,15 +308,17 @@ class Users extends Component {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {data.selectsallusers.map(row => {
+                    {data.selectAllUsers.map(row => {
                       return (
                         <TableRow key={row.id} hover onClick={() => {
                           console.log(`clicked on ${row.id}`)
                           this.props.history.push('/gebruiker/' + row.id)
                         }}>
-                          <TableCell>
-                            <Link to={this.gotolink(row.id)}><img src={Edit} alt="Edit" /></Link>
-                          </TableCell>
+                          <Tooltip title="Aanpassen" placement="right">
+                            <TableCell>
+                              <Link to={this.gotolink(row.id)}><img src={Edit} alt="Edit" /></Link>
+                            </TableCell>
+                          </Tooltip>
                           <TableCell >
                             {row.id}
                           </TableCell>
@@ -365,34 +348,34 @@ class Users extends Component {
           onClose={this.handleClose}
           disableBackdropClick
           disableEscapeKeyDown
-          // scroll='scroll'
+        // scroll='scroll'
         >
           <DialogTitle id="form-dialog-title">Gebruiker toevoegen</DialogTitle>
           <MuiThemeProvider theme={theme}>
             <DialogContent
               className="dialog-add-painting"
             >
-                <Stepper activeStep={activeStep} alternativeLabel>
-                  {steps.map(label => {
-                    return (
-                      <Step key={label}>
-                        <StepLabel>{label}</StepLabel>
-                      </Step>
-                    );
-                  })}
-                </Stepper>
-                <div>
-                  {this.state.activeStep === steps.length ? (
-                    <div>
-                      <div>All steps completed</div>
-                      <Button onClick={this.handleReset}>Reset</Button>
-                    </div>
-                  ) : (
+              <Stepper activeStep={activeStep} alternativeLabel>
+                {steps.map(label => {
+                  return (
+                    <Step key={label}>
+                      <StepLabel>{label}</StepLabel>
+                    </Step>
+                  );
+                })}
+              </Stepper>
+              <div>
+                {this.state.activeStep === steps.length ? (
+                  <div>
+                    <div>All steps completed</div>
+                    <Button onClick={this.handleReset}>Reset</Button>
+                  </div>
+                ) : (
                     <div>
                       <div>{getStepContent(activeStep, this.state, this.handleChange, this.handeImage)}</div>
                     </div>
                   )}
-                </div>
+              </div>
             </DialogContent>
             <DialogActions>
               <Button onClick={this.handleClose}>
@@ -409,37 +392,37 @@ class Users extends Component {
                 </div>
               ) : null}
               {activeStep === 1 ? (
-              <Mutation
-                mutation={ADD_USER}
-                onCompleted={(data) => {
-                  console.log(`Query complete: ${data.addProduct}`)
-                  this.handleClose()
-                  this.setState({
+                <Mutation
+                  mutation={ADD_USER}
+                  onCompleted={(data) => {
+                    console.log(`Query complete: ${data.addProduct}`)
+                    this.handleClose()
+                    this.setState({
 
-                  })
-                  this.props.handleSnackbarOpen('ADD_USER_SUCCESS')
-                }}
-                onError={(err) => {
-                  console.log(`Query failed: ${err}`)
-                  this.props.handleSnackbarOpen('ADD_USER_ERROR')
-                }}
-              >
-                {(addUser, { data }) => (
-                  <div>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={e => {
-                        e.preventDefault()
-                      }}>
-                      Opslaan
+                    })
+                    this.props.handleSnackbarOpen('ADD_USER_SUCCESS')
+                  }}
+                  onError={(err) => {
+                    console.log(`Query failed: ${err}`)
+                    this.props.handleSnackbarOpen('ADD_USER_ERROR')
+                  }}
+                >
+                  {(addUser, { data }) => (
+                    <div>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={e => {
+                          e.preventDefault()
+                        }}>
+                        Opslaan
                     </Button>
-                  </div>
-                )}
-              </Mutation>
+                    </div>
+                  )}
+                </Mutation>
               ) : (
-              <Button variant="contained" color="primary" onClick={this.handleNext}>
-                Volgende
+                  <Button variant="contained" color="primary" onClick={this.handleNext}>
+                    Volgende
               </Button>)}
             </DialogActions>
           </MuiThemeProvider>
