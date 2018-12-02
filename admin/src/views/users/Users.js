@@ -37,9 +37,6 @@ import gql from "graphql-tag";
 import Edit from '../../icons/Edit.svg';
 
 //Linking to userdetail page
-<<<<<<< HEAD
-import { Link } from 'react-router-dom';
-=======
 import {Link} from 'react-router-dom';
 
 //other route imports (testing)
@@ -56,7 +53,6 @@ const ALL_USERS = gql`
     }
   }
 `
->>>>>>> ce3d813e6d6fdb66c8cddf2dc3e10282b99c67b7
 
 const ADD_USER = gql`
   mutation AddUser(
