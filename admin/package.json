@@ -23,6 +23,7 @@
   },
   "scripts": {
     "start": "PORT=3002 react-scripts start",
+    "start_prod": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
