@@ -14,22 +14,18 @@ var root = {
     return db.manyOrNone(query)
   },
   collectionSearch: () => {
-    let query = 'SELECT * from schilderijen'
+    let query = 'SELECT * from schilderijen ORDER BY id ASC'
     return db.manyOrNone(query)
   },
-  async paintingOrderedByPagination ({ page }) {
-    let offset = (page - 1) * 12
-    // let query = (`SELECT * FROM schilderijen LIMIT 10 OFFSET ${offset}`)
+  async paintingOrderedByPagination ({page, amount = 12}) {
+    let offset = (page - 1) * amount
 
     const total = await db.manyOrNone('SELECT COUNT(*) from schilderijen')
-                        .then( data => {
-                          return data
-                        })
+        .then( data => {return data})
 
-    const preQuery = await db.manyOrNone(`SELECT * FROM schilderijen LIMIT 12 OFFSET ${offset}`)
-                        .then( data => {
-                          return data
-                        })
+    const preQuery = await db.manyOrNone(`SELECT * FROM schilderijen LIMIT ${amount} OFFSET ${offset} ORDER BY id ASC`)
+        .then( data => {return data})
+    console.log(preQuery)
     return {
       total: total[0].count,
       collection: preQuery
@@ -264,13 +260,17 @@ var root = {
   //#region alter products
   //Add product
   async addProduct({id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker,price,rented=false}){
-    return await db.one(`INSERT INTO schilderijen(id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, principalmakersproductionplaces, principalmaker, width, height, price,rented) 
+    let painting =  await db.one(`INSERT INTO schilderijen(id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, principalmakersproductionplaces, principalmaker, width, height, price,rented) 
     VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id_number`, 
     [id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, principalmaker, width, height, price, rented])
     .then(data => {console.log(`\nPainting ID: ${data.id_number}`)
                     return data.id_number})
       .catch(err => {console.error(err)
         throw new Error(err)})
+
+    db.one(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${id}, ${painting})`)
+    
+    return `Painting added to the product list`
   },
   //Alter products
   async alterProduct({id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker, price, rented}){
