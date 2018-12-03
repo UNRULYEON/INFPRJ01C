@@ -27,6 +27,7 @@ var schema = buildSchema(`
     orderListSelect(buyerId: Int!): [Orders]
     selectShoppingCart(userId: Int!): [Cart]
     searchbar(query: String!, page: Int!): searchResult
+    wishlistSelect(userId: Int!): [wishlist]
   },
   type Mutation {
     signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String, adres: String, housenumber: String, city: String, 
@@ -50,6 +51,7 @@ var schema = buildSchema(`
     orderListInsert(gebruikerId: Int, items: [PaintRef!], purchaseDate: String!): String
     rentalListInsert(gebruikerId: Int!, items : [PaintRef!], purchaseDate: String!, rentStart: String!, rentStop: String!): String
     orderListUpdate(id: Int!, buyerId: Int!, newStatus: String!): String
+    WishlistInsert(gebruikerId: Int!, items: String!, time: String!): String
   },
   input PaintRef{foreignkey: Int!},
   input RefBaby{foreignkey: Int!},
@@ -172,6 +174,12 @@ var schema = buildSchema(`
     id: Int,
     title: String,
     body: String
+  },
+  type wishlist{
+    id: Int,
+    gebruikerid: Int,
+    items: String,
+    timestamp: String
   }
 `)
 

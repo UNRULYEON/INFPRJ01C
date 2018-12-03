@@ -64,6 +64,7 @@ var root = {
     return db.manyOrNone(query)
   },
   //#endregion
+  
   //#region Painters
   paintersAll: ()=>{
     let query = `SELECT * from schilder`
@@ -82,6 +83,7 @@ var root = {
     return db.manyOrNone(query)
   },
   //#endregion
+  
   //#region filters
   filterbyperiod:({period}) => {
     let query = (`SELECT * from schilderijen where period = ${period}`)
@@ -102,6 +104,7 @@ var root = {
     return db.manyOrNone(`SELECT * FROM schilderijen ORDER BY title desc`)
   },
   //#endregion
+  
   //#region Search
   //searchfunction 
   async searchbar({query, page}){
@@ -127,11 +130,9 @@ var root = {
     }
   },
   //#endregion
-  faq: () => {
-    let query = ('SELECT * from faq')
-    return db.manyOrNone(query)
-  },
+  
   //#region Admin
+  
   //#region papa & baby tabel
   //Return content of papatabel
   papatabel: () =>{
@@ -203,6 +204,7 @@ var root = {
     return "The specified table has been removed from the DB"
   },
   //#endregion
+  
   //#region alter users
   //Add user
   selectAllUsers:()=>{
@@ -258,6 +260,7 @@ var root = {
     }
   },
   //#endregion
+  
   //#region alter products
   //Add product
   async addProduct({id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker,price,rented=false}){
@@ -309,6 +312,7 @@ var root = {
     }
   },
   //#endregion
+  
   //#region alter painters
   async addPainter({name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description}){
     const painter = await db.manyOrNone(`SELECT name from schilder where name = $1`,[name])
@@ -352,65 +356,11 @@ var root = {
   },
   //#endregion
   //#endregion  
-  
-  //#region Merging Painter & Paintings
-  //Merge schilder met schilderij 1 at a time
-  async merge({id_number,id}){
-    if(id_number != null != id || id_number != 0 != id){
-       return await db.one(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${id}, ${id_number})`)
-    }
-  },
-  //Merge all
-  async merging(){
-    // let amount = await db.manyOrNone('SELECT COUNT(*) from schilderijen').then( data => {return data})
-    // // console.log(amount[0].count)
-    // for (let i = 1; i <= amount[0].count; i++){
-    //   // console.log(i)
-    //   let schilderNum = await db.manyOrNone(`SELECT schilder.id from schilderijen, schilder WHERE schilderijen.id_number = ${i} AND schilderijen.principalmaker = schilder.name`)
-    //  .then( data => {return data})
-    //   // console.log(schilderNum[0].id)
-    //   // Commented for safety reasons, only uncomment when the entire collection of painters is to be inserted
-    //   await db.one(`INSERT INTO schilderschilderij (schilder, schilderij) values(${schilderNum[0].id}, ${i}) RETURNING id`).then(data => {return data})  
-    //   console.log(`Insert executed`)  
-    // }
-    console.log("Commented for safety reasons, only uncomment when the entire collection of painters is to be inserted")
-  },
-  //#endregion
-  
-  //#region User
-  async selectShoppingCart({userId}){
-    let check = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${userId}`)
-    .then(data => {return data})
-    .catch(err => {throw new Error(err)})
-    if(!check.length){
-      throw new Error(`The provided user doesn't exist`)
-    }
-    let cart = await db.manyOrNone(`SELECT * from shoppingcart WHERE gebruikerid = ${userId}`)
-        .then(data => {return data})
-        .catch(err => {throw new Error(err)})
-    cart.forEach(element => {
-      element.timestamp = this.dateToString(element.timestamp)
-    })
-    return cart
-  },
-  async shoppingCartInsert({gebruikerId,items,time}){
-    let check = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${gebruikerId}`)
-        .then(data => {return data})
-        .catch(err => {throw new Error(err)})
-    if(!check.length){
-      throw new Error(`The provided user doesn't exist`)
-    }
-    let current = await db.manyOrNone(`SELECT * from shoppingcart WHERE gebruikerid = ${gebruikerId}`)
-    if(current.length){
-      db.one(`UPDATE shoppingcart set items = $1, timestamp = $2
-              WHERE gebruikerid = ${gebruikerId}`,[items,time])
-      return `The shoppingcart of user '${gebruikerId}' has been updated`
-    }else{
-      db.one(`INSERT INTO shoppingcart(gebruikerid, items, timestamp) 
-              VALUES($1,$2,$3) RETURNING id`,[gebruikerId,items,time])
-        .catch(err => {throw new Error(err)})
-      return `The shoppingcart of user '${gebruikerId}' has been created`
-    }
+
+  //#region Random
+  faq: () => {
+    let query = ('SELECT * from faq')
+    return db.manyOrNone(query)
   },
   dateToString: (givenDate) => {
     let DateDB = givenDate.toString()
@@ -457,6 +407,99 @@ var root = {
     let day = DateDB.slice(8,10)
     return `${year}-${month}-${day}`
   },
+  //#endregion
+  
+  //#region Merging Painter & Paintings
+  //Merge schilder met schilderij 1 at a time
+  async merge({id_number,id}){
+    if(id_number != null != id || id_number != 0 != id){
+       return await db.one(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${id}, ${id_number})`)
+    }
+  },
+  //Merge all
+  async merging(){
+    // let amount = await db.manyOrNone('SELECT COUNT(*) from schilderijen').then( data => {return data})
+    // // console.log(amount[0].count)
+    // for (let i = 1; i <= amount[0].count; i++){
+    //   // console.log(i)
+    //   let schilderNum = await db.manyOrNone(`SELECT schilder.id from schilderijen, schilder WHERE schilderijen.id_number = ${i} AND schilderijen.principalmaker = schilder.name`)
+    //  .then( data => {return data})
+    //   // console.log(schilderNum[0].id)
+    //   // Commented for safety reasons, only uncomment when the entire collection of painters is to be inserted
+    //   await db.one(`INSERT INTO schilderschilderij (schilder, schilderij) values(${schilderNum[0].id}, ${i}) RETURNING id`).then(data => {return data})  
+    //   console.log(`Insert executed`)  
+    // }
+    console.log("Commented for safety reasons, only uncomment when the entire collection of painters is to be inserted")
+  },
+  //#endregion
+  
+  //#region User
+  async wishlistSelect({userId}){
+    let check = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${userId}`)
+    .then(data => {return data})
+    .catch(err => {throw new Error(err)})
+    if(!check.length){
+      throw new Error(`The provided user doesn't exist`)
+    }
+    let wishlist = await db.manyOrNone(`SELECT * from wishlist WHERE gebruikerid = ${userId}`)
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
+    wishlist.forEach(element => {
+      element.timestamp = this.dateToString(element.timestamp)
+    })
+    return wishlist
+  },
+  async WishlistInsert ({gebruikerId,items,time}){
+    let check = await db.manyOrNone(`SELECT id FROM gebruiker WHERE id= ${gebruikerId}`)
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
+    if(!check.length){
+      throw new Error(`The provided user doesn't exist`)
+    }
+    let current = await db.manyOrNone(`SELECT * FROM wishlist WHERE gebruikerid = ${gebruikerId}`)
+    if(current.length){
+    db.one(`UPDATE wishlist set items = $1, timestamp = $2 WHERE        gebruikerid = ${gebruikerId}`,[items,time])
+      return `The wishlist of user '${gebruikerId}' has been updated`
+    }else{
+      db.one(`INSERT INTO wishlist(gebruikerid, items, timestamp) VALUES ($1,$2,$3) RETURNING id`,[gebruikerId,items,time])
+          .catch(err => {throw new Error(err)})
+      return `The wishlist of user '${gebruikerId}' has been created`
+    }
+  },
+  async selectShoppingCart({userId}){
+    let check = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${userId}`)
+    .then(data => {return data})
+    .catch(err => {throw new Error(err)})
+    if(!check.length){
+      throw new Error(`The provided user doesn't exist`)
+    }
+    let cart = await db.manyOrNone(`SELECT * from shoppingcart WHERE gebruikerid = ${userId}`)
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
+    cart.forEach(element => {
+      element.timestamp = this.dateToString(element.timestamp)
+    })
+    return cart
+  },
+  async shoppingCartInsert({gebruikerId,items,time}){
+    let check = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${gebruikerId}`)
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
+    if(!check.length){
+      throw new Error(`The provided user doesn't exist`)
+    }
+    let current = await db.manyOrNone(`SELECT * from shoppingcart WHERE gebruikerid = ${gebruikerId}`)
+    if(current.length){
+      db.one(`UPDATE shoppingcart set items = $1, timestamp = $2
+              WHERE gebruikerid = ${gebruikerId}`,[items,time])
+      return `The shoppingcart of user '${gebruikerId}' has been updated`
+    }else{
+      db.one(`INSERT INTO shoppingcart(gebruikerid, items, timestamp) 
+              VALUES($1,$2,$3) RETURNING id`,[gebruikerId,items,time])
+        .catch(err => {throw new Error(err)})
+      return `The shoppingcart of user '${gebruikerId}' has been created`
+    }
+  },  
   async orderListSelect({buyerId}){
     let Lijst = await db.manyOrNone(`SELECT * FROM orderlist
               WHERE buyerid = ${buyerId}`)
