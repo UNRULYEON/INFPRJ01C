@@ -258,7 +258,7 @@ var root = {
   
   //#region alter products
   //Add product
-  async addProduct({id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker,price,rented=false}){
+  async addProduct({id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker,price,rented=false,painterId}){
     let painting =  await db.one(`INSERT INTO schilderijen(id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, principalmakersproductionplaces, principalmaker, width, height, price,rented) 
     VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id_number`, 
     [id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, principalmaker, width, height, price, rented])
@@ -267,7 +267,7 @@ var root = {
       .catch(err => {console.error(err)
         throw new Error(err)})
 
-    db.one(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${id}, ${painting})`)
+    db.one(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${painterId}, ${painting})`)
     
     return `Painting added to the product list`
   },
