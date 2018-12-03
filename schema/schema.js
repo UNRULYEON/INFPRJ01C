@@ -14,6 +14,7 @@ var schema = buildSchema(`
     filterbytitleasc: [Painting]
     filterbytitledesc: [Painting]
     paintersAll: [Painter]
+    paintersAdmin(page: Int!, amount: Int): PainterWithTotal
     painters: [Painter]
     painterByID(id: String!): [Painter]
     PaintingsByPainter(id: String!): [ret]
@@ -109,6 +110,10 @@ var schema = buildSchema(`
   type CollectionWithTotal{
     total: Int,
     collection: [Collection]
+  },
+  type PainterWithTotal{
+    total: Int,
+    painterpagination: [Painter]
   },
   type Painting{
     id: String,
