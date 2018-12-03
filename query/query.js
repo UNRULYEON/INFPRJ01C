@@ -21,10 +21,10 @@ var root = {
     let offset = (page - 1) * amount
 
     const total = await db.manyOrNone('SELECT COUNT(*) from schilderijen')
-        .then( data => {return data})
+        .then(data => {return data})
 
     const preQuery = await db.manyOrNone(`SELECT * FROM schilderijen ORDER BY id_number ASC LIMIT ${amount} OFFSET ${offset}`)
-        .then( data => {return data})
+        .then(data => {return data})
     return {
       total: total[0].count,
       collection: preQuery
