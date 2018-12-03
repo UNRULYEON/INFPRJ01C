@@ -10,11 +10,11 @@ var root = {
   },
   //#region Painting
   collection: () => {
-    let query = 'SELECT * from schilderijen limit 15'
+    let query = 'SELECT * from schilderijen ORDER BY id_number ASC limit 15'
     return db.manyOrNone(query)
   },
   collectionSearch: () => {
-    let query = 'SELECT * from schilderijen ORDER BY id ASC'
+    let query = 'SELECT * from schilderijen ORDER BY id_number ASC'
     return db.manyOrNone(query)
   },
   async paintingOrderedByPagination ({page, amount = 12}) {
@@ -23,9 +23,8 @@ var root = {
     const total = await db.manyOrNone('SELECT COUNT(*) from schilderijen')
         .then( data => {return data})
 
-    const preQuery = await db.manyOrNone(`SELECT * FROM schilderijen LIMIT ${amount} OFFSET ${offset} ORDER BY id ASC`)
+    const preQuery = await db.manyOrNone(`SELECT * FROM schilderijen ORDER BY id_number ASC LIMIT ${amount} OFFSET ${offset}`)
         .then( data => {return data})
-    console.log(preQuery)
     return {
       total: total[0].count,
       collection: preQuery
