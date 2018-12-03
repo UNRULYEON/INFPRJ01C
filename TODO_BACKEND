@@ -1,9 +1,5 @@
 status van Huren visualiseren 
 
-wat mogelijk is voor de wishlist: 
-nieuwe regel voor elk item per klant.
-wanneer een klant een nieuwe wishlist opslaat dan alle oude regels voor die klant verwijderen, vervolgens de nieuwe wishlist plaatsen.
-
 Schilderijen:
 - Query die alle schilders geeft met pagination voor admin panel
 - Query die alle namen en bijbehorende ID's van schilders geeft
@@ -14,5 +10,5 @@ Schilder:
 Gebruikers:
 - Query die alle schilders geeft met pagination voor admin panel
 
-FAQ:
-- Query die alle schilders geeft met pagination voor admin panel
+FAQ: DONE
+geen pagination, wel een optie om met een ID een FAQ te selecteren

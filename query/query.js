@@ -362,6 +362,9 @@ var root = {
     let query = ('SELECT * from faq')
     return db.manyOrNone(query)
   },
+  faqId: (id) => {
+    return db.manyOrNone(`SELECT * from faq where id = ${id}`)
+  },
   dateToString: (givenDate) => {
     let DateDB = givenDate.toString()
     let year = DateDB.slice(11,15)

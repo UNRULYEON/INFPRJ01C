@@ -14,7 +14,7 @@ var schema = buildSchema(`
     filterbytitleasc: [Painting]
     filterbytitledesc: [Painting]
     paintersAll: [Painter]
-    painters: [Painter]
+    paintersPaginated: [Painter]
     painterByID(id: String!): [Painter]
     PaintingsByPainter(id: String!): [ret]
     checkUser(mail: String!): Boolean!
@@ -22,6 +22,7 @@ var schema = buildSchema(`
     selectUserById(id: Int!): User
     selectAllUsers: [User]
     faq: [FAQ]
+    faqId: FAQ
     status: Int 
     papatabel: [PapaGet]
     orderListSelect(buyerId: Int!): [Orders]
