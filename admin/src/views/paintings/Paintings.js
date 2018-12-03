@@ -96,7 +96,7 @@ function getSteps() {
   return ['Vul informatie in', 'Review schilderij'];
 }
 
-function getStepContent(stepIndex, state, handleChange, handeImage) {
+function getStepContent(stepIndex, state, handleChange, handeImage, handleChoosePainterDialog, handleChoosePainterDialogClose, handleChosenPainter) {
   switch (stepIndex) {
     case 0:
       return (
@@ -108,12 +108,18 @@ function getStepContent(stepIndex, state, handleChange, handeImage) {
               <FormHelperText id="add-title-error-text">{state.titleErrorMsg}</FormHelperText>
             </FormControl>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth error={state.principalMakerError}>
-              <InputLabel htmlFor="add-principal-maker">Schilder</InputLabel>
-              <Input id="add-principal-maker" value={state.principalMaker} onChange={handleChange('principalMaker')} />
-              <FormHelperText id="add-principal-maker-error-text">{state.principalMakerErrorMsg}</FormHelperText>
-            </FormControl>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            style={{  display: 'flex',
+                      flexFlow: 'column nowrap',
+                      justifyContent: 'center'}}
+            onClick={handleChoosePainterDialog}
+          >
+            <Button variant="outlined" fullWidth>
+              {state.principalMaker.length ? state.principalMaker : 'Kies een schilder'}
+            </Button>
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth error={state.releaseDateError}>
@@ -178,6 +184,50 @@ function getStepContent(stepIndex, state, handleChange, handeImage) {
               <FormHelperText id="add-price-error-text"></FormHelperText>
             </FormControl>
           </Grid>
+          <Dialog
+            open={state.dialogChoosePainter}
+            onClose={handleChoosePainterDialogClose}
+            disableBackdropClick
+            disableEscapeKeyDown
+            // scroll='scroll'
+          >
+            <DialogTitle id="form-dialog-title">Kies een schilder</DialogTitle>
+            <MuiThemeProvider theme={theme}>
+              <DialogContent>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Naam</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow
+                      hover
+                      onClick={() => {
+                        // handleChosenPainter(row.name, row.id)
+                      }}
+                      tabIndex={-1}
+                    >
+                      <TableCell component="th" scope="row">
+                        Naam
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </DialogContent>
+              <DialogActions>
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  onClick={() => {
+                    handleChoosePainterDialogClose()
+                  }}
+                >
+                  Annuleren
+                </Button>
+              </DialogActions>
+            </MuiThemeProvider>
+          </Dialog>
         </Grid>
       )
     case 1:
@@ -255,6 +305,7 @@ class Paintings extends Component {
     this.state = {
       activeStep: 0,
       dialogAddPainting: false,
+      dialogChoosePainter: false,
       id: 0,
       title: '',
       titleError: false,
@@ -286,8 +337,7 @@ class Paintings extends Component {
       width: 0,
       height: 0,
       principalMaker: '',
-      principalMakerError: false,
-      principalMakerErrorMsg: '',
+      principalMakerID: 0,
       price: 0,
       rented: false
     }
@@ -329,6 +379,25 @@ class Paintings extends Component {
     });
   };
 
+  handleChoosePainterDialog = () => {
+    this.setState({
+      dialogChoosePainter: true
+    });
+  }
+
+  handleChoosePainterDialogClose = () => {
+    this.setState({
+      dialogChoosePainter: false
+    });
+  }
+
+  handleChosenPainter = (painter, id) => {
+    this.setState({
+      principalMaker: painter,
+      principalMakerID: id
+    });
+  }
+
   // Handle dialog when closing
   handleClose = () => {
     this.setState({ dialogAddPainting: false });
@@ -345,8 +414,7 @@ class Paintings extends Component {
                     ['physicalMedium', this.state.physicalMedium],
                     ['src', this.state.src],
                     ['bigsrc', this.state.bigsrc],
-                    ['principalMakersProductionPlaces', this.state.principalMakersProductionPlaces],
-                    ['principalMaker', this.state.principalMaker]]
+                    ['principalMakersProductionPlaces', this.state.principalMakersProductionPlaces]]
 
       console.log(items)
 
@@ -478,7 +546,7 @@ class Paintings extends Component {
                     </div>
                   ) : (
                     <div>
-                      <div>{getStepContent(activeStep, this.state, this.handleChange, this.handeImage)}</div>
+                      <div>{getStepContent(activeStep, this.state, this.handleChange, this.handeImage, this.handleChoosePainterDialog, this.handleChoosePainterDialogClose , this.handleChosenPainter)}</div>
                     </div>
                   )}
                 </div>

@@ -1,0 +1,29 @@
+version : '3.7'
+
+services:
+  client:
+    build:
+      context: './client'
+      dockerfile: Dockerfile
+    volumes:
+      - './client:/usr/src/app'
+    ports:
+      - '3000:80'
+      # - '80:80'
+  admin:
+    build:
+      context: './admin'
+      dockerfile: Dockerfile
+    volumes:
+      - './admin:/usr/src/app'
+    ports:
+      - '3002:80'
+  # server:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - '.:/usr/src/app'
+  #     # - '/usr/src/app/node_modules'
+  #   ports:
+  #     - '3001:3001'
