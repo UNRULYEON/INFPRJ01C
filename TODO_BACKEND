@@ -7,8 +7,8 @@ Schilderijen:
 Schilder:
 - Query die alle schilders geeft met pagination voor admin panel
 
-Gebruikers:
-- Query die alle schilders geeft met pagination voor admin panel
+Gebruikers: DONE
+Query die alle Gebruikers geeft met pagination voor admin panel
 
 FAQ: DONE
 geen pagination, wel een optie om met een ID een FAQ te selecteren

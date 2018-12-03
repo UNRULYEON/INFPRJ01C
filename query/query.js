@@ -70,7 +70,7 @@ var root = {
     let query = `SELECT * from schilder`
     return db.manyOrNone(query)
   },
-  painters: () => {
+  paintersPaginated: () => {
     let query = `SELECT * from schilder limit 15`
     return db.manyOrNone(query)
   },
@@ -207,8 +207,26 @@ var root = {
   
   //#region alter users
   //Add user
-  selectAllUsers:()=>{
-    return db.manyOrNone(`SELECT * FROM gebruiker`)
+  async selectAllUsers({page, amount}){
+    let offset = (page - 1) * amount
+
+    let users = await db.manyOrNone(`SELECT * FROM gebruiker ORDER BY ID ASC LIMIT ${amount} OFFSET ${offset}`)
+    .then(data => {
+      return data
+    })
+
+    let maxusers = await db.manyOrNone(`SELECT COUNT(*) FROM gebruiker`)
+    .then(data => {
+      return data
+    })
+    .catch(err => {throw new Error(err)})
+    console.log(users)
+    console.log(maxusers)
+
+    return {
+      total: maxusers[0].count,
+      totaluser: users
+    }
   },
   async selectUserById({id}){
     return await db.one(`SELECT * FROM gebruiker where id = ${id}`)

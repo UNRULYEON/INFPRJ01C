@@ -19,8 +19,8 @@ var schema = buildSchema(`
     PaintingsByPainter(id: String!): [ret]
     checkUser(mail: String!): Boolean!
     me: User
+    selectAllUsers(page: Int!, amount: Int!): TotalUsers
     selectUserById(id: Int!): User
-    selectAllUsers: [User]
     faq: [FAQ]
     faqId: FAQ
     status: Int 
@@ -155,6 +155,10 @@ var schema = buildSchema(`
     housenumber: String,
     admin: Boolean,
     paymentmethod: String
+  }, 
+  type TotalUsers{
+    total: Int,
+    totaluser: [User]
   },
   type UserWithToken { 
     id: Int,
