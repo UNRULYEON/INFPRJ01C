@@ -4,8 +4,6 @@ import Img from 'react-image'
 import Loading from '../../components/loading/Loading'
 import './imageComponent.css'
 import Currency from 'react-currency-formatter';
-import LazyLoad from 'react-lazy-load';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 class ImageComponent extends Component {
   render() {
