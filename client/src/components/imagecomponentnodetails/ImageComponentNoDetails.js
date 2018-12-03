@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom'
 import Img from 'react-image'
 import Loading from '../../components/loading/Loading'
 import './ImageComponentNoDetails.css'
-import LazyLoad from 'react-lazy-load';
 
 class ImageComponentNoDetails extends Component {
   render() {

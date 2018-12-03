@@ -91,7 +91,6 @@ class SchilderijDetails extends Component {
                         <section className="section-container">
                             Schilderij ID: {this.state.id}
                             {this.getMakerLink(data.paintingByID[0].painter, data.paintingByID[0].principalmaker)}
-                            
                         </section>
                     )
 
