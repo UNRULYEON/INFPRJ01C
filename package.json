@@ -40,6 +40,8 @@
     "npm": "^6.4.1",
     "pg-promise": "^5.9.7",
     "react-apollo": "^2.2.4",
+    "react-lazy-load": "^3.0.13",
+    "react-lazy-load-image-component": "^1.1.5",
     "react-pose": "^3.3.7",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",

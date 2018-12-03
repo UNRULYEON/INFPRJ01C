@@ -39,13 +39,10 @@ import Edit from '../../icons/Edit.svg';
 //Linking to userdetail page
 import {Link} from 'react-router-dom';
 
-//other route imports (testing)
-import {Route} from 'react-router';
-import { Redirect } from 'react-router-dom'
-
 const ALL_USERS = gql`
   query AllUsers{
     selectAllUsers{
+      id
       name
       surname
       mail
@@ -241,18 +238,6 @@ function getStepContent(stepIndex, state, handleChange) {
       return 'Uknown stepIndex';
   }
 }
-
-const USERS = gql`
-  query users{
-    selectAllUsers{
-      id
-      name
-      surname
-      mail
-      adres
-    }
-  }
-`;
 
 class Users extends Component {
   constructor(props) {

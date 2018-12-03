@@ -57,7 +57,7 @@ const theme = new createMuiTheme({
 
 
 function getSteps() {
-  return ['Koop- en huurlijst', 'Gegevens', 'Betaalwijze', 'Overzicht', 'Betaalt!'];
+  return ['Koop- en huurlijst', 'Gegevens', 'Betaalwijze', 'Overzicht', 'Betaald'];
 }
 class Order extends Component {
   constructor(props){
