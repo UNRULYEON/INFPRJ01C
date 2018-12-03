@@ -37,18 +37,12 @@ import gql from "graphql-tag";
 import Edit from '../../icons/Edit.svg';
 
 //Linking to userdetail page
-<<<<<<< HEAD
-import { Link } from 'react-router-dom';
-=======
 import {Link} from 'react-router-dom';
-
-//other route imports (testing)
-import {Route} from 'react-router';
-import { Redirect } from 'react-router-dom'
 
 const ALL_USERS = gql`
   query AllUsers{
     selectAllUsers{
+      id
       name
       surname
       mail
@@ -56,7 +50,6 @@ const ALL_USERS = gql`
     }
   }
 `
->>>>>>> ce3d813e6d6fdb66c8cddf2dc3e10282b99c67b7
 
 const ADD_USER = gql`
   mutation AddUser(
@@ -245,18 +238,6 @@ function getStepContent(stepIndex, state, handleChange) {
       return 'Uknown stepIndex';
   }
 }
-
-const USERS = gql`
-  query users{
-    selectAllUsers{
-      id
-      name
-      surname
-      mail
-      adres
-    }
-  }
-`;
 
 class Users extends Component {
   constructor(props) {

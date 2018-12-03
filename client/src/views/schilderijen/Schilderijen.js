@@ -5,6 +5,7 @@ import nl_NL from 'rc-pagination/lib/locale/nl_NL';
 import gql from "graphql-tag";
 import './Schilderijen.css'
 
+
 // Components
 import PageTitle from '../../components/pageLink/PageLink'
 import Gallery from '../../components/gallery/Gallery'
@@ -61,7 +62,7 @@ class Schilderijen extends Component {
                     current={this.state.page}
                     locale={nl_NL}
                   />
-                  <Gallery images={data.paintingOrderedByPagination.collection}/>
+                  <Gallery images={data.paintingOrderedByPagination.collection}/>                
                   <Pagination
                     showTotal={(total, range) => `${range[0]} - ${range[1]} van ${total} items`}
                     pageSize={12}
