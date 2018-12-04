@@ -395,6 +395,15 @@ var root = {
         .catch(err => {throw new Error(err)})
     return `The question has been added to row: ${query.id}`
   },
+  async faqDelete({id}){
+    let faq = await db.manyOrNone(`SELECT * from faq WHERE id = ${id}`)
+    if(faq.length){
+      db.one(`DELETE FROM faq WHERE id = ${id}`)
+      return `FAQ removed`
+    }else{
+      throw new Error(`The given ID does not match an existing ID!`)
+    }
+  },
   dateToString: (givenDate) => {
     let DateDB = givenDate.toString()
     let year = DateDB.slice(11,15)

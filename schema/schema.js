@@ -55,7 +55,7 @@ var schema = buildSchema(`
     orderListUpdate(id: Int!, buyerId: Int!, newStatus: String!): String
     WishlistInsert(gebruikerId: Int!, items: String!, time: String!): String
     faqCreate(question: String!, answer: String!): String
-
+    faqDelete(id: Int!): String!
   },
   input PaintRef{foreignkey: Int!},
   input RefBaby{foreignkey: Int!},
