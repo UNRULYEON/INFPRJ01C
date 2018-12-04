@@ -9,14 +9,14 @@ import Gallery from '../../components/gallery/Gallery';
 
 const GET_PAINTERS = gql`
   {
-    painters {
+    paintersAll {
       id
       name
       headerimage
     }
   }
 `
-
+ 
 class Schilders extends Component {
   render() {
     return (
@@ -31,7 +31,7 @@ class Schilders extends Component {
             if (error) return <p>Error :(</p>;
 
             return (
-                <Gallery images={data.painters} noDetails={true} />
+                <Gallery images={data.paintersAll} noDetails={true} />
             )
           }}
         </Query>

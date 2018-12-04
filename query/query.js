@@ -61,9 +61,23 @@ var root = {
   //#endregion
   
   //#region Painters
-  paintersAll: ()=>{
+
+  paintersAll: () => {
     let query = `SELECT * from schilder`
     return db.manyOrNone(query)
+  },
+  async paintersAdmin ({page, amount = 12}) {
+    let offset = (page - 1) * amount
+    
+    let painter = await db.manyOrNone (`SELECT * from schilder`)
+         .then(data => {return data})
+
+    let totalPainters = await db.manyOrNone (`SELECT COUNT(*) from schilder`)
+          .then(data => {return data})
+  return{
+    total: totalPainters[0].count,
+    painterpagination: painter
+    }
   },
   paintersPaginated: () => {
     let query = `SELECT * from schilder limit 15`
