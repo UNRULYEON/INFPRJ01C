@@ -389,6 +389,12 @@ var root = {
   faqId: (id) => {
     return db.manyOrNone(`SELECT * from faq where id = ${id}`)
   },
+  async faqCreate({question, answer}){
+    query = await db.one(`INSERT INTO faq(title, body) VALUES($1,$2) RETURNING id`,[question,answer])
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
+    return `The question has been added to row: ${query.id}`
+  },
   dateToString: (givenDate) => {
     let DateDB = givenDate.toString()
     let year = DateDB.slice(11,15)
