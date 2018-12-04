@@ -102,22 +102,15 @@ var root = {
   
   //#region Search
   //searchfunction 
-  async searchbar({query, page}){
-    let offset = (page - 1) * 12
+  async searchbar({query, page, amount = 12}){
+    let offset = (page - 1) * amount
 
-    // let search = await db.manyOrNone('SELECT * FROM schilderijen WHERE document_vectors @@ to_tsquery(`$1`)', [title])
-    let search = await db.manyOrNone(` SELECT * FROM schilderijen WHERE document_vectors @@ plainto_tsquery('${query}:*') LIMIT 12 OFFSET ${offset}`)
-    .then(data => {
-      return data
-    })
+    let search = await db.manyOrNone(` SELECT * FROM schilderijen WHERE document_vectors @@ plainto_tsquery('${query}:*') LIMIT ${amount} OFFSET ${offset}`)
+        .then(data => {return data})
 
     let total_search = await db.manyOrNone(`SELECT COUNT(*) FROM schilderijen WHERE document_vectors @@ plainto_tsquery('${query}:*')`)
-    .then(data => {
-      return data
-    })
-    .catch(err => {throw new Error(err)})
-      //console.log(search)
-      //console.log(total_search)
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
 
     return {
       total: total_search[0].count,

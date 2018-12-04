@@ -27,7 +27,7 @@ var schema = buildSchema(`
     papatabel: [PapaGet]
     orderListSelect(buyerId: Int!): [Orders]
     selectShoppingCart(userId: Int!): [Cart]
-    searchbar(query: String!, page: Int!): searchResult
+    searchbar(query: String!, page: Int!, amount: Int): searchResult
     wishlistSelect(userId: Int!): [wishlist]
   },
   type Mutation {
