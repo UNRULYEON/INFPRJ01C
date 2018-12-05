@@ -62,7 +62,6 @@ var root = {
   //#endregion
   
   //#region Painters
-
   paintersAll: () => {
     let query = `SELECT * from schilder`
     return db.manyOrNone(query)
@@ -95,6 +94,30 @@ var root = {
   //#endregion
   
   //#region filters
+  async filterPaintings({num = "is not null", prodplace = "is not null", physical = "is not null",pricemin = 0, pricemax = 1000000, order = 'price'}){
+    var period = ""
+    if(isNaN(num)){
+      period = num
+    }else{period = "= "+ num}
+    var prod = ""
+    if(prodplace != "is not null"){
+      prod = `= '${prodplace}'`
+    }else{
+      prod = prodplace
+    }
+    var medium = ""
+    if(physical != "is not null"){
+      medium = `= '${physical}'`
+    }else{
+      medium = physical
+    }
+    order = `'${order}'`
+    var query = await db.manyOrNone(`SELECT * FROM schilderijen WHERE period ${period} AND principalmakersproductionplaces ${prod} AND physicalmedium ${medium} AND price BETWEEN ${pricemin} AND ${pricemax} ORDER BY ${order}`)
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
+    return query
+  },
+
   filterbyperiod:({period}) => {
     let query = (`SELECT * from schilderijen where period = ${period}`)
     return db.manyOrNone(query)

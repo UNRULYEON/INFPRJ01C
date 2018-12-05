@@ -30,6 +30,7 @@ var schema = buildSchema(`
     selectShoppingCart(userId: Int!): [Cart]
     searchbar(query: String!, page: Int!, amount: Int): searchResult
     wishlistSelect(userId: Int!): [wishlist]
+    filterPaintings(num: Int, prodplace: String, physical: String, pricemin: Int, pricemax: Int, order: String): [Painting]
   },
   type Mutation {
     signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String, adres: String, housenumber: String, city: String, 
