@@ -1,14 +1,5 @@
 status van Huren visualiseren 
 
-Schilderijen: MENNO DONE
-- Query die alle schilders geeft met pagination voor admin panel
-- Query die alle namen en bijbehorende ID's van schilders geeft
+FAQ: update functie maken
 
-Schilder: ABDU DONE
-- Query die alle schilders geeft met pagination voor admin panel
-
-Gebruikers: DONE
-Query die alle Gebruikers geeft met pagination voor admin panel
-
-FAQ: DONE
-geen pagination, wel een optie om met een ID een FAQ te selecteren
+description bij queries in schema, als we weten hoe
