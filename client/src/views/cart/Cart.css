@@ -40,7 +40,7 @@
 
 .draggable-action-date{
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: column nowrap;
   align-self: center;
 }
 

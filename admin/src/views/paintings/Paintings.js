@@ -44,6 +44,15 @@ const PAINTINGS = gql`
   }
 `;
 
+const PAINTERS = gql`
+  query PaintersAll {
+    paintersAll{
+      name
+      id
+    }
+  }
+`
+
 const ADD_PAINTING = gql`
   mutation AddPainting(
     $id: String!,
@@ -60,7 +69,8 @@ const ADD_PAINTING = gql`
     $height: Int!,
     $principalmaker: String!,
     $price: Int!,
-    $rented: Boolean!) {
+    $rented: Boolean!,
+    $painterId:Int!) {
     addProduct(
       id: $id,
       title: $title,
@@ -76,7 +86,8 @@ const ADD_PAINTING = gql`
       height: $height,
       principalmaker: $principalmaker,
       price: $price,
-      rented: $rented)
+      rented: $rented,
+      painterId: $painterId)
   }
 `;
 
@@ -118,7 +129,7 @@ function getStepContent(stepIndex, state, handleChange, handeImage, handleChoose
             onClick={handleChoosePainterDialog}
           >
             <Button variant="outlined" fullWidth>
-              {state.principalMaker.length ? state.principalMaker : 'Kies een schilder'}
+              {state.principalMaker.length > 0 ? state.principalMaker : 'Kies een schilder'}
             </Button>
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -200,19 +211,34 @@ function getStepContent(stepIndex, state, handleChange, handeImage, handleChoose
                       <TableCell>Naam</TableCell>
                     </TableRow>
                   </TableHead>
-                  <TableBody>
-                    <TableRow
-                      hover
-                      onClick={() => {
-                        // handleChosenPainter(row.name, row.id)
-                      }}
-                      tabIndex={-1}
-                    >
-                      <TableCell component="th" scope="row">
-                        Naam
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
+                  <Query query={PAINTERS}>
+                    {({ loading, error, data }) => {
+                      if (loading) return "Loading...";
+                      if (error) return `Error! ${error.message}`;
+
+                      return (
+                        <TableBody>
+                          {data.paintersAll.map(row => {
+                            return (
+                              <TableRow
+                                hover
+                                onClick={() => {
+                                  handleChosenPainter(row.name, row.id)
+                                  handleChoosePainterDialogClose()
+                                }}
+                                tabIndex={-1}
+                                key={row.id}
+                              >
+                                <TableCell component="th" scope="row">
+                                  {row.name}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      );
+                    }}
+                  </Query>
                 </Table>
               </DialogContent>
               <DialogActions>
@@ -604,6 +630,7 @@ class Paintings extends Component {
                     principalMaker: '',
                     principalMakerError: false,
                     principalMakerErrorMsg: '',
+                    principalMakerID: 0,
                     price: 0
                   })
                   this.props.handleSnackbarOpen('ADD_PAINTING_SUCCESS')
@@ -635,6 +662,7 @@ class Paintings extends Component {
                           width: this.state.width,
                           height: this.state.height,
                           principalmaker: this.state.principalMaker,
+                          painterId: this.state.principalMakerID,
                           price: this.state.price,
                           rented: this.state.rented
                         }

@@ -18,7 +18,6 @@ import Tabs from '../../components/tabs/Tabs';
 const GET_ART_DETAILS = gql`
 	query Painting($id: String!){
 		paintingByID(id: $id){
-			id
 			title
 			releasedate
 			period
@@ -130,7 +129,8 @@ class SchilderijDetails extends Component {
 												const price = data.paintingByID[0].price
 												const amount = 1
 												const startDate = new Date()
-												const endDate = new Date()
+												let endDate = new Date()
+												endDate.setDate(endDate.getDate() + 1)
 
 												const item = {
 													id,
