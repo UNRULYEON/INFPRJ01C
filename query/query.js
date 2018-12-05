@@ -321,7 +321,7 @@ var root = {
     return `Painting added to the product list`
   },
   //Alter products
-  async alterProduct({id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker, price, rented}){
+  async alterProduct({id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker, price, rented, amountwatched}){
     const prod = await db.manyOrNone(`SELECT * from schilderijen where id_number = ${id_number}`)
     .then(data => {return data})
     .catch(err => {console.err(err)
@@ -344,9 +344,10 @@ var root = {
                           height = $13,
                           principalmaker = $14,
                           price = $15,
-                          rented = $16
+                          rented = $16,
+                          amountwatched = $17
                           WHERE id_number = ${id_number}`,
-                          [id,title,releasedate,period,description,physicalmedium,amountofpaintings,src,bigsrc,prodplace,width,height,principalmaker,price,rented])
+                          [id,title,releasedate,period,description,physicalmedium,amountofpaintings,src,bigsrc,prodplace,width,height,principalmaker,price,rented,amountwatched])
                         .then(data => {return data})
   },
   //Delete products
@@ -372,7 +373,7 @@ var root = {
           .then(data => {return data.id})
           .catch(err => {throw new Error(err)})
   },
-  async alterPainter({name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description}){
+  async alterPainter({name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched}){
     const painter = await db.manyOrNone(`SELECT * from schilder WHERE name = ${name}`)
         .then(data => {return data})
         .catch(err => {throw new Error(err)})
@@ -389,9 +390,10 @@ var root = {
                           nationality = $7,
                           headerimage = $8,
                           thumbnail = $9,
-                          description = $10
+                          description = $10,
+                          amountwatched = $11
                           WHERE name = ${name}`,
-                          [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description])
+                          [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description,amountwatched])
                         .then(data => {return data})
   },
   async deletePainter({name}){
@@ -418,6 +420,18 @@ var root = {
         .then(data => {return data})
         .catch(err => {throw new Error(err)})
     return `The question has been added to row: ${query.id}`
+  },
+  async faqUpdate({question, answer, id}){
+    let faq = await db.manyOrNone(`SELECT * from faq WHERE id = ${id}`)
+    if(faq.length){
+      db.one(`UPDATE faq set 
+                question = $1,
+                answer = $2
+                WHERE id = ${id}`,[question,answer])
+      return `FAQ Updated`
+    }else{
+      throw new Error(`The given ID does not match an existing ID!`)
+    }
   },
   async faqDelete({id}){
     let faq = await db.manyOrNone(`SELECT * from faq WHERE id = ${id}`)
