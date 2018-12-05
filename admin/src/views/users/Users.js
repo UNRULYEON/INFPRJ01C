@@ -269,7 +269,7 @@ class TablePaginationActions extends React.Component {
   };
 
   render() {
-    const { classes, count, page, rowsPerPage, theme } = this.props;
+    const { count, page, rowsPerPage } = this.props;
 
     return (
       <div className='footer-actions'>
