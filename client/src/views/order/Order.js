@@ -134,18 +134,6 @@ class Order extends Component {
     }
   }
 
-  resetOrder = () => {
-    console.log(`reset order`)
-    let i = []
-    this.props.updateOrder(i)
-  }
-
-  resetRental = () => {
-    console.log(`reset rental`)
-    let i = []
-    this.props.updateRental(i)
-  }
-
   getStepContent = (stepIndex) => {
     switch (stepIndex) {
       case 0:
@@ -560,7 +548,6 @@ class Order extends Component {
                               purchaseDate: new Date()
                             }
                           })
-                          // this.resetOrder()
                           let i = []
                           this.props.updateOrder(i)
                         }
@@ -583,7 +570,6 @@ class Order extends Component {
                               purchaseDate: new Date()
                             }
                           })
-                          // this.resetRental()
                           let i = []
                           this.props.updateRental(i)
                         }
