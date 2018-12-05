@@ -407,16 +407,8 @@ var root = {
     }
   },
   //#endregion
-  //#endregion  
-
-  //#region Random
-  faq: () => {
-    let query = ('SELECT * from faq')
-    return db.manyOrNone(query)
-  },
-  faqId: (id) => {
-    return db.manyOrNone(`SELECT * from faq where id = ${id}`)
-  },
+  
+  //#region FAQ  
   async faqCreate({question, answer}){
     query = await db.one(`INSERT INTO faq(title, body) VALUES($1,$2) RETURNING id`,[question,answer])
         .then(data => {return data})
@@ -443,6 +435,17 @@ var root = {
     }else{
       throw new Error(`The given ID does not match an existing ID!`)
     }
+  },
+  //#endregion
+  //#endregion  
+
+  //#region Random
+  faq: () => {
+    let query = ('SELECT * from faq')
+    return db.manyOrNone(query)
+  },
+  faqId: (id) => {
+    return db.manyOrNone(`SELECT * from faq where id = ${id}`)
   },
   dateToString: (givenDate) => {
     let DateDB = givenDate.toString()
@@ -607,9 +610,9 @@ var root = {
           .catch(err => {throw new Error(err)})
     return `The status of the selected order has been changed to: ${newStatus}`
   },
-  async orderListInsert({buyerId = 166, items, purchaseDate}){
+  async orderListInsert({gebruikerId = 166, items, purchaseDate}){
     items.forEach(element => {      
-      db.one(`INSERT INTO orderlist(buyerid, items, purchasedate) VALUES($1,$2,$3) RETURNING ID`,[buyerId,element.foreignkey,purchaseDate])
+      db.one(`INSERT INTO orderlist(buyerid, items, purchasedate) VALUES($1,$2,$3) RETURNING ID`,[gebruikerId,element.foreignkey,purchaseDate])
           .then(data => {console.log(`Inserted into row: ${data.id}`)})
           .catch(err => {console.log("oeps"+err+'Oeps')
                 throw new Error(err)})
