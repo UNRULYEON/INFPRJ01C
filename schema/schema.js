@@ -52,14 +52,18 @@ var schema = buildSchema(`
     removeBabyTabel(id: Int!): String
     shoppingCartInsert(gebruikerId: Int!, items: String!, time: String!): String
     orderListInsert(gebruikerId: Int, items: [PaintRef!], purchaseDate: String!): String
-    rentalListInsert(gebruikerId: Int!, items : [PaintRef!], purchaseDate: String!, rentStart: String!, rentStop: String!): String
+    rentalListInsert(gebruikerId: Int!, items : [PaintRefRent!], purchaseDate: String!): String
     orderListUpdate(id: Int!, buyerId: Int!, newStatus: String!): String
     WishlistInsert(gebruikerId: Int!, items: String!, time: String!): String
     faqCreate(question: String!, answer: String!): String
     faqUpdate(question: String!, answer: String!, id: Int!): String
     faqDelete(id: Int!): String!
   },
-  input PaintRef{foreignkey: Int!},
+  input PaintRef{foreignkey: Int!,},
+  input PaintRefRent{
+    foreignkey: Int!, 
+    startDate: String!, 
+    stopDate: String!},
   input RefBaby{foreignkey: Int!},
   type PapaGet{
     id: Int,

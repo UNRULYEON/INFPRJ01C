@@ -619,14 +619,14 @@ var root = {
     })
     return "Succes"
   },
-  async rentalListInsert({buyerId, items, purchaseDate, rentStart, rentStop}){
+  async rentalListInsert({gebruikerId, items, purchaseDate}){
     items.forEach(element => {
-      db.one(`INSERT INTO rentallist(buyerid,items,purchasedate,rentstart,rentstop) VALUES($1,$2,$3,$3,$4,$5) RETURNING ID`,[buyerId,element.foreignkey,purchaseDate,rentStart,rentStop])
+      db.one(`INSERT INTO rentallist(buyerid,items,purchasedate,rentstart,rentstop) VALUES($1,$2,$3,$4,$5) RETURNING ID`,[gebruikerId,element.foreignkey,purchaseDate,element.startDate,element.stopDate])
           .then(data => {console.log(`Inserted into row: ${data.id}`)})
-          .catch(err => {console.log("oeps"+err+'Oeps')
+          .catch(err => {console.log(`OEPS ${err} OEPS`)
                 throw new Error(err)})
     })
-    return "Succes"
+    return "The data has successfully been inserted."
   },
   async me (req, res, next) {
     if (!res.headers.authorization) {
