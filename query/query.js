@@ -84,10 +84,12 @@ var root = {
     return db.manyOrNone(query)
   },
   painterByID: ({id}) => {
+    db.one(`UPDATE schilder SET amountwatched = amountwatched + 1 where id = ${id}`)
     let query = (`SELECT * from schilder where id = ${id}`)
     return db.manyOrNone(query)
   },
   workByPainter: ({id}) => {
+    db.one(`UPDATE schilder SET amountwatched = amountwatched + 1 where id = ${id}`)
     let query = (`SELECT * from schilderijen where principalmaker = ${id}`)
     return db.manyOrNone(query)
   },
