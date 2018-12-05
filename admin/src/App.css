@@ -26,3 +26,11 @@ section {
 .section-actions{
   margin-bottom: 25px;
 }
+
+.footer-row {
+  display: flex;
+}
+
+.footer-actions{
+  flex-shrink: 0;
+}
