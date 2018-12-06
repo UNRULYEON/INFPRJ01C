@@ -275,15 +275,15 @@ var root = {
     return await db.one(`SELECT * FROM gebruiker where id = ${id}`)
             .catch(err => {throw new Error(err)})
   },
-  async addUser({name, surname, mail, password, aanhef, adres = null, city = null, postalcode = null, housenumber = null, paymentmethod = null}){
+  async addUser({name, surname, mail, password, aanhef, adres = null, city = null, postalcode = null, housenumber = null, paymentmethod = null, admin}){
     const saltedPassword = await bcrypt.hash(password,10)
     const user = await db.manyOrNone(`SELECT mail from gebruiker where mail = $1`,[mail])
     if(user.length){
-      throw new Error('User with this email already exists')
+      return 'User with this email already exists'
     }
-    return await db.one(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`, 
-    [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber, paymentmethod])
+    return await db.one(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`, 
+    [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin])
     .then(data => {console.log(`\nUser ID: ${data.id}`)
                     return data.id})
       .catch(err => {throw new Error(err)})    

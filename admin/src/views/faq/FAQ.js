@@ -193,6 +193,7 @@ class FAQ extends Component {
         </div>
         <Query
           query={FAQS}
+          pollInterval={1000}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading... :)</p>;

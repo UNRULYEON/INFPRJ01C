@@ -280,6 +280,7 @@ class Painters extends Component {
             page: page,
             amount: rowsPerPage
           }}
+          pollInterval={1000}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading... :)</p>;

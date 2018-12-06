@@ -39,7 +39,7 @@ var schema = buildSchema(`
     login(email: String!, password: String!): UserWithToken!
     merge(id_number: Int!, id: Int!): String
     merging: String
-    addUser(name: String!, surname: String!, mail: String!, password: String!, aanhef: String!, adres: String, city: String, postalcode: String, housenumber: String, paymentmethod: String): String!
+    addUser(name: String!, surname: String!, mail: String!, password: String!, aanhef: String!, adres: String, city: String, postalcode: String, housenumber: String, paymentmethod: String, admin: Boolean!): String!
     alterUser(id: Int!, name: String!, surname: String!, aanhef: String!, mail: String!, password: String!, adres: String!, city: String!, postalcode: String!, housenumber: String!, paymentmethod: String!): String!
     deleteUser(id: Int!): String
     addProduct(id: String!, title: String!, releasedate: Int!, period: Int!, description: String!, physicalmedium: String!, amountofpaintings: Int!, src: String!, bigsrc: String!,prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!, rented: Boolean!,painterId: Int!): String!

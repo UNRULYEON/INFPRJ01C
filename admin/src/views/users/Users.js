@@ -35,6 +35,10 @@ import FirstPageIcon from '@material-ui/icons/FirstPage';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import FormLabel from '@material-ui/core/FormLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
 // Apollo
 import { Query, Mutation } from "react-apollo";
@@ -72,7 +76,8 @@ const ADD_USER = gql`
     $city: String
     $postalcode: String
     $housenumber: String
-    $paymentmethod: String){
+    $paymentmethod: String,
+    $admin: Boolean!){
     addUser(
       name: $name
       surname: $surname
@@ -83,7 +88,8 @@ const ADD_USER = gql`
       city: $city
       postalcode: $postalcode
       housenumber: $housenumber
-      paymentmethod: $paymentmethod)
+      paymentmethod: $paymentmethod,
+      admin: $admin)
   }
 `
 
@@ -179,14 +185,32 @@ function getStepContent(stepIndex, state, handleChange) {
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormControl fullWidth error={state.paymentmethodError}>
+            {/* <FormControl fullWidth error={state.paymentmethodError}>
               <InputLabel htmlFor="add-paymentmethod">Betaalwijze</InputLabel>
               <Input id="add-paymentmethod" value={state.paymentmethod} onChange={handleChange('paymentmethod')} />
               <FormHelperText id="add-paymentmethod-error-text">{state.paymentmethodErrorMsg}</FormHelperText>
+            </FormControl> */}
+            <FormControl fullWidth error={state.paymentmethodError}>
+              <InputLabel htmlFor="name-paymentmethod">Betaalwijze</InputLabel>
+              <Select
+                value={state.paymentmethod}
+                onChange={handleChange('paymentmethod')}
+                name="Betaalwijze"
+                renderValue={value => `${value}`}
+                input={<Input id="name-paymentmethod" />}
+              >
+                <MenuItem value="">
+                  <em>Geen</em>
+                </MenuItem>
+                <MenuItem value="iDeal">iDeal</MenuItem>
+                <MenuItem value="Creditcard">Creditcard</MenuItem>
+                <MenuItem value="Paypal">Paypal</MenuItem>
+              </Select>
+              <FormHelperText>{state.paymentmethodErrorMsg}</FormHelperText>
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormGroup>
+            {/* <FormGroup>
               <FormControlLabel
                 control={
                   <Switch
@@ -197,7 +221,20 @@ function getStepContent(stepIndex, state, handleChange) {
                 }
                 label="Admin"
               />
-            </FormGroup>
+            </FormGroup> */}
+
+            <FormControl error={state.adminError} component="fieldset">
+              <FormLabel component="legend">Is de gebruiker een admin?</FormLabel>
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox checked={state.admin} onChange={handleChange('admin')} value="gilad" />
+                  }
+                  label="Admin"
+                />
+              </FormGroup>
+              <FormHelperText>{state.adminErrorMsg}</FormHelperText>
+            </FormControl>
           </Grid>
         </Grid>
       )
@@ -341,6 +378,8 @@ class Users extends Component {
       paymentmethodError: false,
       paymentmethodErrorMsg: '',
       admin: false,
+      adminError: '',
+      adminErrorMsg: '',
       ID: 404,
       page: 0,
       rowsPerPage: 10,
@@ -422,6 +461,16 @@ class Users extends Component {
         }
       }
 
+      console.log(`item: admin - value: ${this.state.admin}`)
+
+      if(!(/\S+@\S+\.\S+/).test(this.state.mail)) {
+        next = false
+        this.setState(state => ({
+          mailError: true,
+          mailErrorMsg: 'Dit is geen geldig email-adres'
+        }));
+      }
+
       if (next) {
         this.setState(state => ({ activeStep: state.activeStep + 1, }));
       }
@@ -455,6 +504,7 @@ class Users extends Component {
             page: page,
             amount: rowsPerPage
           }}
+          pollInterval={1000}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading... :)</p>;
@@ -623,13 +673,15 @@ class Users extends Component {
                             variables: {
                               name: this.state.name,
                               surname: this.state.surname,
-                              mail: this.state.password,
+                              mail: this.state.mail,
                               password: this.state.password,
                               aanhef: this.state.aanhef,
                               adres: this.state.adres,
                               city: this.state.city,
                               postalcode: this.state.postalcode,
-                              paymentmethod: this.state.paymentmethod
+                              housenumber: this.state.housenumber,
+                              paymentmethod: this.state.paymentmethod,
+                              admin: this.state.admin
                             }
                           })
                         }}>
