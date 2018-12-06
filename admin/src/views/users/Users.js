@@ -93,7 +93,6 @@ function getSteps() {
   return ['Vul informatie in', 'Review gebruiker'];
 }
 
-
 function getStepContent(stepIndex, state, handleChange) {
   switch (stepIndex) {
     case 0:
@@ -284,9 +283,15 @@ class Users extends Component {
 
   // Handle input change
   handleChange = name => event => {
-    this.setState({
-      [name]: event.target.value,
-    });
+    if (name === 'admin') {
+      this.setState({
+        [name]: event.target.checked,
+      });
+    } else {
+      this.setState({
+        [name]: event.target.value,
+      });
+    }
   };
 
   // Handle dialog whnen opening
@@ -450,7 +455,7 @@ class Users extends Component {
                   </div>
                 ) : (
                     <div>
-                      <div>{getStepContent(activeStep, this.state, this.handleChange, this.handeImage)}</div>
+                      <div>{getStepContent(activeStep, this.state, this.handleChange)}</div>
                     </div>
                   )}
               </div>

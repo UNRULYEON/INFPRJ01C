@@ -1,12 +1,4 @@
 import React, { Component } from 'react';
-import { Query } from "react-apollo";
-import gql from "graphql-tag";
-import TextField from '@material-ui/core/TextField';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import Grid from '@material-ui/core/Grid';
 import './GebruikerDetails.css';
 
 // const GET_PAINTER_DETAILS = gql`
@@ -17,7 +9,7 @@ import './GebruikerDetails.css';
 //       description
 //     }
 //   }
-// `
+// ` 
 
 class GebruikerDetails extends Component {
   constructor(props) {
