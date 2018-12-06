@@ -569,10 +569,41 @@ class Users extends Component {
                 <Mutation
                   mutation={ADD_USER}
                   onCompleted={(data) => {
-                    console.log(`Query complete: ${data.addProduct}`)
+                    console.log(`Query complete: ${data}`)
                     this.handleClose()
                     this.setState({
-
+                      activeStep: 0,
+                      dialogAddUser: false,
+                      aanhef: 'Dhr.',
+                      name: '',
+                      nameError: false,
+                      nameErrorMsg: '',
+                      surname: '',
+                      surnameError: false,
+                      surnameErrorMsg: '',
+                      mail: '',
+                      mailError: false,
+                      mailErrorMsg: '',
+                      password: '',
+                      passwordError: false,
+                      passwordErrorMsg: '',
+                      adres: '',
+                      adresError: false,
+                      adresErrorMsg: '',
+                      housenumber: '',
+                      housenumberError: false,
+                      housenumberErrorMsg: '',
+                      postalcode: '',
+                      postalcodeError: false,
+                      postalcodeErrorMsg: '',
+                      city: '',
+                      cityError: '',
+                      cityErrorMsg: false,
+                      paymentmethod: '',
+                      paymentmethodError: false,
+                      paymentmethodErrorMsg: '',
+                      admin: false,
+                      ID: 404,
                     })
                     this.props.handleSnackbarOpen('ADD_USER_SUCCESS')
                   }}
@@ -588,6 +619,19 @@ class Users extends Component {
                         color="primary"
                         onClick={e => {
                           e.preventDefault()
+                          addUser({
+                            variables: {
+                              name: this.state.name,
+                              surname: this.state.surname,
+                              mail: this.state.password,
+                              password: this.state.password,
+                              aanhef: this.state.aanhef,
+                              adres: this.state.adres,
+                              city: this.state.city,
+                              postalcode: this.state.postalcode,
+                              paymentmethod: this.state.paymentmethod
+                            }
+                          })
                         }}>
                         Opslaan
                     </Button>
