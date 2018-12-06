@@ -582,7 +582,9 @@ class App extends Component {
                     user={this.state.user}
                     cart={this.state.cart}
                     order={this.state.order}
+                    updateOrder={this.updateOrder}
                     rental={this.state.rental}
+                    updateRental={this.updateRental}
                     loggedIn={this.state.loggedIn}
                 />} />
                 <Route path="/registreren" component={Registreren} />

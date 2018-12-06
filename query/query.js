@@ -236,7 +236,7 @@ var root = {
   //#region alter users
   //Add user
   async selectAllUsers({page, amount}){
-    let offset = (page - 1) * amount
+    let offset = (page) * amount
 
     let users = await db.manyOrNone(`SELECT * FROM gebruiker ORDER BY ID ASC LIMIT ${amount} OFFSET ${offset}`)
     .then(data => {

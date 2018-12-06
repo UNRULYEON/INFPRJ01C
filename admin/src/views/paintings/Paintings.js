@@ -9,6 +9,8 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import TableFooter from '@material-ui/core/TableFooter';
+import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -22,6 +24,11 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
+import IconButton from '@material-ui/core/IconButton';
+import FirstPageIcon from '@material-ui/icons/FirstPage';
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
+import LastPageIcon from '@material-ui/icons/LastPage';
 
 // Apollo
 import { Query, Mutation } from "react-apollo";
@@ -56,14 +63,26 @@ const GET_ART_DETAILS = gql`
 `;
 
 const PAINTINGS = gql`
-  query Collection{
-    collection{
-      id_number
-      title
-      principalmaker
+  query paintingsPAG($page: Int!, $amount: Int!){
+    paintingOrderedByPagination(page: $page, amount: $amount){
+      total
+      collection{
+        title
+        id_number
+        principalmaker
+      }
     }
   }
 `;
+
+const PAINTERS = gql`
+  query PaintersAll {
+    paintersAll{
+      name
+      id
+    }
+  }
+`
 
 const ADD_PAINTING = gql`
   mutation AddPainting(
@@ -81,7 +100,8 @@ const ADD_PAINTING = gql`
     $height: Int!,
     $principalmaker: String!,
     $price: Int!,
-    $rented: Boolean!) {
+    $rented: Boolean!,
+    $painterId:Int!) {
     addProduct(
       id: $id,
       title: $title,
@@ -97,7 +117,8 @@ const ADD_PAINTING = gql`
       height: $height,
       principalmaker: $principalmaker,
       price: $price,
-      rented: $rented)
+      rented: $rented,
+      painterId: $painterId)
   }
 `;
 
@@ -145,7 +166,7 @@ function getStepContent(stepIndex, state, handleChange, handeImage, handleChoose
             onClick={handleChoosePainterDialog}
           >
             <Button variant="outlined" fullWidth>
-              {state.principalMaker.length ? state.principalMaker : 'Kies een schilder'}
+              {state.principalMaker.length > 0 ? state.principalMaker : 'Kies een schilder'}
             </Button>
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -227,19 +248,34 @@ function getStepContent(stepIndex, state, handleChange, handeImage, handleChoose
                       <TableCell>Naam</TableCell>
                     </TableRow>
                   </TableHead>
-                  <TableBody>
-                    <TableRow
-                      hover
-                      onClick={() => {
-                        // handleChosenPainter(row.name, row.id)
-                      }}
-                      tabIndex={-1}
-                    >
-                      <TableCell component="th" scope="row">
-                        Naam
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
+                  <Query query={PAINTERS}>
+                    {({ loading, error, data }) => {
+                      if (loading) return "Loading...";
+                      if (error) return `Error! ${error.message}`;
+
+                      return (
+                        <TableBody>
+                          {data.paintersAll.map(row => {
+                            return (
+                              <TableRow
+                                hover
+                                onClick={() => {
+                                  handleChosenPainter(row.name, row.id)
+                                  handleChoosePainterDialogClose()
+                                }}
+                                tabIndex={-1}
+                                key={row.id}
+                              >
+                                <TableCell component="th" scope="row">
+                                  {row.name}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      );
+                    }}
+                  </Query>
                 </Table>
               </DialogContent>
               <DialogActions>
@@ -323,6 +359,63 @@ function getStepContent(stepIndex, state, handleChange, handeImage, handleChoose
       );
     default:
       return 'Uknown stepIndex';
+  }
+}
+class TablePaginationActions extends React.Component {
+  handleFirstPageButtonClick = event => {
+    this.props.onChangePage(event, 0);
+  };
+
+  handleBackButtonClick = event => {
+    this.props.onChangePage(event, this.props.page - 1);
+  };
+
+  handleNextButtonClick = event => {
+    this.props.onChangePage(event, this.props.page + 1);
+  };
+
+  handleLastPageButtonClick = event => {
+    this.props.onChangePage(
+      event,
+      Math.max(0, Math.ceil(this.props.count / this.props.rowsPerPage) - 1),
+    );
+  };
+
+  render() {
+    const { count, page, rowsPerPage } = this.props;
+
+    return (
+      <div className='footer-actions'>
+        <IconButton
+          onClick={this.handleFirstPageButtonClick}
+          disabled={page === 0}
+          aria-label="Eerste pagina"
+        >
+          <FirstPageIcon/>
+        </IconButton>
+        <IconButton
+          onClick={this.handleBackButtonClick}
+          disabled={page === 0}
+          aria-label="Vorige pagina"
+        >
+          <KeyboardArrowLeft/>
+        </IconButton>
+        <IconButton
+          onClick={this.handleNextButtonClick}
+          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+          aria-label="Volgende pagina"
+        >
+          <KeyboardArrowRight/>
+        </IconButton>
+        <IconButton
+          onClick={this.handleLastPageButtonClick}
+          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+          aria-label="Laatste pagina"
+        >
+          <LastPageIcon/>
+        </IconButton>
+      </div>
+    );
   }
 }
 
@@ -536,6 +629,14 @@ class Paintings extends Component {
     }
   }
 
+  handleChangePage = (event, page) => {
+    this.setState({ page });
+  };
+
+  handleChangeRowsPerPage = event => {
+    this.setState({ rowsPerPage: event.target.value });
+  };
+
   // Handle input change
   handleChange = name => event => {
     this.setState({
@@ -722,6 +823,7 @@ class Paintings extends Component {
   render() {
     const steps = getStepsAanmaken();
     const { activeStep } = this.state;
+    const { rowsPerPage, page } = this.state;
 
     return (
       <section>
@@ -753,7 +855,7 @@ class Paintings extends Component {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {data.collection.map(row => {
+                    {data.paintingOrderedByPagination.collection.map(row => {
                       return (
                         <TableRow
                           hover
@@ -777,6 +879,20 @@ class Paintings extends Component {
                       );
                     })}
                   </TableBody>
+                  <TableFooter>
+                    <TableRow className='footer-row'>
+                      <TablePagination
+                        rowsPerPageOptions={[5, 10, 25]}
+                        colSpan={5}
+                        count={data.paintingOrderedByPagination.total}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onChangePage={this.handleChangePage}
+                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                        ActionsComponent={TablePaginationActions}
+                      />
+                    </TableRow>
+                  </TableFooter>
                 </Table>
               </Paper>
             )

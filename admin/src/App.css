@@ -26,3 +26,7 @@ section {
 .section-actions{
   margin-bottom: 25px;
 }
+
+.footer-actions{
+  flex-shrink: 0;
+}

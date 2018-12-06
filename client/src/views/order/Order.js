@@ -26,6 +26,18 @@ import Select from '@material-ui/core/Select';
 import PageTitle from '../../components/pageLink/PageLink'
 import CartList from './../../components/cartlist/CartList'
 
+// Apollo
+import { Mutation } from "react-apollo";
+import gql from "graphql-tag";
+import { adopt } from 'react-adopt'
+
+
+import { OrderQueryComposer } from '../../components/orderQueryComposer/orderQueryComposer'
+
+const Composed = adopt({
+  container: <OrderQueryComposer />
+})
+
 const styles = theme => ({
   root: {
     width: '100%',
@@ -41,8 +53,6 @@ const styles = theme => ({
     useNextVariants: true,
   },
 });
-
-
 
 const theme = new createMuiTheme({
   palette: {
@@ -68,6 +78,7 @@ class Order extends Component {
       order: this.props.order.items,
       rental: this.props.rental.items,
       activeStep: this.setActiveStep(),
+      id: this.props.user.id,
       email: this.props.user.email,
       emailError: false,
       emailHelperText: '',
@@ -499,28 +510,98 @@ class Order extends Component {
             <div>
               <div className={classes.instructions}>{this.getStepContent(activeStep)}</div>
               <div className="order-action-container">
-                <div>
+                <div style={{ display: 'flex', flexFlow: 'row nowrap' }}>
                   {activeStep === 0 | activeStep === 4 ? null : (
                     <Button
-                    variant="outlined"
-                    disabled={activeStep === 0}
-                    onClick={this.handleBack}
-                    className={classes.backButton}
-                    >
-                    Terug
+                      variant="outlined"
+                      disabled={activeStep === 0}
+                      onClick={this.handleBack}
+                      className={classes.backButton}
+                      >
+                      Terug
                     </Button>
                   )}
-                  {activeStep === 4 ? null : (
-                  <MuiThemeProvider theme={theme}>
+                  {activeStep === 3 | activeStep === 4 ? null : (
+                    <MuiThemeProvider theme={theme}>
+                      <Button
+                        variant="contained"
+                        color='secondary'
+                        onClick={this.handleNext}
+                        disabled={this.state.buttonDisabled}>
+                          Volgende
+                      </Button>
+                    </MuiThemeProvider>
+                  )}
+                  {activeStep === 3 ? (
+                    <MuiThemeProvider theme={theme}>
+                    <Composed>
+                      {({ container: { insertOrder, insertRental } }) => {
+                        const insertOrderQ = async () => {
+                          let items = []
+                          for (let i = 0; i < this.state.order.length; i++) {
+                            items.push({"foreignkey": parseInt(this.state.order[i].id)})
+                          }
+                          await insertOrder.mutation({
+                            variables: {
+                              gebruikerId: parseInt(this.state.id),
+                              items: items,
+                              purchaseDate: new Date()
+                            }
+                          })
+                          let i = []
+                          this.props.updateOrder(i)
+                        }
+
+                        const insertRentalQ = async () => {
+                          let items = []
+                          for (let i = 0; i < this.state.rental.length; i++) {
+                            items.push(
+                              {
+                                "foreignkey": parseInt(this.state.rental[i].id),
+                                "startDate": this.state.rental[i].startDate,
+                                "stopDate": this.state.rental[i].endDate
+                              }
+                            )
+                          }
+                          await insertRental.mutation({
+                            variables: {
+                              gebruikerId: parseInt(this.state.id),
+                              items: items,
+                              purchaseDate: new Date()
+                            }
+                          })
+                          let i = []
+                          this.props.updateRental(i)
+                        }
+
+                        return (
+                          <Button
+                            variant="contained"
+                            color='primary'
+                            onClick={() => {
+                              insertOrderQ()
+                              insertRentalQ()
+                              this.setState({
+                                activeStep: this.state.activeStep + 1
+                              })
+                            }}
+                          >
+                            Betalen
+                          </Button>
+                        )
+
+                      }}
+                    </Composed>
+                    </MuiThemeProvider>
+                  ) : null}
+                  {/* {activeStep === 4 ? (
                     <Button
                       variant="contained"
-                      color={activeStep === steps.length - 2 ? 'primary' : 'secondary'}
-                      onClick={this.handleNext}
-                      disabled={this.state.buttonDisabled}>
-                      {activeStep === steps.length - 2 ? 'Betalen' : 'Volgende'}
+                      color='primary'
+                    >
+                      Verder winkelen
                     </Button>
-                  </MuiThemeProvider>
-                  )}
+                  ) : null} */}
                 </div>
               </div>
             </div>
