@@ -9,6 +9,8 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import TableFooter from '@material-ui/core/TableFooter';
+import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -28,6 +30,11 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import FormGroup from '@material-ui/core/FormGroup';
 import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
+import FirstPageIcon from '@material-ui/icons/FirstPage';
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
+import LastPageIcon from '@material-ui/icons/LastPage';
 
 // Apollo
 import { Query, Mutation } from "react-apollo";
@@ -40,13 +47,16 @@ import Edit from '../../icons/Edit.svg';
 import {Link} from 'react-router-dom';
 
 const ALL_USERS = gql`
-  query AllUsers{
-    selectAllUsers{
-      id
-      name
-      surname
-      mail
-      adres
+  query AllUsers($page: Int!, $amount: Int!){
+    selectAllUsers(page: $page, amount: $amount){
+      total
+      totaluser{
+        id
+        name
+        surname
+        mail
+        adres
+      }
     }
   }
 `
@@ -92,7 +102,6 @@ const theme = new createMuiTheme({
 function getSteps() {
   return ['Vul informatie in', 'Review gebruiker'];
 }
-
 
 function getStepContent(stepIndex, state, handleChange) {
   switch (stepIndex) {
@@ -239,6 +248,64 @@ function getStepContent(stepIndex, state, handleChange) {
   }
 }
 
+class TablePaginationActions extends React.Component {
+  handleFirstPageButtonClick = event => {
+    this.props.onChangePage(event, 0);
+  };
+
+  handleBackButtonClick = event => {
+    this.props.onChangePage(event, this.props.page - 1);
+  };
+
+  handleNextButtonClick = event => {
+    this.props.onChangePage(event, this.props.page + 1);
+  };
+
+  handleLastPageButtonClick = event => {
+    this.props.onChangePage(
+      event,
+      Math.max(0, Math.ceil(this.props.count / this.props.rowsPerPage) - 1),
+    );
+  };
+
+  render() {
+    const { count, page, rowsPerPage } = this.props;
+
+    return (
+      <div className='footer-actions'>
+        <IconButton
+          onClick={this.handleFirstPageButtonClick}
+          disabled={page === 0}
+          aria-label="Eerste pagina"
+        >
+          <FirstPageIcon/>
+        </IconButton>
+        <IconButton
+          onClick={this.handleBackButtonClick}
+          disabled={page === 0}
+          aria-label="Vorige pagina"
+        >
+          <KeyboardArrowLeft/>
+        </IconButton>
+        <IconButton
+          onClick={this.handleNextButtonClick}
+          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+          aria-label="Volgende pagina"
+        >
+          <KeyboardArrowRight/>
+        </IconButton>
+        <IconButton
+          onClick={this.handleLastPageButtonClick}
+          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+          aria-label="Laatste pagina"
+        >
+          <LastPageIcon/>
+        </IconButton>
+      </div>
+    );
+  }
+}
+
 class Users extends Component {
   constructor(props) {
     super(props);
@@ -274,9 +341,19 @@ class Users extends Component {
       paymentmethodError: false,
       paymentmethodErrorMsg: '',
       admin: false,
-      ID: 404
+      ID: 404,
+      page: 0,
+      rowsPerPage: 10,
     }
   }
+
+  handleChangePage = (event, page) => {
+    this.setState({ page });
+  };
+
+  handleChangeRowsPerPage = event => {
+    this.setState({ rowsPerPage: event.target.value });
+  };
 
   gotolink(id) {
     return "/gebruiker/" + id;
@@ -284,9 +361,15 @@ class Users extends Component {
 
   // Handle input change
   handleChange = name => event => {
-    this.setState({
-      [name]: event.target.value,
-    });
+    if (name === 'admin') {
+      this.setState({
+        [name]: event.target.checked,
+      });
+    } else {
+      this.setState({
+        [name]: event.target.value,
+      });
+    }
   };
 
   // Handle dialog whnen opening
@@ -353,6 +436,7 @@ class Users extends Component {
   render() {
     const steps = getSteps();
     const { activeStep } = this.state;
+    const { rowsPerPage, page } = this.state;
 
     return (
       <section>
@@ -367,6 +451,10 @@ class Users extends Component {
         </div>
         <Query
           query={ALL_USERS}
+          variables={{
+            page: page,
+            amount: rowsPerPage
+          }}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading... :)</p>;
@@ -377,7 +465,6 @@ class Users extends Component {
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell></TableCell>
                       <TableCell>ID</TableCell>
                       <TableCell>Voornaam</TableCell>
                       <TableCell>Achternaam</TableCell>
@@ -386,17 +473,12 @@ class Users extends Component {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {data.selectAllUsers.map(row => {
+                    {data.selectAllUsers.totaluser.map(row => {
                       return (
                         <TableRow key={row.id} hover onClick={() => {
                           console.log(`clicked on ${row.id}`)
                           this.props.history.push('/gebruiker/' + row.id)
                         }}>
-                          <Tooltip title="Aanpassen" placement="right">
-                            <TableCell>
-                              <Link to={this.gotolink(row.id)}><img src={Edit} alt="Edit" /></Link>
-                            </TableCell>
-                          </Tooltip>
                           <TableCell >
                             {row.id}
                           </TableCell>
@@ -416,6 +498,20 @@ class Users extends Component {
                       );
                     })}
                   </TableBody>
+                  <TableFooter>
+                    <TableRow className='footer-row'>
+                      <TablePagination
+                        rowsPerPageOptions={[5, 10, 25]}
+                        colSpan={5}
+                        count={data.selectAllUsers.total}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onChangePage={this.handleChangePage}
+                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                        ActionsComponent={TablePaginationActions}
+                      />
+                    </TableRow>
+                  </TableFooter>
                 </Table>
               </Paper>
             )
@@ -450,7 +546,7 @@ class Users extends Component {
                   </div>
                 ) : (
                     <div>
-                      <div>{getStepContent(activeStep, this.state, this.handleChange, this.handeImage)}</div>
+                      <div>{getStepContent(activeStep, this.state, this.handleChange)}</div>
                     </div>
                   )}
               </div>

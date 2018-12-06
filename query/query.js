@@ -251,7 +251,7 @@ var root = {
   //#region alter users
   //Add user
   async selectAllUsers({page, amount}){
-    let offset = (page - 1) * amount
+    let offset = (page) * amount
 
     let users = await db.manyOrNone(`SELECT * FROM gebruiker ORDER BY ID ASC LIMIT ${amount} OFFSET ${offset}`)
     .then(data => {
@@ -338,7 +338,7 @@ var root = {
     return `Painting added to the product list`
   },
   //Alter products
-  async alterProduct({id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker, price, rented}){
+  async alterProduct({id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker, price, rented, amountwatched}){
     const prod = await db.manyOrNone(`SELECT * from schilderijen where id_number = ${id_number}`)
     .then(data => {return data})
     .catch(err => {console.err(err)
@@ -361,9 +361,10 @@ var root = {
                           height = $13,
                           principalmaker = $14,
                           price = $15,
-                          rented = $16
+                          rented = $16,
+                          amountwatched = $17
                           WHERE id_number = ${id_number}`,
-                          [id,title,releasedate,period,description,physicalmedium,amountofpaintings,src,bigsrc,prodplace,width,height,principalmaker,price,rented])
+                          [id,title,releasedate,period,description,physicalmedium,amountofpaintings,src,bigsrc,prodplace,width,height,principalmaker,price,rented,amountwatched])
                         .then(data => {return data})
   },
   //Delete products
@@ -389,7 +390,7 @@ var root = {
           .then(data => {return data.id})
           .catch(err => {throw new Error(err)})
   },
-  async alterPainter({name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description}){
+  async alterPainter({name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched}){
     const painter = await db.manyOrNone(`SELECT * from schilder WHERE name = ${name}`)
         .then(data => {return data})
         .catch(err => {throw new Error(err)})
@@ -406,9 +407,10 @@ var root = {
                           nationality = $7,
                           headerimage = $8,
                           thumbnail = $9,
-                          description = $10
+                          description = $10,
+                          amountwatched = $11
                           WHERE name = ${name}`,
-                          [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description])
+                          [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description,amountwatched])
                         .then(data => {return data})
   },
   async deletePainter({name}){
@@ -417,6 +419,36 @@ var root = {
       return await db.one(`DELETE from schilder WHERE name = ${name}`)
     }else{
       throw new Error(`The specified Painter doesn't exist!`)
+    }
+  },
+  //#endregion
+  
+  //#region FAQ  
+  async faqCreate({question, answer}){
+    query = await db.one(`INSERT INTO faq(title, body) VALUES($1,$2) RETURNING id`,[question,answer])
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
+    return `The question has been added to row: ${query.id}`
+  },
+  async faqUpdate({question, answer, id}){
+    let faq = await db.manyOrNone(`SELECT * from faq WHERE id = ${id}`)
+    if(faq.length){
+      db.one(`UPDATE faq set 
+                question = $1,
+                answer = $2
+                WHERE id = ${id}`,[question,answer])
+      return `FAQ Updated`
+    }else{
+      throw new Error(`The given ID does not match an existing ID!`)
+    }
+  },
+  async faqDelete({id}){
+    let faq = await db.manyOrNone(`SELECT * from faq WHERE id = ${id}`)
+    if(faq.length){
+      db.one(`DELETE FROM faq WHERE id = ${id}`)
+      return `FAQ removed`
+    }else{
+      throw new Error(`The given ID does not match an existing ID!`)
     }
   },
   //#endregion
@@ -429,21 +461,6 @@ var root = {
   },
   faqId: (id) => {
     return db.manyOrNone(`SELECT * from faq where id = ${id}`)
-  },
-  async faqCreate({question, answer}){
-    query = await db.one(`INSERT INTO faq(title, body) VALUES($1,$2) RETURNING id`,[question,answer])
-        .then(data => {return data})
-        .catch(err => {throw new Error(err)})
-    return `The question has been added to row: ${query.id}`
-  },
-  async faqDelete({id}){
-    let faq = await db.manyOrNone(`SELECT * from faq WHERE id = ${id}`)
-    if(faq.length){
-      db.one(`DELETE FROM faq WHERE id = ${id}`)
-      return `FAQ removed`
-    }else{
-      throw new Error(`The given ID does not match an existing ID!`)
-    }
   },
   dateToString: (givenDate) => {
     let DateDB = givenDate.toString()
@@ -608,23 +625,23 @@ var root = {
           .catch(err => {throw new Error(err)})
     return `The status of the selected order has been changed to: ${newStatus}`
   },
-  async orderListInsert({buyerId = 166, items, purchaseDate}){
+  async orderListInsert({gebruikerId = 166, items, purchaseDate}){
     items.forEach(element => {      
-      db.one(`INSERT INTO orderlist(buyerid, items, purchasedate) VALUES($1,$2,$3) RETURNING ID`,[buyerId,element.foreignkey,purchaseDate])
+      db.one(`INSERT INTO orderlist(buyerid, items, purchasedate) VALUES($1,$2,$3) RETURNING ID`,[gebruikerId,element.foreignkey,purchaseDate])
           .then(data => {console.log(`Inserted into row: ${data.id}`)})
           .catch(err => {console.log("oeps"+err+'Oeps')
                 throw new Error(err)})
     })
     return "Succes"
   },
-  async rentalListInsert({buyerId, items, purchaseDate, rentStart, rentStop}){
+  async rentalListInsert({gebruikerId, items, purchaseDate}){
     items.forEach(element => {
-      db.one(`INSERT INTO rentallist(buyerid,items,purchasedate,rentstart,rentstop) VALUES($1,$2,$3,$3,$4,$5) RETURNING ID`,[buyerId,element.foreignkey,purchaseDate,rentStart,rentStop])
+      db.one(`INSERT INTO rentallist(buyerid,items,purchasedate,rentstart,rentstop) VALUES($1,$2,$3,$4,$5) RETURNING ID`,[gebruikerId,element.foreignkey,purchaseDate,element.startDate,element.stopDate])
           .then(data => {console.log(`Inserted into row: ${data.id}`)})
-          .catch(err => {console.log("oeps"+err+'Oeps')
+          .catch(err => {console.log(`OEPS ${err} OEPS`)
                 throw new Error(err)})
     })
-    return "Succes"
+    return "The data has successfully been inserted."
   },
   async me (req, res, next) {
     if (!res.headers.authorization) {

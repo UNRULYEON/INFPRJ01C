@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import './Header.css';
 
-// Pose
-import posed from 'react-pose';
-
 // Apollo
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
@@ -43,7 +40,7 @@ class Header extends Component {
 
     return (
       <div className="header-wrapper">
-        <span className="header-title">ARCTIC - Admin panel</span>
+        <span className="header-title">ARTIC - Admin panel</span>
         <Query
           query={STATUS}
           pollInterval={300}

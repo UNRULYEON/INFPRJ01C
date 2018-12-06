@@ -43,23 +43,28 @@ var schema = buildSchema(`
     alterUser(id: Int!, name: String!, surname: String!, aanhef: String!, mail: String!, password: String!, adres: String!, city: String!, postalcode: String!, housenumber: String!, paymentmethod: String!): String!
     deleteUser(id: Int!): String
     addProduct(id: String!, title: String!, releasedate: Int!, period: Int!, description: String!, physicalmedium: String!, amountofpaintings: Int!, src: String!, bigsrc: String!,prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!, rented: Boolean!,painterId: Int!): String!
-    alterProduct(id_number: Int!, id: String!, title: String!, releasedate: Int!, period: Int! description: String!, physicalmedium: String!, amountofpaintings: Int!, src: String!, bigsrc: String!, prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!, rented: Boolean!): String
+    alterProduct(id_number: Int!, id: String!, title: String!, releasedate: Int!, period: Int! description: String!, physicalmedium: String!, amountofpaintings: Int!, src: String!, bigsrc: String!, prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!, rented: Boolean!, amountwatched: String!): String
     deleteProduct(id: Int!): String
     addPainter(name: String!, city: String!, dateBirth: String!, dateDeath: String!, placeDeath: String!, occupation: String!, nationality: String!, headerimage: String!, thumbnail: String!, description: String!): String
-    alterPainter(name: String!, city: String!, dateBirth: String!, dateDeath: String!, placeDeath: String!, occupation: String!, nationality: String!, headerimage: String!, thumbnail: String!, description: String!): String
+    alterPainter(name: String!, city: String!, dateBirth: String!, dateDeath: String!, placeDeath: String!, occupation: String!, nationality: String!, headerimage: String!, thumbnail: String!, description: String!, amountwatched: String!): String
     deltePainter(name: String!): String
     createBabyTabel(tabelnaam: String!, foreignkey: [RefBaby!], type: String!): String
     addToBabyTabel(id: Int!, foreignkey: [RefBaby!]): String
     removeBabyTabel(id: Int!): String
     shoppingCartInsert(gebruikerId: Int!, items: String!, time: String!): String
     orderListInsert(gebruikerId: Int, items: [PaintRef!], purchaseDate: String!): String
-    rentalListInsert(gebruikerId: Int!, items : [PaintRef!], purchaseDate: String!, rentStart: String!, rentStop: String!): String
+    rentalListInsert(gebruikerId: Int!, items : [PaintRefRent!], purchaseDate: String!): String
     orderListUpdate(id: Int!, buyerId: Int!, newStatus: String!): String
     WishlistInsert(gebruikerId: Int!, items: String!, time: String!): String
     faqCreate(question: String!, answer: String!): String
+    faqUpdate(question: String!, answer: String!, id: Int!): String
     faqDelete(id: Int!): String!
   },
-  input PaintRef{foreignkey: Int!},
+  input PaintRef{foreignkey: Int!,},
+  input PaintRefRent{
+    foreignkey: Int!, 
+    startDate: String!, 
+    stopDate: String!},
   input RefBaby{foreignkey: Int!},
   type PapaGet{
     id: Int,

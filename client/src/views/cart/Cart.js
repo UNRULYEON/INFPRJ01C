@@ -471,8 +471,10 @@ class Cart extends Component {
 																locale={nlLocale}
 															>
 																<div>
-																	Van:
- 																							<Tooltip title="Wijzig start-datum" enterDelay={500} leaveDelay={200}>
+																	<span style={{ minWidth: '40px' }}>
+																		Van:
+																	</span>
+																	<Tooltip title="Wijzig start-datum" enterDelay={500} leaveDelay={200}>
 																		<Button onClick={() => { this.openPicker('start') }}>
 																			<Moment
 																				format="DD-MM-YYYY"
@@ -500,8 +502,10 @@ class Cart extends Component {
 																	</div>
 																</div>
 																<div>
-																	Tot:
- 																							<Tooltip title="Wijzig eind-datum" enterDelay={500} leaveDelay={200}>
+																	<span style={{ minWidth: '40px' }}>
+																		Tot:
+																	</span>
+																	<Tooltip title="Wijzig eind-datum" enterDelay={500} leaveDelay={200}>
 																		<Button onClick={() => { this.openPicker('end') }}>
 																			<Moment
 																				format="DD-MM-YYYY"

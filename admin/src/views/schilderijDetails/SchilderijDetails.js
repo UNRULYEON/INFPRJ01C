@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
-import { Query, Mutation } from "react-apollo";
+import { Query } from "react-apollo";
 import gql from "graphql-tag";
-import { NavLink } from 'react-router-dom'
-
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
 
 import './SchilderijDetails.css';
 
@@ -29,15 +25,15 @@ const GET_ART_DETAILS = gql`
 	}
 `;
 
-const PAINTINGS = gql`
-  query Collection{
-    collection{
-      id_number
-      title
-      principalmaker
-    }
-  }
-`;
+// const PAINTINGS = gql`
+//   query Collection{
+//     collection{
+//       id_number
+//       title
+//       principalmaker
+//     }
+//   }
+// `;
 
 
 class SchilderijDetails extends Component {
