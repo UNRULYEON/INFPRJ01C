@@ -60,16 +60,16 @@ var root = {
     return db.manyOrNone(query)
   },
   //#endregion
-  
+
   //#region Painters
   paintersAll: () => {
     let query = `SELECT * from schilder`
     return db.manyOrNone(query)
   },
   async paintersAdmin ({page, amount = 12}) {
-    let offset = (page - 1) * amount
+    let offset = (page) * amount
     
-    let painter = await db.manyOrNone (`SELECT * from schilder`)
+    let painter = await db.manyOrNone (`SELECT * from schilder ORDER BY ID ASC LIMIT ${amount} OFFSET ${offset}`)
          .then(data => {return data})
 
     let totalPainters = await db.manyOrNone (`SELECT COUNT(*) from schilder`)
