@@ -29,6 +29,7 @@ var schema = buildSchema(`
     orderListSelect(buyerId: Int!): [Orders]
     selectShoppingCart(userId: Int!): [Cart]
     searchbar(query: String!, page: Int!, amount: Int): searchResult
+    searchpainter(query: String!, page: Int!, amount: Int): Paintersearch
     wishlistSelect(userId: Int!): [wishlist]
     filterPaintings(num: Int, prodplace: String, physical: String, pricemin: Int, pricemax: Int, order: String): [Painting]
   },
@@ -90,6 +91,10 @@ var schema = buildSchema(`
   },
   type searchResult {
     paintings: [Painting],
+    total: Int
+  },
+  type Paintersearch {
+    painter: [Painter],
     total: Int
   },
   type Collection {

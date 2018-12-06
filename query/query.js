@@ -140,7 +140,7 @@ var root = {
   },
   //#endregion
   
-  //#region Search
+  //#region SearchClient
   //searchfunction 
   async searchbar({query, page, amount = 12}){
     let offset = (page - 1) * amount
@@ -158,7 +158,22 @@ var root = {
     }
   },
   //#endregion
-  
+  //#region Search Admin
+  async searchpainter({query, page, amount = 12}){
+    let offset = (page - 1) * amount
+
+    let search = await db.manyOrNone(` SELECT * FROM schilder WHERE document_vectors @@ plainto_tsquery('${query}:*') LIMIT ${amount} OFFSET ${offset}`)
+        .then(data => {return data})
+
+    let total_search = await db.manyOrNone(`SELECT COUNT(*) FROM schilder WHERE document_vectors @@ plainto_tsquery('${query}:*')`)
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
+
+    return {
+      total: total_search[0].count,
+      painters: search
+    }
+  },
   //#region Admin
   
   //#region papa & baby tabel
