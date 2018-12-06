@@ -34,15 +34,17 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 
 const PAINTERS = gql`
-  query collectionPainters{
-    painters{
-      id
-      name
-      city
-      dateofbirth
-      dateofdeath
-      occupation
-      nationality
+  query paintersPAG($page: Int!, $amount: Int!){
+    paintersAdmin(page: $page, amount: $amount){
+      total
+      painterpagination{
+        name
+        nationality
+        dateofdeath
+        city
+        occupation
+        dateofbirth
+      }
     }
   }
 `;
@@ -298,7 +300,7 @@ class Painters extends Component {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {data.painters.map(row => {
+                    {data.paintersAdmin.painterpagination.map(row => {
                       return (
                         <TableRow key={row.id}>
                           <TableCell component="th" scope="row">
@@ -331,8 +333,8 @@ class Painters extends Component {
                     <TableRow className='footer-row'>
                       <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
-                        colSpan={5}
-                        count={data.total}
+                        colSpan={6}
+                        count={data.paintersAdmin.total}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onChangePage={this.handleChangePage}
