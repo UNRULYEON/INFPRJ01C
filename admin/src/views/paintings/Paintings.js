@@ -463,9 +463,10 @@ class Paintings extends Component {
       price: 0,
       rented: false,
       paintingID: '',
-
       dialogEditPainting: false,
       changeState: false,
+      page: 0,
+      rowsPerPage: 10
     }
   }
 
@@ -802,7 +803,6 @@ class Paintings extends Component {
       principalMakerErrorMsg: '',
       price: 0,
       activeStep: 0,
-
       changeState: true,
     });
     console.log("State is empty");
@@ -839,7 +839,13 @@ class Paintings extends Component {
 
 
         {/* SHOW PAINTINGS TABLE */}
-        <Query query={PAINTINGS}>
+        <Query
+          query={PAINTINGS}
+          variables={{
+            page: page,
+            amount: rowsPerPage
+          }}
+        >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading... :)</p>;
             if (error) return <p>Error :(</p>;
