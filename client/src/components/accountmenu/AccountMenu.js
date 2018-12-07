@@ -137,7 +137,7 @@ class AccountMenu extends Component {
     let t = new Date().getHours()
 
     if (t >= 0 & t < 6) {
-      return "Goedenavond"
+      return "Goedenacht"
     } else if (t >= 6 && t < 12) {
       return "Goedemorgen"
     } else if (t >= 12 && t < 18) {
