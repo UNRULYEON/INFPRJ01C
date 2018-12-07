@@ -31,6 +31,7 @@ var schema = buildSchema(`
     searchbar(query: String!, page: Int!, amount: Int): searchResult
     wishlistSelect(userId: Int!): [wishlist]
     filterPaintings(num: Int, prodplace: String, physical: String, pricemin: Int, pricemax: Int, order: String): [Painting]
+    filterPaintingsPaginated(title: String, dateStart: Int, dateEnd: Int, period: Int, physicalmedium: String, amountofpaintings: Int, principalmakerprodplace: String, principalmaker: String, pricemin: Int, pricemax: Int, amountwatched: Int): String
   },
   type Mutation {
     signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String, adres: String, housenumber: String, city: String, 

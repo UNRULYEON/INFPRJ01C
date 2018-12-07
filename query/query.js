@@ -96,6 +96,20 @@ var root = {
   //#endregion
   
   //#region filters
+  async filterPaintingsPaginated({title = "is not null",dateStart = 1200, dateEnd = (new Date()).getFullYear(), period = "is not null", physicalmedium = "is not null", amountofpaintings = 0, principalmakerprodplace = "is not null", principalmaker = "is not null", pricemin = 0, pricemax = 1000000, amountwatched = "is not null"}){
+    ///title
+    ///releasedate start
+    ///releasedate end
+    //period
+    //physicalmedium
+    //amountofpaintings
+    //principalmakerprodplace
+    //principalmaker
+    //pricemin
+    //pricemax
+    //amountwatched
+    // console.log(`\n starting filter`)
+  },
   async filterPaintings({num = "is not null", prodplace = "is not null", physical = "is not null",pricemin = 0, pricemax = 1000000, order = 'price'}){
     var period = ""
     if(isNaN(num)){
@@ -239,17 +253,11 @@ var root = {
     let offset = (page) * amount
 
     let users = await db.manyOrNone(`SELECT * FROM gebruiker ORDER BY ID ASC LIMIT ${amount} OFFSET ${offset}`)
-    .then(data => {
-      return data
-    })
+        .then(data => {return data})
 
     let maxusers = await db.manyOrNone(`SELECT COUNT(*) FROM gebruiker`)
-    .then(data => {
-      return data
-    })
-    .catch(err => {throw new Error(err)})
-    console.log(users)
-    console.log(maxusers)
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
 
     return {
       total: maxusers[0].count,
@@ -308,7 +316,6 @@ var root = {
   //#endregion
   
   //#region alter products
-  //Add product
   async addProduct({id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker,price,rented=false,painterId}){
     let painting =  await db.one(`INSERT INTO schilderijen(id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, principalmakersproductionplaces, principalmaker, width, height, price,rented) 
     VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id_number`, 
