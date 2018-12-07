@@ -43,14 +43,16 @@ import Currency from 'react-currency-formatter';
 const GET_ART_DETAILS = gql`
 	query Painting($id: String!){
 		paintingByID(id: $id){
-			id
+      id
+      id_number
 			title
 			releasedate
 			period
 			description
 			physicalmedium
 			amountofpaintings
-			principalmaker
+      principalmaker
+      plaquedescriptiondutch
 			bigsrc
 			src
 			width
@@ -493,6 +495,8 @@ class Paintings extends Component {
                   description: data.paintingByID[0].description,
                   physicalMedium: data.paintingByID[0].physicalmedium,
                   principalMakersProductionPlaces: data.paintingByID[0].principalmakersproductionplaces,
+                  price: data.paintingByID[0].price,
+
                 })
               }
               
