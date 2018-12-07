@@ -5,9 +5,21 @@ var schema = buildSchema(`
   Query is a GET statement, and can only retrieve data from the DataBase.
   """
   type Query {
+    """
+    Hello is a simple test to see if the server is running.
+    """
     hello: String
+    """
+    Collection returns an array of paintings ordered by number, with a limit of 15.
+    """
     collection: [Collection]
+    """
+    CollectionSearch returns an array of paintings ordered by number.
+    """
     collectionSearch: [Collection]
+    """
+    PaintingOrderedByPagination takes the page and the amount of items that should be shown per page, and returns an array of paintings.
+    """
     paintingOrderedByPagination(page: Int!, amount: Int): CollectionWithTotal
     paintingByID(id: String!): [Painting]
     workByPainter(id: String!): [Painting]
