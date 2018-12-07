@@ -33,6 +33,19 @@ class Header extends Component {
     this.setState({ anchorEl: null });
   };
 
+  setUserApp = () => {
+    let user = {
+      id: '',
+      aanhef: '',
+      name: '',
+      surname: '',
+      email: '',
+      admin: false
+    }
+    this.props.setUser(user, false)
+    this.handleClose()
+    window.location.reload()
+  }
 
   render() {
     const { anchorEl } = this.state;
@@ -65,7 +78,7 @@ class Header extends Component {
           open={open}
           onClose={this.handleClose}
         >
-          <MenuItem onClick={this.handleClose}>Log uit</MenuItem>
+          <MenuItem onClick={this.setUserApp}>Log uit</MenuItem>
         </Menu>
       </div>
     );

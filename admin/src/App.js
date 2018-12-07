@@ -166,9 +166,10 @@ function PrivateRoute({ component: Component, ...rest }) {
           />
         ) : (
           <Redirect
+            {...rest}
             to={{
               pathname: "/login",
-              state: { from: props.location }
+              state: {from: props.location}
             }}
           />
         )
@@ -187,12 +188,7 @@ class App extends Component {
         name: '',
         surname: '',
         email: '',
-        address: '',
-        housenumber: '',
-        city: '',
-        postalcode: '',
-        paymentmethod: '',
-        cellphone: ''
+        admin: false
       },
       loggedIn: false,
       snackbarOpen: false,
@@ -201,8 +197,51 @@ class App extends Component {
     }
   }
 
-  componentDidMount = () => {
-    localStorage.setItem('ADMIN_AUTH_TOKEN', true)
+  componentWillMount() {
+    // Check if user data is present as a cookie
+    if (localStorage.getItem('ADMIN_USER')) {
+      const localUser = JSON.parse(localStorage.getItem('ADMIN_USER'));
+
+      this.setState({
+        user: {
+          id: localUser.id,
+          aanhef: localUser.aanhef,
+          name: localUser.name,
+          surname: localUser.surname,
+          email: localUser.email,
+          admin: true
+        },
+        loggedIn: true
+      })
+    }
+  }
+
+  setUser = (data, isLoggedIn) => {
+    this.setState({
+      user: {
+        id: data.id,
+        aanhef: data.aanhef,
+        name: data.name,
+        surname: data.surname,
+        email: data.email,
+        admin: true
+      },
+      loggedIn: isLoggedIn
+    });
+
+    if (isLoggedIn) {
+      localStorage.setItem("ADMIN_USER", JSON.stringify({
+        id: data.id,
+        aanhef: data.aanhef,
+        name: data.name,
+        surname: data.surname,
+        email: data.email,
+        admin: true
+      }))
+    } else {
+      localStorage.removeItem('ADMIN_AUTH_TOKEN')
+      localStorage.removeItem('ADMIN_USER')
+    }
   }
 
   handleSnackbarOpen = (type) => {
@@ -285,13 +324,14 @@ class App extends Component {
           <div className="App">
             <Header
               handleSnackbarOpen={this.handleSnackbarOpen}
+              setUser={this.setUser}
             />
             <div className="sidebar-view-container">
               <Sidebar/>
               <Switch>
                 <PrivateRoute
                   exact
-                  path="/"
+                  path="/dashboard"
                   component={Dashboard}/>
                 <PrivateRoute
                   exact
@@ -309,12 +349,19 @@ class App extends Component {
                   path="/schilders"
                   handleSnackbarOpen={this.handleSnackbarOpen}
                   component={Painters}/>
-                  <PrivateRoute
-                    exact
-                    path="/faq"
+                <PrivateRoute
+                  exact
+                  path="/faq"
+                  handleSnackbarOpen={this.handleSnackbarOpen}
+                  component={FAQ}/>
+                <Route
+                  path="/login"
+                  render={(props) => <Login
+                    {...props}
                     handleSnackbarOpen={this.handleSnackbarOpen}
-                    component={FAQ}/>
-                <Route path="/login" component={Login} />
+                    setUser={this.setUser}
+                  />}
+                />
                 <Route
                 path="/gebruiker/:id"
                 component={GebruikerDetails}/>

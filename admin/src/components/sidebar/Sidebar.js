@@ -22,7 +22,7 @@ class Sidebar extends Component {
       <div className="sidebar-container">
         <MenuList component="nav">
           <NavLink
-            to="/"
+            to="/dashboard"
             className="list-link"
           >
             <MenuItem button>

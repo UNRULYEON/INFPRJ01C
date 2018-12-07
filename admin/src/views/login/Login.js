@@ -52,12 +52,8 @@ const LOGIN = gql`
       name
       surname
       email
-      address
-      housenumber
-      city
-      postalcode
+      admin
       token
-      paymentmethod
     }
   }
 `;
@@ -71,6 +67,14 @@ class Login extends Component {
       showPassword: false,
       buttonState: false,
       snackbar: false,
+    }
+  }
+
+  componentWillMount() {
+    // Check if user data is present as a cookie
+    if (localStorage.getItem('ADMIN_USER')) {
+      this.props.history.push(`/dashboard`)
+      window.location.reload()
     }
   }
 
@@ -100,12 +104,16 @@ class Login extends Component {
     this.setState(state => ({ showPassword: !state.showPassword }));
   }
 
+  setUserApp(user, isLoggedIn) {
+    this.props.setUser(user, isLoggedIn)
+  }
+
   render() {
     return (
       <div className="login-container">
         <Paper elevation={1} className="login-wrapper">
           <img src={logo} alt="Logo" height="100" className="login-logo" />
-          <h1>ARCTIC</h1>
+          <h1>ARTIC</h1>
           <MuiThemeProvider theme={theme}>
             <form className="login-form">
               <TextField
@@ -149,10 +157,10 @@ class Login extends Component {
               mutation={LOGIN}
               ignoreResults={false}
               onCompleted={(data) => {
-                console.log(`Query completed: ${data.login}`)
-                localStorage.setItem('AUTH_TOKEN', data.login.token)
+                localStorage.setItem('ADMIN_AUTH_TOKEN', data.login.token)
                 this.setUserApp(data.login, true)
-                this.props.history.push("/")
+                this.props.history.push(`/dashboard`)
+                window.location.reload()
               }}
               onError={(error) => {
                 console.error(`Query failed: ${error}`)
