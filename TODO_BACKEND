@@ -1,5 +1,7 @@
 status van Huren visualiseren 
 
-FAQ: update functie maken
-
 description bij queries in schema, als we weten hoe
+  """ 
+  This returns a collection
+  """
+voorbeeld voor hoe de description gedaan moet worden

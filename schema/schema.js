@@ -1,6 +1,9 @@
 const { buildSchema } = require('graphql');
 
 var schema = buildSchema(`
+  """ 
+  Query is a GET statement, and can only retrieve data from the DataBase.
+  """
   type Query {
     hello: String
     collection: [Collection]
@@ -23,7 +26,7 @@ var schema = buildSchema(`
     selectAllUsers(page: Int!, amount: Int!): TotalUsers
     selectUserById(id: Int!): User
     faq: [FAQ]
-    faqId: FAQ
+    faqId(id: Int!): FAQ
     status: Int 
     papatabel: [PapaGet]
     orderListSelect(buyerId: Int!): [Orders]
@@ -34,9 +37,17 @@ var schema = buildSchema(`
     filterPaintings(num: Int, prodplace: String, physical: String, pricemin: Int, pricemax: Int, order: String): [Painting]
     filterPaintingsPaginated(title: String, dateStart: Int, dateEnd: Int, period: Int, physicalmedium: String, amountofpaintings: Int, principalmakerprodplace: String, principalmaker: String, pricemin: Int, pricemax: Int, amountwatched: Int): String
   },
+  """ 
+  Mutation is a Put/Post statement, and can create or alter data in the DataBase.
+  """
   type Mutation {
-    signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String, adres: String, housenumber: String, city: String, 
-      postalcode: String, paymentmethod: String): UserWithToken!
+    """ 
+    signup is used to create an account for a visitor of the website.
+    """
+    signup(name: String!, surname: String!, mail: String!, password: String!, aanhef: String, adres: String, housenumber: String, city: String, postalcode: String, paymentmethod: String): UserWithToken!
+    """
+    login is used for a registered user to log into his/her account.
+    """
     login(email: String!, password: String!): UserWithToken!
     merge(id_number: Int!, id: Int!): String
     merging: String
@@ -103,6 +114,9 @@ var schema = buildSchema(`
     painter: [Painter],
     total: Int
   },
+  """ 
+  Collection returns a painting, with all of the attributes present in the database.
+  """
   type Collection {
     id: ID,
     id_number: Int,
@@ -121,10 +135,16 @@ var schema = buildSchema(`
     principalmaker: String,
     price: Int,
   },
+  """ 
+  CollectionWithTotal returns an array of Collection, as well as an integer with the total array-count of Collection.
+  """
   type CollectionWithTotal{
     total: Int,
     collection: [Collection]
   },
+  """ 
+  PainterWithTotal returns an array of Painter, as well as an integer with the total array-count of Painter.
+  """
   type PainterWithTotal{
     total: Int,
     painterpagination: [Painter]
@@ -148,6 +168,9 @@ var schema = buildSchema(`
     price: Int,
     painter: String
   },
+  """ 
+  Painter returns a painter, with all of the attributes present in the database.
+  """
   type Painter{
     name: String,
     id: Int,
@@ -175,6 +198,9 @@ var schema = buildSchema(`
     admin: Boolean,
     paymentmethod: String
   }, 
+  """ 
+  TotalUsers returns an array of User, as well as an integer with the total array-count of User.
+  """
   type TotalUsers{
     total: Int,
     totaluser: [User]
