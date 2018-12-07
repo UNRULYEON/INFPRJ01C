@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import './Header.css';
 
-// Pose
-import posed from 'react-pose';
-
 // Apollo
 import gql from "graphql-tag";
 import { Query } from "react-apollo";

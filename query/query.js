@@ -18,7 +18,7 @@ var root = {
     return db.manyOrNone(query)
   },
   async paintingOrderedByPagination ({page, amount = 12}) {
-    let offset = (page - 1) * amount
+    let offset = (page) * amount
 
     const total = await db.manyOrNone('SELECT COUNT(*) from schilderijen')
         .then(data => {return data})
@@ -60,16 +60,16 @@ var root = {
     return db.manyOrNone(query)
   },
   //#endregion
-  
+
   //#region Painters
   paintersAll: () => {
     let query = `SELECT * from schilder`
     return db.manyOrNone(query)
   },
   async paintersAdmin ({page, amount = 12}) {
-    let offset = (page - 1) * amount
+    let offset = (page) * amount
     
-    let painter = await db.manyOrNone (`SELECT * from schilder`)
+    let painter = await db.manyOrNone (`SELECT * from schilder ORDER BY ID ASC LIMIT ${amount} OFFSET ${offset}`)
          .then(data => {return data})
 
     let totalPainters = await db.manyOrNone (`SELECT COUNT(*) from schilder`)
@@ -154,7 +154,7 @@ var root = {
   },
   //#endregion
   
-  //#region Search
+  //#region SearchClient
   //searchfunction 
   async searchbar({query, page, amount = 12}){
     let offset = (page - 1) * amount
@@ -172,7 +172,22 @@ var root = {
     }
   },
   //#endregion
-  
+  //#region Search Admin
+  async searchpainter({query, page, amount = 12}){
+    let offset = (page - 1) * amount
+
+    let search = await db.manyOrNone(` SELECT * FROM schilder WHERE document_vectors @@ plainto_tsquery('${query}:*') LIMIT ${amount} OFFSET ${offset}`)
+        .then(data => {return data})
+
+    let total_search = await db.manyOrNone(`SELECT COUNT(*) FROM schilder WHERE document_vectors @@ plainto_tsquery('${query}:*')`)
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
+
+    return {
+      total: total_search[0].count,
+      painters: search
+    }
+  },
   //#region Admin
   
   //#region papa & baby tabel
@@ -268,15 +283,15 @@ var root = {
     return await db.one(`SELECT * FROM gebruiker where id = ${id}`)
             .catch(err => {throw new Error(err)})
   },
-  async addUser({name, surname, mail, password, aanhef, adres = null, city = null, postalcode = null, housenumber = null, paymentmethod = null}){
+  async addUser({name, surname, mail, password, aanhef, adres = null, city = null, postalcode = null, housenumber = null, paymentmethod = null, admin}){
     const saltedPassword = await bcrypt.hash(password,10)
     const user = await db.manyOrNone(`SELECT mail from gebruiker where mail = $1`,[mail])
     if(user.length){
-      throw new Error('User with this email already exists')
+      return 'User with this email already exists'
     }
-    return await db.one(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`, 
-    [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber, paymentmethod])
+    return await db.one(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`, 
+    [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin])
     .then(data => {console.log(`\nUser ID: ${data.id}`)
                     return data.id})
       .catch(err => {throw new Error(err)})    

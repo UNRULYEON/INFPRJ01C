@@ -35,6 +35,10 @@ import FirstPageIcon from '@material-ui/icons/FirstPage';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import FormLabel from '@material-ui/core/FormLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
 // Apollo
 import { Query, Mutation } from "react-apollo";
@@ -72,7 +76,8 @@ const ADD_USER = gql`
     $city: String
     $postalcode: String
     $housenumber: String
-    $paymentmethod: String){
+    $paymentmethod: String,
+    $admin: Boolean!){
     addUser(
       name: $name
       surname: $surname
@@ -83,7 +88,8 @@ const ADD_USER = gql`
       city: $city
       postalcode: $postalcode
       housenumber: $housenumber
-      paymentmethod: $paymentmethod)
+      paymentmethod: $paymentmethod,
+      admin: $admin)
   }
 `
 
@@ -179,14 +185,32 @@ function getStepContent(stepIndex, state, handleChange) {
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormControl fullWidth error={state.paymentmethodError}>
+            {/* <FormControl fullWidth error={state.paymentmethodError}>
               <InputLabel htmlFor="add-paymentmethod">Betaalwijze</InputLabel>
               <Input id="add-paymentmethod" value={state.paymentmethod} onChange={handleChange('paymentmethod')} />
               <FormHelperText id="add-paymentmethod-error-text">{state.paymentmethodErrorMsg}</FormHelperText>
+            </FormControl> */}
+            <FormControl fullWidth error={state.paymentmethodError}>
+              <InputLabel htmlFor="name-paymentmethod">Betaalwijze</InputLabel>
+              <Select
+                value={state.paymentmethod}
+                onChange={handleChange('paymentmethod')}
+                name="Betaalwijze"
+                renderValue={value => `${value}`}
+                input={<Input id="name-paymentmethod" />}
+              >
+                <MenuItem value="">
+                  <em>Geen</em>
+                </MenuItem>
+                <MenuItem value="iDeal">iDeal</MenuItem>
+                <MenuItem value="Creditcard">Creditcard</MenuItem>
+                <MenuItem value="Paypal">Paypal</MenuItem>
+              </Select>
+              <FormHelperText>{state.paymentmethodErrorMsg}</FormHelperText>
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormGroup>
+            {/* <FormGroup>
               <FormControlLabel
                 control={
                   <Switch
@@ -197,7 +221,20 @@ function getStepContent(stepIndex, state, handleChange) {
                 }
                 label="Admin"
               />
-            </FormGroup>
+            </FormGroup> */}
+
+            <FormControl error={state.adminError} component="fieldset">
+              <FormLabel component="legend">Is de gebruiker een admin?</FormLabel>
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox checked={state.admin} onChange={handleChange('admin')} value="gilad" />
+                  }
+                  label="Admin"
+                />
+              </FormGroup>
+              <FormHelperText>{state.adminErrorMsg}</FormHelperText>
+            </FormControl>
           </Grid>
         </Grid>
       )
@@ -341,6 +378,8 @@ class Users extends Component {
       paymentmethodError: false,
       paymentmethodErrorMsg: '',
       admin: false,
+      adminError: '',
+      adminErrorMsg: '',
       ID: 404,
       page: 0,
       rowsPerPage: 10,
@@ -361,9 +400,15 @@ class Users extends Component {
 
   // Handle input change
   handleChange = name => event => {
-    this.setState({
-      [name]: event.target.value,
-    });
+    if (name === 'admin') {
+      this.setState({
+        [name]: event.target.checked,
+      });
+    } else {
+      this.setState({
+        [name]: event.target.value,
+      });
+    }
   };
 
   // Handle dialog whnen opening
@@ -416,6 +461,16 @@ class Users extends Component {
         }
       }
 
+      console.log(`item: admin - value: ${this.state.admin}`)
+
+      if(!(/\S+@\S+\.\S+/).test(this.state.mail)) {
+        next = false
+        this.setState(state => ({
+          mailError: true,
+          mailErrorMsg: 'Dit is geen geldig email-adres'
+        }));
+      }
+
       if (next) {
         this.setState(state => ({ activeStep: state.activeStep + 1, }));
       }
@@ -449,6 +504,7 @@ class Users extends Component {
             page: page,
             amount: rowsPerPage
           }}
+          pollInterval={1000}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading... :)</p>;
@@ -540,7 +596,7 @@ class Users extends Component {
                   </div>
                 ) : (
                     <div>
-                      <div>{getStepContent(activeStep, this.state, this.handleChange, this.handeImage)}</div>
+                      <div>{getStepContent(activeStep, this.state, this.handleChange)}</div>
                     </div>
                   )}
               </div>
@@ -563,10 +619,41 @@ class Users extends Component {
                 <Mutation
                   mutation={ADD_USER}
                   onCompleted={(data) => {
-                    console.log(`Query complete: ${data.addProduct}`)
+                    console.log(`Query complete: ${data}`)
                     this.handleClose()
                     this.setState({
-
+                      activeStep: 0,
+                      dialogAddUser: false,
+                      aanhef: 'Dhr.',
+                      name: '',
+                      nameError: false,
+                      nameErrorMsg: '',
+                      surname: '',
+                      surnameError: false,
+                      surnameErrorMsg: '',
+                      mail: '',
+                      mailError: false,
+                      mailErrorMsg: '',
+                      password: '',
+                      passwordError: false,
+                      passwordErrorMsg: '',
+                      adres: '',
+                      adresError: false,
+                      adresErrorMsg: '',
+                      housenumber: '',
+                      housenumberError: false,
+                      housenumberErrorMsg: '',
+                      postalcode: '',
+                      postalcodeError: false,
+                      postalcodeErrorMsg: '',
+                      city: '',
+                      cityError: '',
+                      cityErrorMsg: false,
+                      paymentmethod: '',
+                      paymentmethodError: false,
+                      paymentmethodErrorMsg: '',
+                      admin: false,
+                      ID: 404,
                     })
                     this.props.handleSnackbarOpen('ADD_USER_SUCCESS')
                   }}
@@ -582,6 +669,21 @@ class Users extends Component {
                         color="primary"
                         onClick={e => {
                           e.preventDefault()
+                          addUser({
+                            variables: {
+                              name: this.state.name,
+                              surname: this.state.surname,
+                              mail: this.state.mail,
+                              password: this.state.password,
+                              aanhef: this.state.aanhef,
+                              adres: this.state.adres,
+                              city: this.state.city,
+                              postalcode: this.state.postalcode,
+                              housenumber: this.state.housenumber,
+                              paymentmethod: this.state.paymentmethod,
+                              admin: this.state.admin
+                            }
+                          })
                         }}>
                         Opslaan
                     </Button>
