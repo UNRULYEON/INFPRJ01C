@@ -63,7 +63,7 @@ var root = {
 
   //#region Painters
   paintersAll: () => {
-    let query = `SELECT * from schilder`
+    let query = `SELECT * from schilder ORDER BY NAME ASC`
     return db.manyOrNone(query)
   },
   async paintersAdmin ({page, amount = 12}) {
