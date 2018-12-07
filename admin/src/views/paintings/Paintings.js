@@ -468,7 +468,9 @@ class Paintings extends Component {
       dialogEditPainting: false,
       changeState: false,
       page: 0,
-      rowsPerPage: 10
+      rowsPerPage: 10,
+      addedData: false,
+      inputChanged: false,
     }
   }
 
@@ -487,7 +489,7 @@ class Paintings extends Component {
             query={GET_ART_DETAILS}
             variables={{ id: state.paintingID }}
             onCompleted={(data) => {
-              if(this.state.title === ''){
+              if(this.state.addedData === false){
                 this.setState({
                   title: data.paintingByID[0].title,
                   releaseDate: data.paintingByID[0].releasedate,
@@ -496,7 +498,7 @@ class Paintings extends Component {
                   physicalMedium: data.paintingByID[0].physicalmedium,
                   principalMakersProductionPlaces: data.paintingByID[0].principalmakersproductionplaces,
                   price: data.paintingByID[0].price,
-
+                  addedData: true,
                 })
               }
               
@@ -646,6 +648,7 @@ class Paintings extends Component {
   handleChange = name => event => {
     this.setState({
       [name]: event.target.value,
+      inputChanged: true,
     });
 
     if (name === 'releaseDate') {
@@ -682,6 +685,7 @@ class Paintings extends Component {
     this.setState({
       paintingID: paintingID.toString(),
       dialogEditPainting: true,
+      addedData: false,
       id: Math.floor((Math.random() * 10000000000000) + 1).toString()
     });
   };
@@ -808,6 +812,7 @@ class Paintings extends Component {
       price: 0,
       activeStep: 0,
       changeState: true,
+      inputChanged: false,
     });
     console.log("State is empty");
   }
