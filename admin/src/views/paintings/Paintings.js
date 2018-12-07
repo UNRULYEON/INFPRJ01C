@@ -229,7 +229,7 @@ function getStepContent(stepIndex, state, handleChange, handeImage, handleChoose
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
-              <InputLabel htmlFor="add-price">Prijs (wordt berekend</InputLabel>
+              <InputLabel htmlFor="add-price">Prijs (wordt berekend)</InputLabel>
               <Input id="add-price" inputProps={{ readOnly: true, }} value={state.price} />
               <FormHelperText id="add-price-error-text"></FormHelperText>
             </FormControl>
@@ -498,10 +498,12 @@ class Paintings extends Component {
                   physicalMedium: data.paintingByID[0].physicalmedium,
                   principalMakersProductionPlaces: data.paintingByID[0].principalmakersproductionplaces,
                   price: data.paintingByID[0].price,
+<<<<<<< HEAD
                   addedData: true,
+=======
+>>>>>>> 03857cd96b565a902a8d4adbae3dd7d1e75f95f2
                 })
               }
-              
             }}
           >
             {({ loading, error, data }) => {
@@ -716,8 +718,46 @@ class Paintings extends Component {
 
   // Handle dialog when closing
   handleClose = () => {
-    this.setState({ dialogAddPainting: false, dialogEditPainting: false });
-    this.emptyState()
+    this.setState({
+      dialogAddPainting: false,
+      dialogEditPainting: false,
+      id: 0,
+      title: '',
+      titleError: false,
+      titleErrorMsg: '',
+      releaseDate: '',
+      releaseDateError: false,
+      releaseDateErrorMsg: '',
+      period: '',
+      periodError: false,
+      periodErrorMsg: '',
+      description: '',
+      descriptionError: false,
+      descriptionErrorMsg: '',
+      physicalMedium: '',
+      physicalMediumError: false,
+      physicalMediumErrorMsg: '',
+      src: '',
+      srcError: false,
+      srcErrorMsg: '',
+      srcExists: false,
+      bigsrc: '',
+      bigsrcError: false,
+      bigsrcErrorMsg: '',
+      bigsrcExists: false,
+      principalMakersProductionPlaces: '',
+      principalMakersProductionPlacesError: false,
+      principalMakersProductionPlacesErrorMsg: '',
+      width: '',
+      height: '',
+      principalMaker: '',
+      principalMakerError: false,
+      principalMakerErrorMsg: '',
+      price: 0,
+      activeStep: 0,
+      changeState: true,
+    });
+    // this.emptyState()
   };
 
   // Handle next button for stepper and check if fields are empty before continuing
@@ -1001,7 +1041,8 @@ class Paintings extends Component {
                             height: this.state.height,
                             principalmaker: this.state.principalMaker,
                             price: this.state.price,
-                            rented: this.state.rented
+                            rented: this.state.rented,
+                            painterId: this.state.principalMakerID
                           }
 
                           console.log(vars)
