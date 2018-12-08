@@ -84,7 +84,7 @@ var root = {
     }
   },
   paintersPaginated: () => {
-    let query = `SELECT * from schilder limit 15`
+    let query = `SELECT * from schilder ORDER BY ID ASC limit 15`
     return db.manyOrNone(query)
   },
   painterByID: ({id}) => {
@@ -176,6 +176,7 @@ var root = {
     }
   },
   //#endregion
+  
   //#region Search Admin
   async searchpainter({query, page, amount = 12}){
     let offset = (page - 1) * amount
@@ -192,10 +193,11 @@ var root = {
       painters: search
     }
   },
+  //#endregion
+
   //#region Admin
   
   //#region papa & baby tabel
-  //Return content of papatabel
   papatabel: () =>{
     return db.manyOrNone(`SELECT * FROM papatabel`)
   },
@@ -267,7 +269,6 @@ var root = {
   //#endregion
   
   //#region alter users
-  //Add user
   async selectAllUsers({page, amount}){
     let offset = (page) * amount
 
@@ -335,21 +336,19 @@ var root = {
   //#endregion
   
   //#region alter products
-  async addProduct({id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace,principalmaker, width, height, price, rented=false, painterId}){
-    let painting =  await db.one(`INSERT INTO schilderijen(id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, principalmakersproductionplaces, principalmaker, width, height, price,rented) 
-    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id_number`, 
-    [id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, principalmaker, width, height, price, rented])
-    .then(data => {console.log(`\nPainting ID: ${data.id_number}`)
-                    return data.id_number})
-      .catch(err => {console.error(err)
-        throw new Error(err)})
+  async addProduct({id, title, releasedate, period, description, physicalmedium, amountofpaintings = 1, src, bigsrc, prodplace,principalmaker, width, height, price, rented=false, painterId, amountwatched = 0}){
+    let painting =  await db.one(`INSERT INTO schilderijen(id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, principalmakersproductionplaces, principalmaker, width, height, price, rented, amountwatched) 
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING id_number`, 
+    [id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, principalmaker, width, height, price, rented, amountwatched])
+        .then(data => {return data.id_number})
+        .catch(err => {throw new Error(err)})
 
     db.one(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${painterId}, ${painting})`)
     
     return `Painting added to the product list`
   },
   //Alter products
-  async alterProduct({id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker, price, rented, amountwatched}){
+  async alterProduct({id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings = 1, src, bigsrc, prodplace, width, height, principalmaker, price, rented = false, amountwatched}){
     const prod = await db.manyOrNone(`SELECT * from schilderijen where id_number = ${id_number}`)
     .then(data => {return data})
     .catch(err => {console.err(err)
