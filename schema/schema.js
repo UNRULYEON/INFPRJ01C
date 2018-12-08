@@ -80,7 +80,7 @@ var schema = buildSchema(`
     shoppingCartInsert(gebruikerId: Int!, items: String!, time: String!): String
     orderListInsert(gebruikerId: Int, items: [PaintRef!], purchaseDate: String!): String
     rentalListInsert(gebruikerId: Int!, items : [PaintRefRent!], purchaseDate: String!): String
-    orderListUpdate(id: Int!, buyerId: Int!, painting: Int!, newStatus: String!): String
+    orderListUpdate(id: Int!, buyerId: Int!, newStatus: String!): String
     WishlistInsert(gebruikerId: Int!, items: String!, time: String!): String
     faqCreate(question: String!, answer: String!): String
     faqUpdate(question: String!, answer: String!, id: Int!): String

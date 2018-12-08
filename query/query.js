@@ -621,18 +621,17 @@ var root = {
     });
     return Lijst
   },
-  async orderListUpdate({id, buyerId, painting, newStatus}){
-    let selection = await db.manyOrNone(`SELECT * from orderlist WHERE id = ${id} AND buyerid = ${buyerId} AND items = ${painting}`)
+  async orderListUpdate({id, buyerId, newStatus}){
+    let selection = await db.manyOrNone(`SELECT * from orderlist WHERE id = ${id} AND buyerid = ${buyerId}`)
         .then(data => {return data})
         .catch(err => {throw new Error(err)})
     if(!selection.length){
-      throw new Error("The given combination of 'ID'-'buyerId'-'painting' doesn't exist")
+      throw new Error("The given combination of 'ID'-'buyerId' doesn't exist")
     }
     db.one(`UPDATE orderlist SET
               status = $1
               WHERE id = $2
-              AND buyerid = $3
-              AND items = $4`,[newStatus, id, buyerId, painting])
+              AND buyerid = $3`,[newStatus, id, buyerId])
         .catch(err => {throw new Error(err)})
     return `The status of the selected order has been changed to: ${newStatus}`
   },
