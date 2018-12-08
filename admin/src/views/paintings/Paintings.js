@@ -128,8 +128,8 @@ const ADD_PAINTING = gql`
     $height: Int!,
     $principalmaker: String!,
     $price: Int!,
-    $rented: Boolean!,
-    $painterId:Int!) {
+    $rented: Boolean!
+    $painterId: Int!) {
     addProduct(
       id: $id,
       title: $title,
@@ -145,7 +145,7 @@ const ADD_PAINTING = gql`
       height: $height,
       principalmaker: $principalmaker,
       price: $price,
-      rented: $rented,
+      rented: $rented
       painterId: $painterId)
   }
 `;
@@ -528,10 +528,7 @@ class Paintings extends Component {
       rented: false,
       paintingID: '',
       dialogEditPainting: false,
-
       amountwatched: 0,
-
-
       changeState: false,
       rows: [],
       totalCount: 0,
