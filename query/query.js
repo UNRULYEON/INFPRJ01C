@@ -621,25 +621,24 @@ var root = {
     });
     return Lijst
   },
-  async orderListUpdate({id, buyerId, newStatus}){
-    let selection = await db.manyOrNone(`SELECT * from orderlist WHERE id = ${id} AND buyerid = ${buyerId}`)
-            .then(data => {console.log(data)
-                  return data})
-            .catch(err => {throw new Error(err)})
+  async orderListUpdate({id, buyerId, painting, newStatus}){
+    let selection = await db.manyOrNone(`SELECT * from orderlist WHERE id = ${id} AND buyerid = ${buyerId} AND items = ${painting}`)
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
     if(!selection.length){
-      throw new Error("The given combination of 'ID' and 'buyerId' doesn't exist")
+      throw new Error("The given combination of 'ID'-'buyerId'-'painting' doesn't exist")
     }
     db.one(`UPDATE orderlist SET
               status = $1
               WHERE id = $2
-              AND buyerid = $3`,[newStatus, id, buyerId])
-          .catch(err => {throw new Error(err)})
+              AND buyerid = $3
+              AND items = $4`,[newStatus, id, buyerId, painting])
+        .catch(err => {throw new Error(err)})
     return `The status of the selected order has been changed to: ${newStatus}`
   },
   async orderListInsert({gebruikerId = 166, items, purchaseDate}){
     items.forEach(element => {      
       db.one(`INSERT INTO orderlist(buyerid, items, purchasedate) VALUES($1,$2,$3) RETURNING ID`,[gebruikerId,element.foreignkey,purchaseDate])
-          .then(data => {console.log(`Inserted into row: ${data.id}`)})
           .catch(err => {console.log("oeps"+err+'Oeps')
                 throw new Error(err)})
     })
