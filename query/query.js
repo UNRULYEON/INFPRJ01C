@@ -358,7 +358,7 @@ var root = {
     }
     return await db.one(`UPDATE schilderijen set
                           id = $1,
-                          id_number = $2
+                          id_number = $2,
                           title = $3,
                           releasedate = $4,
                           period = $5,
