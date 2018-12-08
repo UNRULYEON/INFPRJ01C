@@ -4,13 +4,13 @@ import './Paintings.css';
 // Material-UI
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TableFooter from '@material-ui/core/TableFooter';
-import TablePagination from '@material-ui/core/TablePagination';
+// import Table from '@material-ui/core/Table';
+// import TableBody from '@material-ui/core/TableBody';
+// import TableCell from '@material-ui/core/TableCell';
+// import TableHead from '@material-ui/core/TableHead';
+// import TableRow from '@material-ui/core/TableRow';
+// import TableFooter from '@material-ui/core/TableFooter';
+// import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -29,6 +29,26 @@ import FirstPageIcon from '@material-ui/icons/FirstPage';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
+
+// React Grid
+import {
+  PagingState,
+  CustomPaging,
+  SortingState,
+  IntegratedSorting,
+  SearchState,
+  IntegratedFiltering,
+} from '@devexpress/dx-react-grid';
+import {
+  Grid as GridR,
+  Table,
+  TableHeaderRow,
+  PagingPanel,
+  ColumnChooser,
+  TableColumnVisibility,
+  Toolbar,
+  SearchPanel,
+} from '@devexpress/dx-react-grid-material-ui';
 
 // Apollo
 import { Query, Mutation } from "react-apollo";
@@ -52,11 +72,8 @@ const GET_ART_DETAILS = gql`
 			physicalmedium
 			amountofpaintings
       principalmaker
-      plaquedescriptiondutch
 			bigsrc
 			src
-			width
-			height
 			price
       painter
       principalmakersproductionplaces
@@ -69,9 +86,18 @@ const PAINTINGS = gql`
     paintingOrderedByPagination(page: $page, amount: $amount){
       total
       collection{
-        title
         id_number
+        title
+        releasedate
+        period
+        description
+        physicalmedium
+        amountofpaintings
         principalmaker
+        bigsrc
+        src
+        price
+        principalmakersproductionplaces
       }
     }
   }
@@ -144,7 +170,7 @@ function getStepsAanmaken() {
 //   return ['Vul informatie in', 'Review schilderij'];
 // }
 
-function getStepContent(stepIndex, state, handleChange, handeImage, handleChoosePainterDialog, handleChoosePainterDialogClose, handleChosenPainter) {
+function getStepContent(stepIndex, state, handleChange, handeImage, handleChoosePainterDialog, handleChoosePainterDialogClose, TableRowChoosePainter) {
   switch (stepIndex) {
     case 0:
       return (
@@ -244,41 +270,38 @@ function getStepContent(stepIndex, state, handleChange, handeImage, handleChoose
             <DialogTitle id="form-dialog-title">Kies een schilder</DialogTitle>
             <MuiThemeProvider theme={theme}>
               <DialogContent>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Naam</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <Query query={PAINTERS}>
-                    {({ loading, error, data }) => {
-                      if (loading) return "Loading...";
-                      if (error) return `Error! ${error.message}`;
+                <Query query={PAINTERS}>
+                  {({ loading, error, data }) => {
+                    if (loading) return "Loading...";
+                    if (error) return `Error! ${error.message}`;
 
-                      return (
-                        <TableBody>
-                          {data.paintersAll.map(row => {
-                            return (
-                              <TableRow
-                                hover
-                                onClick={() => {
-                                  handleChosenPainter(row.name, row.id)
-                                  handleChoosePainterDialogClose()
-                                }}
-                                tabIndex={-1}
-                                key={row.id}
-                              >
-                                <TableCell component="th" scope="row">
-                                  {row.name}
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })}
-                        </TableBody>
-                      );
-                    }}
-                  </Query>
-                </Table>
+                    let columns = [
+                      {name: 'id', title: 'ID'},
+                      {name: 'name', title: 'Naam'}
+                    ]
+
+                    let rows = []
+
+                    for (let i = 0; i < data.paintersAll.length; i++) {
+                      rows.push(
+                        {id: data.paintersAll[i].id, name: data.paintersAll[i].name}
+                      )
+                    }
+                    return (
+                      <GridR
+                        rows={rows}
+                        columns={columns}
+                      >
+                        <SearchState defaultValue="" />
+                        <IntegratedFiltering />
+                        <Table rowComponent={TableRowChoosePainter} />
+                        <TableHeaderRow />
+                        <Toolbar />
+                        <SearchPanel />
+                      </GridR>
+                    );
+                  }}
+                </Query>
               </DialogContent>
               <DialogActions>
                 <Button
@@ -421,8 +444,6 @@ class TablePaginationActions extends React.Component {
   }
 }
 
-
-
 class Paintings extends Component {
   constructor(props) {
     super(props);
@@ -467,9 +488,22 @@ class Paintings extends Component {
       paintingID: '',
       dialogEditPainting: false,
       changeState: false,
-      page: 0,
-      rowsPerPage: 10
+      rows: [],
+      totalCount: 0,
+      pageSize: 15,
+      currentPage: 0,
+      pageSizes: [15, 20, 25, 30],
+      sorting: [{ columnName: 'titel', direction: 'asc' }],
+      tableColumnExtensions: [
+        { columnName: 'id', width: 70 },
+      ],
+      hiddenColumnNames: ['releasedate', 'description'],
     }
+
+    this.changeCurrentPage = this.changeCurrentPage.bind(this);
+    this.changePageSize = pageSize => this.setState({ pageSize });
+    this.changeSorting = sorting => this.setState({ sorting });
+    this.hiddenColumnNamesChange = (hiddenColumnNames) => {this.setState({ hiddenColumnNames });};
   }
 
   queryInState(data) {
@@ -632,13 +666,12 @@ class Paintings extends Component {
     }
   }
 
-  handleChangePage = (event, page) => {
-    this.setState({ page });
-  };
-
-  handleChangeRowsPerPage = event => {
-    this.setState({ rowsPerPage: event.target.value });
-  };
+  changeCurrentPage(currentPage) {
+    this.setState({
+      loading: true,
+      currentPage,
+    });
+  }
 
   // Handle input change
   handleChange = name => event => {
@@ -684,6 +717,17 @@ class Paintings extends Component {
     });
   };
 
+  TableRow = ({ row, ...restProps }) => (
+    <Table.Row
+      {...restProps}
+      // eslint-disable-next-line no-alert
+      onClick={() => this.handleAanpassenDialog(row.id)}
+      style={{
+        cursor: 'pointer'
+      }}
+    />
+  )
+
   EditPaintingDialog = () => {
     console.log("EditPaintingDialog called")
 
@@ -695,16 +739,31 @@ class Paintings extends Component {
     });
   }
 
+  TableRowChoosePainter = ({ row, ...restProps }) => (
+    <Table.Row
+      {...restProps}
+      // eslint-disable-next-line no-alert
+      onClick={() => {
+        console.log(row)
+        this.handleChosenPainter(row)
+      }}
+      style={{
+        cursor: 'pointer'
+      }}
+    />
+  )
+
   handleChoosePainterDialogClose = () => {
     this.setState({
       dialogChoosePainter: false
     });
   }
 
-  handleChosenPainter = (painter, id) => {
+  handleChosenPainter = (row) => {
     this.setState({
-      principalMaker: painter,
-      principalMakerID: id
+      principalMaker: row.name,
+      principalMakerID: row.id,
+      dialogChoosePainter: false
     });
   }
 
@@ -863,7 +922,9 @@ class Paintings extends Component {
   render() {
     const steps = getStepsAanmaken();
     const { activeStep } = this.state;
-    const { rowsPerPage, page } = this.state;
+    const {
+      pageSize, currentPage, pageSizes, sorting, tableColumnExtensions, hiddenColumnNames
+    } = this.state;
 
     return (
       <section>
@@ -882,8 +943,8 @@ class Paintings extends Component {
         <Query
           query={PAINTINGS}
           variables={{
-            page: page,
-            amount: rowsPerPage
+            page: currentPage,
+            amount: pageSize
           }}
           pollInterval={1000}
         >
@@ -891,56 +952,62 @@ class Paintings extends Component {
             if (loading) return <p>Loading... :)</p>;
             if (error) return <p>Error :(</p>;
 
+            let columns = [
+              {name: 'id', title: 'ID'},
+              {name: 'title', title: 'Titel'},
+              {name: 'principalmaker', title: 'Schilder'},
+              {name: 'releasedate', title: 'Jaar van uitgave'},
+              {name: 'description', title: 'Beschrijving'}
+            ]
+
+            let rows = []
+
+            for (let i = 0; i < data.paintingOrderedByPagination.collection.length; i++) {
+              rows.push(
+                {
+                  id: data.paintingOrderedByPagination.collection[i].id_number,
+                  title: data.paintingOrderedByPagination.collection[i].title,
+                  principalmaker: data.paintingOrderedByPagination.collection[i].principalmaker,
+                  releasedate: data.paintingOrderedByPagination.collection[i].releasedate,
+                  description: data.paintingOrderedByPagination.collection[i].description
+                }
+              )
+            }
             return (
               <Paper>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Titel</TableCell>
-                      <TableCell>Schilder</TableCell>
-                      <TableCell>Status</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {data.paintingOrderedByPagination.collection.map(row => {
-                      return (
-                        <TableRow
-                          hover
-                          onClick={() => {
-                            this.handleAanpassenDialog(row.id_number)
-                          }}
-                          // onClick={() => {
-                          //   console.log(`Clicked on ${row.id_number}`)
-                          //   this.props.history.push(`/schilderij/${row.id_number}`)
-                          // }}
-                          tabIndex={-1}
-                          key={row.id_number}
-                        >
-                          <TableCell component="th" scope="row">
-                            {row.title}
-                          </TableCell>
-                          <TableCell>
-                            {row.principalmaker}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                  <TableFooter>
-                    <TableRow className='footer-row'>
-                      <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        colSpan={5}
-                        count={data.paintingOrderedByPagination.total}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onChangePage={this.handleChangePage}
-                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                        ActionsComponent={TablePaginationActions}
-                      />
-                    </TableRow>
-                  </TableFooter>
-                </Table>
+                <GridR
+                  rows={rows}
+                  columns={columns}
+                >
+                  <PagingState
+                    currentPage={currentPage}
+                    onCurrentPageChange={this.changeCurrentPage}
+                    pageSize={pageSize}
+                    onPageSizeChange={this.changePageSize}
+                  />
+                  <CustomPaging
+                    totalCount={data.paintingOrderedByPagination.total}
+                  />
+                  <SortingState
+                    sorting={sorting}
+                    onSortingChange={this.changeSorting}
+                  />
+                  <IntegratedSorting />
+                  <Table
+                    rowComponent={this.TableRow}
+                    columnExtensions={tableColumnExtensions}
+                  />
+                  <TableHeaderRow showSortingControls/>
+                  <TableColumnVisibility
+                    hiddenColumnNames={hiddenColumnNames}
+                    onHiddenColumnNamesChange={this.hiddenColumnNamesChange}
+                  />
+                  <Toolbar />
+                  <ColumnChooser />
+                  <PagingPanel
+                    pageSizes={pageSizes}
+                  />
+                </GridR>
               </Paper>
             )
           }}
@@ -976,7 +1043,7 @@ class Paintings extends Component {
                   </div>
                 ) : (
                     <div>
-                      <div>{getStepContent(activeStep, this.state, this.handleChange, this.handeImage, this.handleChoosePainterDialog, this.handleChoosePainterDialogClose, this.handleChosenPainter)}</div>
+                      <div>{getStepContent(activeStep, this.state, this.handleChange, this.handeImage, this.handleChoosePainterDialog, this.handleChoosePainterDialogClose, this.TableRowChoosePainter)}</div>
                     </div>
                   )}
               </div>
