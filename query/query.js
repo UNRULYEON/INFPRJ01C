@@ -38,6 +38,7 @@ var root = {
     let painter = queryPainter[0].schilder
     return[{
             id: painting.id,
+            id_number: painting.id_number,
             title: painting.title,
             releasedate: painting.releasedate,
             period: painting.period,
@@ -52,7 +53,10 @@ var root = {
             height: painting.height,
             principalmaker: painting.principalmaker,
             price: painting.price,
-            painter: painter
+            rented: painting.rented,
+            amountwatched: painting.amountwatched,
+            painter: painter,
+            
     }]
   },
   PaintingsByPainter: ({id}) => {
@@ -355,14 +359,15 @@ var root = {
     }
     return await db.one(`UPDATE schilderijen set
                           id = $1,
-                          title = $2,
-                          releasedate = $3,
-                          period = $4,
-                          description = $5,
-                          physicalmedium = $6,
-                          amountofpaintings = $7,
-                          src = $8,
-                          bigsrc = $9,
+                          id_number = $2
+                          title = $3,
+                          releasedate = $4,
+                          period = $5,
+                          description = $6,
+                          physicalmedium = $7,
+                          amountofpaintings = $8,
+                          src = $9,
+                          bigsrc = $10,
                           principalmakersproductionplaces = $11,
                           width = $12,
                           height = $13,
@@ -371,7 +376,7 @@ var root = {
                           rented = $16,
                           amountwatched = $17
                           WHERE id_number = ${id_number}`,
-                          [id,title,releasedate,period,description,physicalmedium,amountofpaintings,src,bigsrc,prodplace,width,height,principalmaker,price,rented,amountwatched])
+                          [id,id_number,title,releasedate,period,description,physicalmedium,amountofpaintings,src,bigsrc,prodplace,width,height,principalmaker,price,rented,amountwatched])
                         .then(data => {return data})
   },
   //Delete products
