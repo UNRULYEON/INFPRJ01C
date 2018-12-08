@@ -139,7 +139,7 @@ var root = {
   },
 
   filterbyperiod:({period}) => {
-    let query = (`SELECT * from schilderijen where period = ${period}`)
+    let query = (`SELECT * from schilderijen where period = ${period} ORDER BY ID_NUMBER ASC`)
     return db.manyOrNone(query)
   },
   filterbypriceasc:() => { 

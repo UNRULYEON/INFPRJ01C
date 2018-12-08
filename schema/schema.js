@@ -5,42 +5,45 @@ var schema = buildSchema(`
   Query is a GET statement, and can only retrieve data from the DataBase.
   """
   type Query {
-    """
-    Hello is a simple test to see if the server is running.
-    """
+    """Hello is a simple test to see if the server is running."""
     hello: String
-    """
-    Collection returns an array of paintings ordered by number, with a limit of 15.
-    """
+    """Collection returns an array of paintings ordered by number, with a limit of 15."""
     collection: [Collection]
-    """
-    CollectionSearch returns an array of paintings ordered by number.
-    """
+    """CollectionSearch returns an array of paintings ordered by number."""
     collectionSearch: [Collection]
-    """
-    PaintingOrderedByPagination takes the page and the amount of items that should be shown per page, and returns an array of paintings.
-    """
+    """PaintingOrderedByPagination takes the page and the amount of items that should be shown per page, and returns an array of paintings."""
     paintingOrderedByPagination(page: Int!, amount: Int): CollectionWithTotal
-    """
-    
-    """
+    """PaintingByID takes an ID (primary) en returns all associated content."""
     paintingByID(id: String!): [Painting]
+    """workByPainter takes the name of a painter and returns all painting made by that painter."""
     workByPainter(id: String!): [Painting]
+    """filterbyperiod takes a period and returns all paintings made in that period."""
     filterbyperiod(period: Int!): [Painting]
+    """THE FOLLOWING 4 FILTERS RETURN ALL PAINTINGS ORDERED DIFFERENTLY, SEE TITLE OF EACH FUNCTION."""
     filterbypriceasc: [Painting]
     filterbypricedesc: [Painting]
     filterbytitleasc: [Painting]
     filterbytitledesc: [Painting]
+    """Returns all Painters."""
     paintersAll: [Painter]
+    """Returns all Painters, paginated."""
     paintersAdmin(page: Int!, amount: Int): PainterWithTotal
+    """Takes an ID of a painter, and returns all associated data."""
     painterByID(id: String!): [Painter]
+    """Returns a combination of a painting, allong with the painter."""
     PaintingsByPainter(id: String!): [ret]
+    """Checks if the given mail exists in the DataBase."""
     checkUser(mail: String!): Boolean!
     me: User
+    """Returns all users, paginated."""
     selectAllUsers(page: Int!, amount: Int!): TotalUsers
+    """Takes an ID of a user, and returns all associated data."""
     selectUserById(id: Int!): User
+    """Returns an array containing all FAQ's"""
     faq: [FAQ]
+    """Takes an ID of a FAQ, and returns all associated data."""
     faqId(id: Int!): FAQ
+    """Test to see if the server is running"""
     status: Int 
     papatabel: [PapaGet]
     orderListSelect(buyerId: Int!): [Orders]

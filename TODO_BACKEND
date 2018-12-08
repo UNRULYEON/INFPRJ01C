@@ -1,7 +1,4 @@
 status van Huren visualiseren 
 
-description bij queries in schema, als we weten hoe
-  """ 
-  This returns a collection
-  """
-voorbeeld voor hoe de description gedaan moet worden
+Tijdens de 5e sprint moet in de Admin pannel een optie komen om groepen van schilderijen aan te maken, aan te passen of te verwijderen
+BACKEND werkt al
