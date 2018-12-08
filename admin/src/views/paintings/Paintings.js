@@ -150,6 +150,46 @@ const ADD_PAINTING = gql`
   }
 `;
 
+const EDIT_PAINTING = gql`
+  mutation EditPainting(
+    $id: String!,
+    $id_number: Int!,
+    $title: String!,
+    $releasedate: Int!,
+    $period: Int!,
+    $description: String!,
+    $physicalmedium: String!,
+    $amountofpaintings: Int!,
+    $src: String!,
+    $bigsrc: String!,
+    $prodplace: String!,
+    $width: Int!,
+    $height: Int!,
+    $principalmaker: String!,
+    $price: Int!,
+    $rented: Boolean!,
+    $amountwatched: Int!) {
+      alterProduct(
+      id: $id,
+      id_number: $id_number,
+      title: $title,
+      releasedate: $releasedate,
+      period:$period,
+      description: $description,,
+      physicalmedium: $physicalmedium,
+      amountofpaintings: $amountofpaintings,
+      src: $src,
+      bigsrc: $bigsrc,
+      prodplace: $prodplace,
+      width: $width,
+      height: $height,
+      principalmaker: $principalmaker,
+      price: $price,
+      rented: $rented,
+      amountwatched: $amountwatched)
+  }
+`;
+
 const theme = new createMuiTheme({
   palette: {
     primary: {
@@ -416,28 +456,28 @@ class TablePaginationActions extends React.Component {
           disabled={page === 0}
           aria-label="Eerste pagina"
         >
-          <FirstPageIcon/>
+          <FirstPageIcon />
         </IconButton>
         <IconButton
           onClick={this.handleBackButtonClick}
           disabled={page === 0}
           aria-label="Vorige pagina"
         >
-          <KeyboardArrowLeft/>
+          <KeyboardArrowLeft />
         </IconButton>
         <IconButton
           onClick={this.handleNextButtonClick}
           disabled={page >= Math.ceil(count / rowsPerPage) - 1}
           aria-label="Volgende pagina"
         >
-          <KeyboardArrowRight/>
+          <KeyboardArrowRight />
         </IconButton>
         <IconButton
           onClick={this.handleLastPageButtonClick}
           disabled={page >= Math.ceil(count / rowsPerPage) - 1}
           aria-label="Laatste pagina"
         >
-          <LastPageIcon/>
+          <LastPageIcon />
         </IconButton>
       </div>
     );
@@ -452,6 +492,7 @@ class Paintings extends Component {
       dialogAddPainting: false,
       dialogChoosePainter: false,
       id: 0,
+      id_number: 0,
       title: '',
       titleError: false,
       titleErrorMsg: '',
@@ -487,6 +528,10 @@ class Paintings extends Component {
       rented: false,
       paintingID: '',
       dialogEditPainting: false,
+
+      amountwatched: 0,
+
+
       changeState: false,
       rows: [],
       totalCount: 0,
@@ -498,12 +543,34 @@ class Paintings extends Component {
         { columnName: 'id', width: 70 },
       ],
       hiddenColumnNames: ['releasedate', 'description'],
+      page: 0,
+      rowsPerPage: 10,
+      addedData: false,
+      inputChanged: false,
     }
 
     this.changeCurrentPage = this.changeCurrentPage.bind(this);
     this.changePageSize = pageSize => this.setState({ pageSize });
     this.changeSorting = sorting => this.setState({ sorting });
     this.hiddenColumnNamesChange = (hiddenColumnNames) => {this.setState({ hiddenColumnNames });};
+  }
+
+  checkUndefinedValues(){
+    console.log(this.state.amountwatched)
+    console.log(this.state.rented)
+    
+    if(this.state.amountwatched != null){
+      this.setState({
+        amountwatched: 0,
+      })
+    }
+    if(this.state.rented === null){
+      this.setState({
+        rented: false,
+      })
+    }
+    console.log(this.state.amountwatched)
+    console.log(this.state.rented)
   }
 
   queryInState(data) {
@@ -521,15 +588,26 @@ class Paintings extends Component {
             query={GET_ART_DETAILS}
             variables={{ id: state.paintingID }}
             onCompleted={(data) => {
-              if(this.state.title === ''){
+              if (this.state.addedData === false) {
                 this.setState({
+                  id: data.paintingByID[0].id,
+                  id_number: data.paintingByID[0].id_number,
                   title: data.paintingByID[0].title,
                   releaseDate: data.paintingByID[0].releasedate,
                   period: data.paintingByID[0].period,
                   description: data.paintingByID[0].description,
                   physicalMedium: data.paintingByID[0].physicalmedium,
+                  amount: data.paintingByID[0].amountofpaintings,
+                  src: data.paintingByID[0].src,
+                  bigsrc: data.paintingByID[0].bigsrc,                  
                   principalMakersProductionPlaces: data.paintingByID[0].principalmakersproductionplaces,
+                  width: data.paintingByID[0].width,
+                  height: data.paintingByID[0].height,
+                  principalMaker: data.paintingByID[0].principalmaker,                  
                   price: data.paintingByID[0].price,
+                  rented: data.paintingByID[0].rented,
+                  amountwatched: data.paintingByID[0].amountwatched,
+                  addedData: true,
                 })
               }
             }}
@@ -611,44 +689,16 @@ class Paintings extends Component {
         return (
           <Grid>
             <Grid container spacing={24}>
-              <Grid item xs={12} sm={6}>
-                <Grid item xs={12}>
+              <Grid item xs={12} sm={6} className="add-painting-review-details-preview">
+                <Grid item xs={12} className="add-painting-review-container">
                   <span>Titel</span>
                   <span>{state.title}</span>
                 </Grid>
-                <Grid item xs={12} sm={6} className="add-painting-review-container">
-                  <span>Gemaakt in (jaar)</span>
-                  <span>{state.releaseDate}</span>
-                </Grid>
-                <Grid item xs={12} sm={6} className="add-painting-review-container">
-                  <span>Periode (eeuw)</span>
-                  <span>{state.period}</span>
-                </Grid>
-                <Grid item cs={12}>
+                <Grid item xs={12} className="add-painting-review-container">
                   <span>Schilder</span>
                   <span>{state.principalMaker}</span>
                 </Grid>
                 <Grid item xs={12} className="add-painting-review-container">
-                  <span>Beschrijving</span>
-                  <span>{state.description}</span>
-                </Grid>
-
-              </Grid>
-              <Grid container spacing={24}>
-                <Grid item xs={12} sm={6} className="add-painting-review-container">
-                  <span>Gemaakt op (materiaal)</span>
-                  <span>{state.physicalMedium}</span>
-                </Grid>
-                <Grid item xs={12} sm={6} className="add-painting-review-container">
-                  <span>Hoeveelheid</span>
-                  <span>{state.amount}</span>
-                </Grid>
-                <Grid item xs={12} sm={6} className="add-painting-review-container">
-                  <span>Gemaakt in (stad)</span>
-                  <span>{state.principalMakersProductionPlaces}</span>
-                </Grid>
-
-                <Grid item cs={12}>
                   <span>Prijs</span>
                   <Currency
                     quantity={state.price}
@@ -657,6 +707,32 @@ class Paintings extends Component {
                     group="."
                   />
                 </Grid>
+              </Grid>
+            </Grid>
+            <Grid container spacing={24}>
+              <Grid item xs={12} className="add-painting-review-container">
+                <span>Beschrijving</span>
+                <span>{state.description}</span>
+              </Grid>
+              <Grid item xs={12} sm={6} className="add-painting-review-container">
+                <span>Gemaakt in (jaar)</span>
+                <span>{state.releaseDate}</span>
+              </Grid>
+              <Grid item xs={12} sm={6} className="add-painting-review-container">
+                <span>Periode (eeuw)</span>
+                <span>{state.period}</span>
+              </Grid>
+              <Grid item xs={12} sm={6} className="add-painting-review-container">
+                <span>Gemaakt op (materiaal)</span>
+                <span>{state.physicalMedium}</span>
+              </Grid>
+              <Grid item xs={12} sm={6} className="add-painting-review-container">
+                <span>Gemaakt in (stad)</span>
+                <span>{state.principalMakersProductionPlaces}</span>
+              </Grid>
+              <Grid item xs={12} sm={6} className="add-painting-review-container">
+                <span>Hoeveelheid</span>
+                <span>{state.amount}</span>
               </Grid>
             </Grid>
           </Grid>
@@ -677,6 +753,7 @@ class Paintings extends Component {
   handleChange = name => event => {
     this.setState({
       [name]: event.target.value,
+      inputChanged: true,
     });
 
     if (name === 'releaseDate') {
@@ -713,6 +790,7 @@ class Paintings extends Component {
     this.setState({
       paintingID: paintingID.toString(),
       dialogEditPainting: true,
+      addedData: false,
       id: Math.floor((Math.random() * 10000000000000) + 1).toString()
     });
   };
@@ -773,6 +851,7 @@ class Paintings extends Component {
       dialogAddPainting: false,
       dialogEditPainting: false,
       id: 0,
+      id_number: 0,
       title: '',
       titleError: false,
       titleErrorMsg: '',
@@ -903,6 +982,7 @@ class Paintings extends Component {
       price: 0,
       activeStep: 0,
       changeState: true,
+      inputChanged: false,
     });
     console.log("State is empty");
   }
@@ -1165,7 +1245,56 @@ class Paintings extends Component {
               </div>
             ) : null}
             {activeStep === 1 ? (
-              <Button disabled>Opslaan</Button>
+              <Mutation
+                mutation={EDIT_PAINTING}
+                onCompleted={(data) => {
+                  console.log(`Query complete: ${data.editProduct}`)
+                  this.handleClose()
+                  this.emptyState()
+                  this.props.handleSnackbarOpen('EDIT_PAINTING_SUCCESS')
+                }}
+                onError={(err) => {
+                  console.log(`Query failed: ${err}`)
+                  this.props.handleSnackbarOpen('EDIT_PAINTING_ERROR')
+                }}
+              >
+                {(editPainting, { data }) => (
+                  <div>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={e => {
+                        e.preventDefault()
+                        this.checkUndefinedValues()
+                        let vars = {
+                          id: this.state.id,
+                          id_number: this.state.id_number,
+                          title: this.state.title,
+                          releasedate: parseInt(this.state.releaseDate),
+                          period: parseInt(this.state.period),
+                          description: this.state.description,
+                          physicalmedium: this.state.physicalMedium,
+                          amountofpaintings: this.state.amount,
+                          src: this.state.src,
+                          bigsrc: this.state.bigsrc,
+                          prodplace: this.state.principalMakersProductionPlaces,
+                          width: this.state.width,
+                          height: this.state.height,
+                          principalmaker: this.state.principalMaker,
+                          price: this.state.price,
+                          rented: this.state.rented,
+                          amountwatched: this.state.amountwatched
+                        }
+
+                        console.log(vars)
+
+                        editPainting({ variables: vars })
+                      }}>
+                      Opslaan
+                </Button>
+                  </div>
+                )}
+              </Mutation>
             ) : (
                 <Button variant="contained" color="primary" onClick={this.handleNext}>
                   Volgende
