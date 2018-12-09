@@ -48,7 +48,7 @@ import gql from "graphql-tag";
 import Edit from '../../icons/Edit.svg';
 
 //Linking to userdetail page
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const ALL_USERS = gql`
   query AllUsers($page: Int!, $amount: Int!){
@@ -63,7 +63,26 @@ const ALL_USERS = gql`
       }
     }
   }
-`
+`;
+
+const GET_USER_DETAILS = gql`
+  query User($id: Int!){
+    selectUserById(id: $id){
+      id
+      name
+      surname
+      mail
+      adres
+      city
+      postalcode
+      password
+      aanhef
+      housenumber
+      admin
+      paymentmethod
+    }
+  }
+`;
 
 const ADD_USER = gql`
   mutation AddUser(
@@ -91,7 +110,7 @@ const ADD_USER = gql`
       paymentmethod: $paymentmethod,
       admin: $admin)
   }
-`
+`;
 
 const theme = new createMuiTheme({
   palette: {
@@ -267,7 +286,7 @@ function getStepContent(stepIndex, state, handleChange) {
               <span className="add-user-column-right">{state.adres} {state.housenumber}</span>
             </Grid>
             <Grid item xs={3} className="add-user-review-container"></Grid>
-            <Grid item xs={7} className="add-user-review-container" style={{padding: '0 12px 12px 12px'}}>
+            <Grid item xs={7} className="add-user-review-container" style={{ padding: '0 12px 12px 12px' }}>
               <span className="add-user-column-right">{state.postalcode} {state.city}</span>
             </Grid>
             <Grid item xs={12} className="add-user-review-container-divider" />
@@ -315,28 +334,28 @@ class TablePaginationActions extends React.Component {
           disabled={page === 0}
           aria-label="Eerste pagina"
         >
-          <FirstPageIcon/>
+          <FirstPageIcon />
         </IconButton>
         <IconButton
           onClick={this.handleBackButtonClick}
           disabled={page === 0}
           aria-label="Vorige pagina"
         >
-          <KeyboardArrowLeft/>
+          <KeyboardArrowLeft />
         </IconButton>
         <IconButton
           onClick={this.handleNextButtonClick}
           disabled={page >= Math.ceil(count / rowsPerPage) - 1}
           aria-label="Volgende pagina"
         >
-          <KeyboardArrowRight/>
+          <KeyboardArrowRight />
         </IconButton>
         <IconButton
           onClick={this.handleLastPageButtonClick}
           disabled={page >= Math.ceil(count / rowsPerPage) - 1}
           aria-label="Laatste pagina"
         >
-          <LastPageIcon/>
+          <LastPageIcon />
         </IconButton>
       </div>
     );
@@ -428,15 +447,15 @@ class Users extends Component {
   handleNext = () => {
     if (this.state.activeStep === 0) {
       let next = true
-      let items = [ ['name', this.state.name],
-                    ['surname', this.state.surname],
-                    ['mail', this.state.mail],
-                    ['password', this.state.password],
-                    ['adres', this.state.adres],
-                    ['housenumber', this.state.housenumber],
-                    ['postalcode', this.state.postalcode],
-                    ['city', this.state.city],
-                    ['paymentmethod', this.state.paymentmethod]]
+      let items = [['name', this.state.name],
+      ['surname', this.state.surname],
+      ['mail', this.state.mail],
+      ['password', this.state.password],
+      ['adres', this.state.adres],
+      ['housenumber', this.state.housenumber],
+      ['postalcode', this.state.postalcode],
+      ['city', this.state.city],
+      ['paymentmethod', this.state.paymentmethod]]
 
       console.log(items)
 
@@ -463,7 +482,7 @@ class Users extends Component {
 
       console.log(`item: admin - value: ${this.state.admin}`)
 
-      if(!(/\S+@\S+\.\S+/).test(this.state.mail)) {
+      if (!(/\S+@\S+\.\S+/).test(this.state.mail)) {
         next = false
         this.setState(state => ({
           mailError: true,

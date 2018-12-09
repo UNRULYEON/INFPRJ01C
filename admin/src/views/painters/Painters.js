@@ -49,6 +49,24 @@ const PAINTERS = gql`
   }
 `;
 
+const GET_PAINTER_DETAILS = gql`
+  query painter($id: String!){
+    painterByID(id: $id){
+      id
+      name
+      city
+      dateofbirth
+      dateofdeath
+      occupation
+      nationality
+      headerimage
+      thumbnail
+      description
+    }
+  }
+`
+
+
 const ADD_PAINTER = gql`
   query collectionPainters{
     painters{

@@ -70,7 +70,7 @@ const GET_ART_DETAILS = gql`
 			period
 			description
 			physicalmedium
-			amountofpainting
+			amountofpaintings
       principalmaker
 			bigsrc
 			src
@@ -788,7 +788,8 @@ class Paintings extends Component {
       // eslint-disable-next-line no-alert
       onClick={() => this.handleAanpassenDialog(row.id)}
       style={{
-        cursor: 'pointer'
+        cursor: 'pointer',
+        hover: true,
       }}
     />
   )
