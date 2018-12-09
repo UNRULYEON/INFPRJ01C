@@ -74,8 +74,8 @@ const authLink = setContext((_, { headers }) => {
       authorization: token ? (
         `Bearer ${token}`
       ) : (
-        ""
-      ),
+          ""
+        ),
     }
   }
 });
@@ -165,14 +165,14 @@ function PrivateRoute({ component: Component, ...rest }) {
             {...props}
           />
         ) : (
-          <Redirect
-            {...rest}
-            to={{
-              pathname: "/login",
-              state: {from: props.location}
-            }}
-          />
-        )
+            <Redirect
+              {...rest}
+              to={{
+                pathname: "/login",
+                state: { from: props.location }
+              }}
+            />
+          )
       }
     />
   );
@@ -180,7 +180,7 @@ function PrivateRoute({ component: Component, ...rest }) {
 
 class App extends Component {
   constructor(props) {
-    super (props);
+    super(props);
     this.state = {
       user: {
         id: '',
@@ -302,6 +302,20 @@ class App extends Component {
           snackbarMessage: "Er is een fout opgetreden bij het aanmaken van de FAQ"
         });
         break;
+      case 'EDIT_PAINTING_SUCCESS':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "Het schilderij is successvol aangepast"
+        });
+        break;
+      case 'EDIT_PAINTING_ERROR':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "error",
+          snackbarMessage: "Er is een fout opgetreden bij het aanpassen van een schilderij"
+        });
+        break;
       default:
         break;
     }
@@ -327,17 +341,17 @@ class App extends Component {
               setUser={this.setUser}
             />
             <div className="sidebar-view-container">
-              <Sidebar/>
+              <Sidebar />
               <Switch>
                 <PrivateRoute
                   exact
                   path="/dashboard"
-                  component={Dashboard}/>
+                  component={Dashboard} />
                 <PrivateRoute
                   exact
                   path="/gebruikers"
                   handleSnackbarOpen={this.handleSnackbarOpen}
-                  component={Users}/>
+                  component={Users} />
                 <PrivateRoute
                   exact
                   path="/schilderijen"
@@ -348,12 +362,12 @@ class App extends Component {
                   exact
                   path="/schilders"
                   handleSnackbarOpen={this.handleSnackbarOpen}
-                  component={Painters}/>
+                  component={Painters} />
                 <PrivateRoute
                   exact
                   path="/faq"
                   handleSnackbarOpen={this.handleSnackbarOpen}
-                  component={FAQ}/>
+                  component={FAQ} />
                 <Route
                   path="/login"
                   render={(props) => <Login
@@ -363,11 +377,11 @@ class App extends Component {
                   />}
                 />
                 <Route
-                path="/gebruiker/:id"
-                component={GebruikerDetails}/>
+                  path="/gebruiker/:id"
+                  component={GebruikerDetails} />
                 <Route
-                path="/schilderij/:id"
-                component={SchilderijDetails}/>
+                  path="/schilderij/:id"
+                  component={SchilderijDetails} />
                 <Route component={NoMatch} />
               </Switch>
             </div>

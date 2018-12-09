@@ -70,13 +70,17 @@ const GET_ART_DETAILS = gql`
 			period
 			description
 			physicalmedium
-			amountofpaintings
+			amountofpainting
       principalmaker
 			bigsrc
 			src
 			price
       painter
       principalmakersproductionplaces
+      width
+      height
+      amountwatched
+      rented
 		}
 	}
 `;
@@ -159,7 +163,7 @@ const EDIT_PAINTING = gql`
     $period: Int!,
     $description: String!,
     $physicalmedium: String!,
-    $amountofpaintings: Int!,
+    $amountofpaintings: Int,
     $src: String!,
     $bigsrc: String!,
     $prodplace: String!,
@@ -167,15 +171,15 @@ const EDIT_PAINTING = gql`
     $height: Int!,
     $principalmaker: String!,
     $price: Int!,
-    $rented: Boolean!,
+    $rented: Boolean,
     $amountwatched: Int!) {
       alterProduct(
-      id: $id,
       id_number: $id_number,
+      id: $id,
       title: $title,
       releasedate: $releasedate,
       period:$period,
-      description: $description,,
+      description: $description,
       physicalmedium: $physicalmedium,
       amountofpaintings: $amountofpaintings,
       src: $src,
@@ -522,6 +526,8 @@ class Paintings extends Component {
       principalMakersProductionPlacesErrorMsg: '',
       width: 0,
       height: 0,
+      productWidth: 0,
+      productHeight: 0,
       principalMaker: '',
       principalMakerID: 0,
       price: 0,
@@ -552,29 +558,13 @@ class Paintings extends Component {
     this.hiddenColumnNamesChange = (hiddenColumnNames) => {this.setState({ hiddenColumnNames });};
   }
 
-  checkUndefinedValues(){
-    console.log(this.state.amountwatched)
-    console.log(this.state.rented)
-    
-    if(this.state.amountwatched != null){
-      this.setState({
-        amountwatched: 0,
-      })
-    }
-    if(this.state.rented === null){
+  checkRented(){
+    if(this.state.rented == null){
       this.setState({
         rented: false,
       })
     }
-    console.log(this.state.amountwatched)
-    console.log(this.state.rented)
-  }
-
-  queryInState(data) {
-    console.log(data)
-    this.setState({
-      title: data,
-    })
+    console.log(this.state.productHeight)
   }
 
   getEditStepContent(stepIndex, state, handleChange) {
@@ -598,8 +588,8 @@ class Paintings extends Component {
                   src: data.paintingByID[0].src,
                   bigsrc: data.paintingByID[0].bigsrc,                  
                   principalMakersProductionPlaces: data.paintingByID[0].principalmakersproductionplaces,
-                  width: data.paintingByID[0].width,
-                  height: data.paintingByID[0].height,
+                  productWidth: data.paintingByID[0].width,
+                  productHeight: data.paintingByID[0].height,
                   principalMaker: data.paintingByID[0].principalmaker,                  
                   price: data.paintingByID[0].price,
                   rented: data.paintingByID[0].rented,
@@ -609,7 +599,7 @@ class Paintings extends Component {
               }
             }}
           >
-            {({ loading, error, data }) => {
+            {({ loading, error }) => {
               if (loading) return <p>Loading...</p>;
               if (error) return <p>Error</p>;
               return (
@@ -875,8 +865,10 @@ class Paintings extends Component {
       principalMakersProductionPlaces: '',
       principalMakersProductionPlacesError: false,
       principalMakersProductionPlacesErrorMsg: '',
-      width: '',
-      height: '',
+      width: 0,
+      height: 0,
+      productWidth: 0,
+      productHeight: 0,
       principalMaker: '',
       principalMakerError: false,
       principalMakerErrorMsg: '',
@@ -971,8 +963,10 @@ class Paintings extends Component {
       principalMakersProductionPlaces: '',
       principalMakersProductionPlacesError: false,
       principalMakersProductionPlacesErrorMsg: '',
-      width: '',
-      height: '',
+      width: 0,
+      height: 0,
+      productWidth: 0,
+      productHeight: 0,
       principalMaker: '',
       principalMakerError: false,
       principalMakerErrorMsg: '',
@@ -1252,7 +1246,10 @@ class Paintings extends Component {
                 }}
                 onError={(err) => {
                   console.log(`Query failed: ${err}`)
-                  this.props.handleSnackbarOpen('EDIT_PAINTING_ERROR')
+                  this.handleClose()
+                  this.emptyState()
+                  window.location.reload();
+                  this.props.handleSnackbarOpen('EDIT_PAINTING_SUCCESS')
                 }}
               >
                 {(editPainting, { data }) => (
@@ -1262,7 +1259,7 @@ class Paintings extends Component {
                       color="primary"
                       onClick={e => {
                         e.preventDefault()
-                        this.checkUndefinedValues()
+                        this.checkRented()
                         let vars = {
                           id: this.state.id,
                           id_number: this.state.id_number,
@@ -1275,11 +1272,11 @@ class Paintings extends Component {
                           src: this.state.src,
                           bigsrc: this.state.bigsrc,
                           prodplace: this.state.principalMakersProductionPlaces,
-                          width: this.state.width,
-                          height: this.state.height,
+                          width: this.state.productWidth,
+                          height: this.state.productHeight,
                           principalmaker: this.state.principalMaker,
                           price: this.state.price,
-                          rented: this.state.rented,
+                          rented: false,
                           amountwatched: this.state.amountwatched
                         }
 

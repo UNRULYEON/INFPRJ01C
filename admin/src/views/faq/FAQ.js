@@ -103,7 +103,7 @@ function getStepContent(stepIndex, state, handleChange) {
 
 class FAQ extends Component {
   constructor(props) {
-    super (props);
+    super(props);
     this.state = {
       activeStep: 0,
       dialogAddFAQ: false,
@@ -113,6 +113,48 @@ class FAQ extends Component {
       answer: '',
       answerError: false,
       answerErrorMsg: ''
+    }
+  }
+
+  getStepContent(stepIndex, state, handleChange) {
+    switch (stepIndex) {
+      case 0:
+        return (
+
+          <Grid container spacing={24}>
+            <Grid item xs={12}>
+              <FormControl fullWidth error={state.questionError}>
+                <InputLabel htmlFor="add-question">Vraag</InputLabel>
+                <Input id="add-question" multiline value={state.question} onChange={handleChange('question')} />
+                <FormHelperText id="add-question-error-text">{state.questionErrorMsg}</FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth error={state.answerError}>
+                <InputLabel htmlFor="add-answer">Antwoord</InputLabel>
+                <Input id="add-answer" multiline value={state.answer} onChange={handleChange('answer')} />
+                <FormHelperText id="add-answer-error-text">{state.answerErrorMsg}</FormHelperText>
+              </FormControl>
+            </Grid>
+          </Grid>
+        )
+      case 1:
+        return (
+          <Grid>
+            <Grid container spacing={24}>
+              <Grid item xs={12} className="add-painting-review-container">
+                <span>Vraag</span>
+                <span>{state.question}</span>
+              </Grid>
+              <Grid item xs={12} className="add-painting-review-container">
+                <span>Antwoord</span>
+                <span>{state.answer}</span>
+              </Grid>
+            </Grid>
+          </Grid>
+        )
+      default:
+        return 'Uknown stepIndex';
     }
   }
 
@@ -134,8 +176,8 @@ class FAQ extends Component {
   handleNext = () => {
     if (this.state.activeStep === 0) {
       let next = true
-      let items = [ ['question', this.state.question],
-                    ['answer', this.state.answer]]
+      let items = [['question', this.state.question],
+      ['answer', this.state.answer]]
 
       console.log(items)
 
@@ -228,34 +270,34 @@ class FAQ extends Component {
           onClose={this.handleClose}
           disableBackdropClick
           disableEscapeKeyDown
-          // scroll='scroll'
+        // scroll='scroll'
         >
           <DialogTitle id="form-dialog-title">Schilderij toevoegen</DialogTitle>
           <MuiThemeProvider theme={theme}>
             <DialogContent
               className="dialog-add-painting"
             >
-                <Stepper activeStep={activeStep} alternativeLabel>
-                  {steps.map(label => {
-                    return (
-                      <Step key={label}>
-                        <StepLabel>{label}</StepLabel>
-                      </Step>
-                    );
-                  })}
-                </Stepper>
-                <div>
-                  {this.state.activeStep === steps.length ? (
-                    <div>
-                      <div>All steps completed</div>
-                      <Button onClick={this.handleReset}>Reset</Button>
-                    </div>
-                  ) : (
+              <Stepper activeStep={activeStep} alternativeLabel>
+                {steps.map(label => {
+                  return (
+                    <Step key={label}>
+                      <StepLabel>{label}</StepLabel>
+                    </Step>
+                  );
+                })}
+              </Stepper>
+              <div>
+                {this.state.activeStep === steps.length ? (
+                  <div>
+                    <div>All steps completed</div>
+                    <Button onClick={this.handleReset}>Reset</Button>
+                  </div>
+                ) : (
                     <div>
                       <div>{getStepContent(activeStep, this.state, this.handleChange, this.handeImage)}</div>
                     </div>
                   )}
-                </div>
+              </div>
             </DialogContent>
             <DialogActions>
               <Button onClick={this.handleClose}>
@@ -272,43 +314,43 @@ class FAQ extends Component {
                 </div>
               ) : null}
               {activeStep === 1 ? (
-              <Mutation
-                mutation={ADD_FAQ}
-                onCompleted={(data) => {
-                  console.log(`Query complete: ${data.addProduct}`)
-                  this.handleClose()
-                  this.setState({
-                  })
-                  this.props.handleSnackbarOpen('ADD_FAQ_SUCCESS')
-                }}
-                onError={(err) => {
-                  console.log(`Query failed: ${err}`)
-                  this.props.handleSnackbarOpen('ADD_FAQ_ERROR')
-                }}
-              >
-                {(addPainting, { data }) => (
-                  <div>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={e => {
-                        e.preventDefault()
+                <Mutation
+                  mutation={ADD_FAQ}
+                  onCompleted={(data) => {
+                    console.log(`Query complete: ${data.addProduct}`)
+                    this.handleClose()
+                    this.setState({
+                    })
+                    this.props.handleSnackbarOpen('ADD_FAQ_SUCCESS')
+                  }}
+                  onError={(err) => {
+                    console.log(`Query failed: ${err}`)
+                    this.props.handleSnackbarOpen('ADD_FAQ_ERROR')
+                  }}
+                >
+                  {(addPainting, { data }) => (
+                    <div>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={e => {
+                          e.preventDefault()
 
-                        let vars = {
-                        }
+                          let vars = {
+                          }
 
-                        console.log(vars)
+                          console.log(vars)
 
-                        addPainting({ variables: vars })
-                      }}>
-                      Opslaan
+                          addPainting({ variables: vars })
+                        }}>
+                        Opslaan
                     </Button>
-                  </div>
-                )}
-              </Mutation>
+                    </div>
+                  )}
+                </Mutation>
               ) : (
-              <Button variant="contained" color="primary" onClick={this.handleNext}>
-                Volgende
+                  <Button variant="contained" color="primary" onClick={this.handleNext}>
+                    Volgende
               </Button>)}
             </DialogActions>
           </MuiThemeProvider>
