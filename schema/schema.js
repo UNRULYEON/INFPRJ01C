@@ -42,7 +42,7 @@ var schema = buildSchema(`
     """Returns an array containing all FAQ's"""
     faq: [FAQ]
     """Takes an ID of a FAQ, and returns all associated data."""
-    faqId(id: Int!): FAQ
+    faqId(id: Int!): [FAQ]
     """Test to see if the server is running"""
     status: Int 
     papatabel: [PapaGet]

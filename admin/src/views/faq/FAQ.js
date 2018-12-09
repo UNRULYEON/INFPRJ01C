@@ -35,6 +35,16 @@ const FAQS = gql`
       body
     }
   }
+`;
+
+const GET_FAQ_DETAILS = gql`
+  query FAQ($id: Int!){
+    faqId(id: $id){
+      id
+      title
+      body
+    }
+  }
 `
 
 const ADD_FAQ = gql`
