@@ -113,6 +113,7 @@ var root = {
     //pricemax
     //amountwatched
     // console.log(`\n starting filter`)
+    return this.status
   },
   async filterPaintings({ num = "is not null", prodplace = "is not null", physical = "is not null", pricemin = 0, pricemax = 1000000, order = 'price' }) {
     var period = ""
@@ -639,7 +640,7 @@ var root = {
       .catch(err => { throw new Error(err) })
     return `The status of the selected order has been changed to: ${newStatus}`
   },
-  async orderListInsert({ gebruikerId = 166, items, purchaseDate }) {
+  async orderListInsert({ gebruikerId = 183, items, purchaseDate }) {
     items.forEach(element => {
       db.one(`INSERT INTO orderlist(buyerid, items, purchasedate) VALUES($1,$2,$3) RETURNING ID`, [gebruikerId, element.foreignkey, purchaseDate])
         .catch(err => {
