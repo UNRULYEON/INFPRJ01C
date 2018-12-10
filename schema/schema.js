@@ -52,7 +52,6 @@ var schema = buildSchema(`
     searchpainter(query: String!, page: Int!, amount: Int): Paintersearch
     wishlistSelect(userId: Int!): [wishlist]
     filterPaintings(num: Int, prodplace: String, physical: String, pricemin: Int, pricemax: Int, order: String): [Painting]
-    filterPaintingsPaginated(title: String, dateStart: Int, dateEnd: Int, period: Int, physicalmedium: String, amountofpaintings: Int, principalmakerprodplace: String, principalmaker: String, pricemin: Int, pricemax: Int, amountwatched: Int): String
   },
   """ 
   Mutation is a Put/Post statement, and can create or alter data in the DataBase.
@@ -74,7 +73,7 @@ var schema = buildSchema(`
     addProduct(id: String!, title: String!, releasedate: Int!, period: Int!, description: String!, physicalmedium: String!, amountofpaintings: Int, src: String!, bigsrc: String!,prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!, rented: Boolean,painterId: Int!, amountwatched: Int): String!
     alterProduct(id_number: Int!, id: String!, title: String!, releasedate: Int!, period: Int!, description: String!, physicalmedium: String!, amountofpaintings: Int, src: String!, bigsrc: String!, prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!, rented: Boolean, amountwatched: Int!): String
     deleteProduct(id: Int!): String
-    addPainter(name: String!, city: String!, dateBirth: String!, dateDeath: String!, placeDeath: String!, occupation: String!, nationality: String!, headerimage: String!, thumbnail: String!, description: String!): String
+    addPainter(name: String!, city: String!, dateBirth: String!, dateDeath: String!, placeDeath: String!, occupation: String!, nationality: String!, headerImage: String!, thumbnail: String!, description: String!): String
     alterPainter(name: String!, city: String!, dateBirth: String!, dateDeath: String!, placeDeath: String!, occupation: String!, nationality: String!, headerimage: String!, thumbnail: String!, description: String!, amountwatched: Int!): String
     deltePainter(name: String!): String
     createBabyTabel(tabelnaam: String!, foreignkey: [RefBaby!], type: String!): String
