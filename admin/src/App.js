@@ -316,6 +316,20 @@ class App extends Component {
           snackbarMessage: "Er is een fout opgetreden bij het aanpassen van een schilderij"
         });
         break;
+        case 'EDIT_FAQ_SUCCESS':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "FAQ item is successvol aangepast"
+        });
+        break;
+      case 'EDIT_FAQ_ERROR':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "error",
+          snackbarMessage: "Er is een fout opgetreden bij het aanpassen van een FAQ item"
+        });
+        break;
       default:
         break;
     }
