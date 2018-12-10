@@ -1,0 +1,21 @@
+The following codes are possible returns for functions
+
+200 range errors
+Error 200 = Successful
+
+300 range errors
+Error 310 = The given name already exists
+Error 311 = the given NAME doesn't exist
+Error 312 = the given USER doesn't exist
+Error 313 = the given combination of ID's doesn't exist
+Error 314 = the given MAIL already exists
+Error 315 = the given MAIL doesn't exist
+Error 316 = the given PASSWORD is incorrect
+
+400 range errors
+Error 410 = not all required elements contain something
+Error 411 = not authenticated
+
+500 range errors
+Error 510 = Failed to execute, try again
+Error 555 = NOT ALLOWED TO PERFORM

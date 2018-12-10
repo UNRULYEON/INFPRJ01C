@@ -52,7 +52,6 @@ var schema = buildSchema(`
     searchpainter(query: String!, page: Int!, amount: Int): Paintersearch
     wishlistSelect(userId: Int!): [wishlist]
     filterPaintings(num: Int, prodplace: String, physical: String, pricemin: Int, pricemax: Int, order: String): [Painting]
-    filterPaintingsPaginated(title: String, dateStart: Int, dateEnd: Int, period: Int, physicalmedium: String, amountofpaintings: Int, principalmakerprodplace: String, principalmaker: String, pricemin: Int, pricemax: Int, amountwatched: Int): String
   },
   """ 
   Mutation is a Put/Post statement, and can create or alter data in the DataBase.

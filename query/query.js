@@ -22,9 +22,11 @@ var root = {
 
     const total = await db.manyOrNone('SELECT COUNT(*) from schilderijen')
       .then(data => { return data })
+      .catch(err => { throw new Error(err)})
 
     const preQuery = await db.manyOrNone(`SELECT * FROM schilderijen ORDER BY id_number ASC LIMIT ${amount} OFFSET ${offset}`)
       .then(data => { return data })
+      .catch(err => { throw new Error(err)})
     return {
       total: total[0].count,
       collection: preQuery
@@ -75,9 +77,11 @@ var root = {
 
     let painter = await db.manyOrNone(`SELECT * from schilder ORDER BY ID ASC LIMIT ${amount} OFFSET ${offset}`)
       .then(data => { return data })
+      .catch(err => { throw new Error(err)})
 
     let totalPainters = await db.manyOrNone(`SELECT COUNT(*) from schilder`)
       .then(data => { return data })
+      .catch(err => { throw new Error(err)})
     return {
       total: totalPainters[0].count,
       painterpagination: painter
@@ -100,21 +104,6 @@ var root = {
   //#endregion
 
   //#region filters
-  async filterPaintingsPaginated({ title = "is not null", dateStart = 1200, dateEnd = (new Date()).getFullYear(), period = "is not null", physicalmedium = "is not null", amountofpaintings = 0, principalmakerprodplace = "is not null", principalmaker = "is not null", pricemin = 0, pricemax = 1000000, amountwatched = "is not null" }) {
-    ///title
-    ///releasedate start
-    ///releasedate end
-    //period
-    //physicalmedium
-    //amountofpaintings
-    //principalmakerprodplace
-    //principalmaker
-    //pricemin
-    //pricemax
-    //amountwatched
-    // console.log(`\n starting filter`)
-    return this.status
-  },
   async filterPaintings({ num = "is not null", prodplace = "is not null", physical = "is not null", pricemin = 0, pricemax = 1000000, order = 'price' }) {
     var period = ""
     if (isNaN(num)) {
@@ -135,7 +124,7 @@ var root = {
     order = `'${order}'`
     var query = await db.manyOrNone(`SELECT * FROM schilderijen WHERE period ${period} AND principalmakersproductionplaces ${prod} AND physicalmedium ${medium} AND price BETWEEN ${pricemin} AND ${pricemax} ORDER BY ${order}`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err) })
+      .catch(err => { throw new Error(err)})
     return query
   },
 
@@ -166,10 +155,11 @@ var root = {
 
     let search = await db.manyOrNone(` SELECT * FROM schilderijen WHERE document_vectors @@ plainto_tsquery('${query}:*') LIMIT ${amount} OFFSET ${offset}`)
       .then(data => { return data })
+      .catch(err => { throw new Error(err)})
 
     let total_search = await db.manyOrNone(`SELECT COUNT(*) FROM schilderijen WHERE document_vectors @@ plainto_tsquery('${query}:*')`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err) })
+      .catch(err => { throw new Error(err)})
 
     return {
       total: total_search[0].count,
@@ -184,10 +174,11 @@ var root = {
 
     let search = await db.manyOrNone(` SELECT * FROM schilder WHERE document_vectors @@ plainto_tsquery('${query}:*') LIMIT ${amount} OFFSET ${offset}`)
       .then(data => { return data })
+      .catch(err => { throw new Error(err)})
 
     let total_search = await db.manyOrNone(`SELECT COUNT(*) FROM schilder WHERE document_vectors @@ plainto_tsquery('${query}:*')`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err) })
+      .catch(err => { throw new Error(err)})
 
     return {
       total: total_search[0].count,
@@ -205,52 +196,53 @@ var root = {
   //Create tabel and insert data
   async createBabyTabel({ tabelnaam, foreignkey, type }) {
     if (tabelnaam == "") {
-      throw new Error("The provided name is empty!")
+      return 410
     }
     //In order to check if the table already exists
     let tableNameCheck = await db.manyOrNone(`SELECT relname as table from pg_stat_user_tables where schemaname = 'public'`)
       .then(data => { return data })
-      .catch(err => { throw new Error(`Error while checking if the given table already exists: ${err}`) })
+      .catch(err => { throw new Error(err)})
     tableNameCheck.forEach(element => {
       if (element.table == tabelnaam) {
-        throw new Error(`There already is a Table existing with the name '${tabelnaam}'`)
+        return 310
       }
     })
 
     //Creating the table
     db.one(`CREATE TABLE ${tabelnaam} (id serial PRIMARY KEY, foreignKey int)`)
       .then()
-      .catch()
+      .catch(err => { throw new Error(err)})
 
     //Inserting all data into the table
     foreignkey.forEach(element => {
-      db.one(`INSERT INTO ${tabelnaam}(foreignkey) VALUES($1) RETURNING id`, [element.foreignkey])
+      db.one(`INSERT INTO ${tabelnaam}(foreignkey) VALUES($1)`, [element.foreignkey])
         .then()
-        .catch()
-    })
+        .catch(err => { throw new Error(err)})
+      })
 
     //Create ref to the newly created table in the papatabel
-    let papaInsert = await db.manyOrNone(`INSERT INTO papatabel(naam,type) VALUES($1, $2) RETURNING id`, [tabelnaam, type])
-      .then(data => { return data })
-      .catch(err => { throw new Error(err) })
-    return `Data has been inserted into row: ${papaInsert[0].id}`
-  },
+    db.one(`INSERT INTO papatabel(naam,type) VALUES($1, $2)`, [tabelnaam, type])
+      .then()
+      .catch(err => { throw new Error(err)})
+    return 200
+    },
   //Add content to babytabel
   async addToBabyTabel({ id, foreignkey }) {
     let table = await db.manyOrNone(`SELECT * from papatabel WHERE id = ${id}`)
     if (!table.length) {
-      throw new Error(`The specified Table doesn't exist`)
+      return 311
     }
     let tabelnaam = table[0].naam
     foreignkey.forEach(element => {
-      db.one(`INSERT INTO ${tabelnaam}(foreignkey) VALUES($1) RETURNING id`, [element.foreignkey])
+      db.one(`INSERT INTO ${tabelnaam}(foreignkey) VALUES($1)`, [element.foreignkey])
     })
+    return 200
   },
   //Remove tabel and link in papatabel
   async removeBabyTabel({ id }) {
     let table = await db.manyOrNone(`SELECT * from papatabel WHERE id = ${id}`)
     if (!table.length) {
-      throw new Error(`The specified Table doesn't exist`)
+      return 311
     }
 
     db.one(`DROP TABLE IF EXISTS ${tablename}`)
@@ -258,14 +250,14 @@ var root = {
     //In order to check if the table actually dropped
     let tableNameCheck = await db.manyOrNone(`SELECT relname as table from pg_stat_user_tables where schemaname = 'public'`)
       .then(data => { return data })
-      .catch(err => { throw new Error(`Error while checking if the table has been dropped: ${err}`) })
+      .catch(err => {throw new Error(err)})
     tableNameCheck.forEach(element => {
       if (element.table == tablename) {
-        throw new Error(`Failed to drop the table: '${tablename}. Please try again later.'`)
+        return 510
       }
     })
     db.one(`DELETE FROM papatabel WHERE id = ${id}`)
-    return "The specified table has been removed from the DB"
+    return 200
   },
   //#endregion
 
@@ -275,10 +267,13 @@ var root = {
 
     let users = await db.manyOrNone(`SELECT * FROM gebruiker ORDER BY ID ASC LIMIT ${amount} OFFSET ${offset}`)
       .then(data => { return data })
+      .catch(err => { throw new Error(err)})
+
 
     let maxusers = await db.manyOrNone(`SELECT COUNT(*) FROM gebruiker`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err) })
+      .catch(err => { throw new Error(err)})
+
 
     return {
       total: maxusers[0].count,
@@ -287,45 +282,34 @@ var root = {
   },
   async selectUserById({ id }) {
     return await db.one(`SELECT * FROM gebruiker where id = ${id}`)
-      .catch(err => { throw new Error(err) })
   },
   async addUser({ name, surname, mail, password, aanhef, adres = null, city = null, postalcode = null, housenumber = null, paymentmethod = null, admin }) {
     const saltedPassword = await bcrypt.hash(password, 10)
     const user = await db.manyOrNone(`SELECT mail from gebruiker where mail = $1`, [mail])
     if (user.length) {
-      return 'User with this email already exists'
+      return 310
     }
-    return await db.one(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
+    db.one(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
       [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin])
-      .then(data => {
-        console.log(`\nUser ID: ${data.id}`)
-        return data.id
-      })
-      .catch(err => { throw new Error(err) })
+      // .catch(err => {throw new Error(err)})
+    return 200
   },
   async alterUser({ id, name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod }) {
     const user = await db.manyOrNone(`SELECT * from gebruiker where id = ${[id]}`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err) })
+      .catch(err => { throw new Error(err)})
     if (!user.length) {
-      throw new Error('No user with the given ID!')
+      return 311
     }
     const saltedPassword = await bcrypt.hash(password, 10)
-    return await db.one(`UPDATE gebruiker set 
-                          name = $1,
-                          surname = $2,
-                          mail = $3,
-                          password = $4,
-                          aanhef = $5,
-                          adres = $6,
-                          city = $7,
-                          postalcode = $8,
-                          housenumber = $9,
-                          paymentmethod = $10
-                          WHERE id = ${id}`,
-      [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber, paymentmethod])
-      .then(data => { return data })
+    db.one(`UPDATE gebruiker set 
+            name = $1, surname = $2, mail = $3, password = $4,
+            aanhef = $5, adres = $6, city = $7, postalcode = $8,
+            housenumber = $9, paymentmethod = $10 WHERE id = ${id}`,
+            [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber, paymentmethod])
+        .catch(err => {throw new Error(510)})
+      return 200
   },
   async deleteUser({ id }) {
     let user = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${id}`)
@@ -333,7 +317,7 @@ var root = {
       let query = `DELETE from gebruiker WHERE id = ${id}`
       return await db.one(query)
     } else {
-      throw new Error(`The specified User doesn't exist!`)
+      return 311
     }
   },
   //#endregion
@@ -348,50 +332,30 @@ var root = {
 
     db.one(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${painterId}, ${painting})`)
 
-    return `Painting added to the product list`
+    return 200
   },
   //Alter products
   async alterProduct({ id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings = 1, src, bigsrc, prodplace, width, height, principalmaker, price, rented = false, amountwatched }) {
     const prod = await db.manyOrNone(`SELECT * from schilderijen where id_number = ${id_number}`)
       .then(data => { return data })
-      .catch(err => {
-        console.err(err)
-        throw new Error(err)
-      })
+      .catch(err => { throw new Error(err)})
     if (!prod.length) {
-      throw new Error(`No product with the given ID!`)
+      return 311
     }
-    return await db.one(`UPDATE schilderijen set
-                          id_number = $1,
-                          id = $2,
-                          title = $3,
-                          releasedate = $4,
-                          period = $5,
-                          description = $6,
-                          physicalmedium = $7,
-                          amountofpaintings = $8,
-                          src = $9,
-                          bigsrc = $10,
-                          principalmakersproductionplaces = $11,
-                          width = $12,
-                          height = $13,
-                          principalmaker = $14,
-                          price = $15,
-                          rented = $16,
-                          amountwatched = $17
-                          WHERE id_number = ${id_number}`,
-      [id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker, price, rented, amountwatched])
-      .then(data => { return data })
+    db.one(`UPDATE schilderijen set 
+            id_number = $1, id = $2, title = $3, releasedate = $4, period = $5, description = $6, physicalmedium = $7, amountofpaintings = $8, src = $9, bigsrc = $10, principalmakersproductionplaces = $11, width = $12, height = $13, principalmaker = $14, price = $15, rented = $16, amountwatched = $17 WHERE id_number = ${id_number}`,
+            [id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker, price, rented, amountwatched])
+
+      return 200
   },
   //Delete products
   async deleteProduct({ id }) {
     let prod = await db.manyOrNone(`SELECT * from schilderijen WHERE id_number = ${id}`)
-    if (prod.length) {
-      let query = `DELETE from schilderijen where id_number = ${id}`
-      return await db.one(query)
-    } else {
-      throw new Error(`The specified Painting doesn't exist!`)
+    if (!prod.length) {
+      return 311
     }
+    db.one(`DELETE FROM schilderijen WHERE id_number = ${id}`)
+    return 200
   },
   //#endregion
 
@@ -399,78 +363,59 @@ var root = {
   async addPainter({ name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description }) {
     const painter = await db.manyOrNone(`SELECT name from schilder where name = $1`, [name])
     if (painter.length) {
-      throw new Error(`Painter with the given name already exists`)
+      return 310
     }
-    return await db.one(`INSERT INTO schilder(name, city, dateofbirth, dateofdeath, placeofdeath, occupation, nationality, headerimage, thumbnail, description)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`, [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description])
-      .then(data => { return data.id })
-      .catch(err => { throw new Error(err) })
+    db.one(`INSERT INTO schilder(name, city, dateofbirth, dateofdeath, placeofdeath, occupation, nationality, headerimage, thumbnail, description) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`, [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description])
+    return 200
   },
   async alterPainter({ name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched }) {
     const painter = await db.manyOrNone(`SELECT * from schilder WHERE name = ${name}`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err) })
+      .catch(err => { throw new Error(err)})
     if (!painter.length) {
-      throw new Error(`No painter with the given name exists`)
+      return 310
     }
-    return await db.one(`UPDATE schilder set
-                          name = $1,
-                          city = $2,
-                          dateofbirth = $3,
-                          dateofdeath = $4,
-                          placeofdeath = $5,
-                          occupation = $6,
-                          nationality = $7,
-                          headerimage = $8,
-                          thumbnail = $9,
-                          description = $10,
-                          amountwatched = $11
-                          WHERE name = ${name}`,
-      [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched])
-      .then(data => { return data })
-  },
+    db.one(`UPDATE schilder set
+            name = $1, city = $2, dateofbirth = $3, dateofdeath = $4, placeofdeath = $5, occupation = $6, nationality = $7, headerimage = $8, thumbnail = $9, description = $10, amountwatched = $11 WHERE name = ${name}`, [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched])
+    return 200
+    },
   async deletePainter({ name }) {
     let painter = await db.manyOrNone(`SELECT * from schilder WHERE name = ${name}`)
-    if (painter.length) {
-      return await db.one(`DELETE from schilder WHERE name = ${name}`)
-    } else {
-      throw new Error(`The specified Painter doesn't exist!`)
+    if (!painter.length) {
+      return 311
     }
+    db.one(`DELETE from schilder WHERE name = ${name}`)
+    return 200
   },
   //#endregion
 
   //#region FAQ  
   async faqCreate({ question, answer }) {
-    query = await db.one(`INSERT INTO faq(title, body) VALUES($1,$2) RETURNING id`, [question, answer])
-      .then(data => { return data })
-      .catch(err => { throw new Error(err) })
-    return `The question has been added to row: ${query.id}`
+    db.one(`INSERT INTO faq(title, body) VALUES($1,$2)`, [question, answer])
+      .catch(err => { throw new Error(510) })
+    return 200
   },
   async faqUpdate({ question, answer, id }) {
     let faq = await db.manyOrNone(`SELECT * from faq WHERE id = ${id}`)
-    if (faq.length) {
-      db.one(`UPDATE faq set 
-                question = $1,
-                answer = $2
-                WHERE id = ${id}`, [question, answer])
-      return `FAQ Updated`
-    } else {
-      throw new Error(`The given ID does not match an existing ID!`)
+    if (!faq.length) {
+      return 311
     }
+      db.one(`UPDATE faq set question = $1,answer = $2 
+              WHERE id = ${id}`, [question, answer])
+      return 200
   },
   async faqDelete({ id }) {
     let faq = await db.manyOrNone(`SELECT * from faq WHERE id = ${id}`)
-    if (faq.length) {
-      db.one(`DELETE FROM faq WHERE id = ${id}`)
-      return `FAQ removed`
-    } else {
-      throw new Error(`The given ID does not match an existing ID!`)
+    if (!faq.length) {
+      return 311
     }
+  db.one(`DELETE FROM faq WHERE id = ${id}`)
+  return 200
   },
   //#endregion
   //#endregion  
 
-  //#region Random
+  //#region  FAQ
   faq: () => {
     let query = ('SELECT * from faq')
     return db.manyOrNone(query)
@@ -478,6 +423,9 @@ var root = {
   faqId: ({ id }) => {
     return db.manyOrNone(`SELECT * from faq where id = ${id}`)
   },
+  //#endregion
+
+  //#region Random
   dateToString: (givenDate) => {
     let DateDB = givenDate.toString()
     let year = DateDB.slice(11, 15)
@@ -529,7 +477,8 @@ var root = {
   //Merge schilder met schilderij 1 at a time
   async merge({ id_number, id }) {
     if (id_number != null != id || id_number != 0 != id) {
-      return await db.one(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${id}, ${id_number})`)
+      db.one(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${id}, ${id_number})`)
+      return 200
     }
   },
   //Merge all
@@ -546,6 +495,7 @@ var root = {
     //   console.log(`Insert executed`)  
     // }
     console.log("Commented for safety reasons, only uncomment when the entire collection of painters is to be inserted")
+    return 555
   },
   //#endregion
 
@@ -555,7 +505,7 @@ var root = {
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
     if (!check.length) {
-      throw new Error(`The provided user doesn't exist`)
+      return 310
     }
     let wishlist = await db.manyOrNone(`SELECT * from wishlist WHERE gebruikerid = ${userId}`)
       .then(data => { return data })
@@ -568,18 +518,17 @@ var root = {
   async WishlistInsert({ gebruikerId, items, time }) {
     let check = await db.manyOrNone(`SELECT id FROM gebruiker WHERE id= ${gebruikerId}`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err) })
+      .catch(err => { throw new Error(err)})
     if (!check.length) {
-      throw new Error(`The provided user doesn't exist`)
+      return 311
     }
     let current = await db.manyOrNone(`SELECT * FROM wishlist WHERE gebruikerid = ${gebruikerId}`)
     if (current.length) {
-      db.one(`UPDATE wishlist set items = $1, timestamp = $2 WHERE        gebruikerid = ${gebruikerId}`, [items, time])
-      return `The wishlist of user '${gebruikerId}' has been updated`
+      db.one(`UPDATE wishlist set items = $1, timestamp = $2 WHERE gebruikerid = ${gebruikerId}`, [items, time])
+      return 200
     } else {
-      db.one(`INSERT INTO wishlist(gebruikerid, items, timestamp) VALUES ($1,$2,$3) RETURNING id`, [gebruikerId, items, time])
-        .catch(err => { throw new Error(err) })
-      return `The wishlist of user '${gebruikerId}' has been created`
+      db.one(`INSERT INTO wishlist(gebruikerid, items, timestamp) VALUES ($1,$2,$3)`, [gebruikerId, items, time])
+      return 200
     }
   },
   async selectShoppingCart({ userId }) {
@@ -587,7 +536,7 @@ var root = {
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
     if (!check.length) {
-      throw new Error(`The provided user doesn't exist`)
+      return 312
     }
     let cart = await db.manyOrNone(`SELECT * from shoppingcart WHERE gebruikerid = ${userId}`)
       .then(data => { return data })
@@ -602,18 +551,17 @@ var root = {
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
     if (!check.length) {
-      throw new Error(`The provided user doesn't exist`)
+      return 312
     }
     let current = await db.manyOrNone(`SELECT * from shoppingcart WHERE gebruikerid = ${gebruikerId}`)
     if (current.length) {
-      db.one(`UPDATE shoppingcart set items = $1, timestamp = $2
-              WHERE gebruikerid = ${gebruikerId}`, [items, time])
-      return `The shoppingcart of user '${gebruikerId}' has been updated`
-    } else {
-      db.one(`INSERT INTO shoppingcart(gebruikerid, items, timestamp) 
-              VALUES($1,$2,$3) RETURNING id`, [gebruikerId, items, time])
+      db.one(`UPDATE shoppingcart set items = $1, timestamp = $2 WHERE gebruikerid = ${gebruikerId}`, [items, time])
         .catch(err => { throw new Error(err) })
-      return `The shoppingcart of user '${gebruikerId}' has been created`
+      return 200
+    } else {
+      db.one(`INSERT INTO shoppingcart(gebruikerid, items, timestamp) VALUES($1,$2,$3) `, [gebruikerId, items, time])
+        .catch(err => { throw new Error(err) })
+      return 200
     }
   },
   async orderListSelect({ buyerId }) {
@@ -631,49 +579,36 @@ var root = {
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
     if (!selection.length) {
-      throw new Error("The given combination of 'ID'-'buyerId' doesn't exist")
+      return 313
     }
-    db.one(`UPDATE orderlist SET
-              status = $1
-              WHERE id = $2
-              AND buyerid = $3`, [newStatus, id, buyerId])
+    db.one(`UPDATE orderlist SET status = $1 WHERE id = $2 AND buyerid = $3`, [newStatus, id, buyerId])
       .catch(err => { throw new Error(err) })
-    return `The status of the selected order has been changed to: ${newStatus}`
+    return 200
   },
   async orderListInsert({ gebruikerId = 183, items, purchaseDate }) {
     items.forEach(element => {
-      db.one(`INSERT INTO orderlist(buyerid, items, purchasedate) VALUES($1,$2,$3) RETURNING ID`, [gebruikerId, element.foreignkey, purchaseDate])
-        .catch(err => {
-          console.log("oeps" + err + 'Oeps')
-          throw new Error(err)
-        })
+      db.one(`INSERT INTO orderlist(buyerid, items, purchasedate) VALUES($1,$2,$3)`, [gebruikerId, element.foreignkey, purchaseDate])
+        .catch(err => {throw new Error(err)})
     })
-    return "Succes"
+    return 200
   },
   async rentalListInsert({ gebruikerId, items, purchaseDate }) {
     items.forEach(element => {
       db.one(`INSERT INTO rentallist(buyerid,items,purchasedate,rentstart,rentstop) VALUES($1,$2,$3,$4,$5) RETURNING ID`, [gebruikerId, element.foreignkey, purchaseDate, element.startDate, element.stopDate])
-        .then(data => { console.log(`Inserted into row: ${data.id}`) })
-        .catch(err => {
-          console.log(`OEPS ${err} OEPS`)
-          throw new Error(err)
-        })
+        .catch(err => {throw new Error(err)})
     })
-    return "The data has successfully been inserted."
+    return 200
   },
   async me(req, res, next) {
     if (!res.headers.authorization) {
-      console.log(`\nUser not authenticated!\n`)
-      throw new Error('You are not authenticated!')
+      return 411
     }
     var decoded = jwt.verify(
       String(res.headers.authorization).slice(7),
       'E28BA7D908327F1F8F08E396D60DC6FBCDB734387C2C08FCD2CF8E4C09B36AB7'
-    );
-    console.log(`\nToken: ${String(res.headers.authorization).slice(7)}`)
-    console.log(`ID: ${decoded.id}\n`)
-    let query = (`SELECT * from gebruiker where id = ${decoded.id}`)
-    return await db.manyOrNone(query)
+    )
+    db.manyOrNone(`SELECT * from gebruiker where id = ${decoded.id}`)
+    return 200
   },
   //user signup
   async checkUser({ mail }) {
@@ -694,16 +629,14 @@ var root = {
 
     // Throw an error when a user with the same email exists
     if (user.length) {
-      throw new Error('User with this email already exists')
+      return 314
     }
 
     // Generate token when insertion is complete
-
     return await db.one('INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, housenumber, city, postalcode, paymentmethod) \
     VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id',
       [name, surname, mail, saltedPassword, aanhef, adres, housenumber, city, postalcode, paymentmethod])
       .then(data => {
-        console.log(`\nUser ID: ${data.id}`)
         let tokens = jwt.sign(
           { id: data.id },
           "E28BA7D908327F1F8F08E396D60DC6FBCDB734387C2C08FCD2CF8E4C09B36AB7",
@@ -724,36 +657,27 @@ var root = {
           token: tokens
         }
       })
-      .catch(err => {
-        throw new Error(err)
-        console.log(err)
-      })
+      .catch(err => {throw new Error(err)})
   },
   //user login
   async login({ email, password }) {
     const user = await db.manyOrNone('SELECT * from gebruiker where mail = $1', [email])
-      .then(data => {
-        return data
-      })
-
+      .then(data => {return data})
+      .catch(err => { throw new Error(err)})
     if (!user) {
-      throw new Error('No user with that email')
+      return 315
     }
-
     const valid = await bcrypt.compare(password, user[0].password)
 
     if (!valid) {
-      throw new Error('Incorrect password')
+      return 316
     }
-
-    console.log(`\nUser ID: ${user[0].id}`)
 
     let token = jwt.sign(
       { id: user[0].id },
       "E28BA7D908327F1F8F08E396D60DC6FBCDB734387C2C08FCD2CF8E4C09B36AB7",
       { expiresIn: '1d' }
     )
-    console.log(`Token: ${token}`)
 
     const userWithToken = {
       id: user[0].id,
