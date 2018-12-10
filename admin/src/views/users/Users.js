@@ -523,7 +523,7 @@ class Users extends Component {
             page: page,
             amount: rowsPerPage
           }}
-          pollInterval={1000}
+          // pollInterval={1000}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading... :)</p>;

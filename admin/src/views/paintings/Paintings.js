@@ -1018,7 +1018,7 @@ class Paintings extends Component {
             page: currentPage,
             amount: pageSize
           }}
-          pollInterval={1000}
+          // pollInterval={1000}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading... :)</p>;
