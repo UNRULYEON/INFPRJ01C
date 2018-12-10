@@ -113,33 +113,33 @@ const ADD_USER = gql`
 `;
 
 const EDIT_USER = gql`
-mutation AlterUser(
-  $id: Int!,
-  $name: String!
-  $surname: String!
-  $mail: String!
-  $password: String!
-  $aanhef: String!
-  $adres: String!
-  $city: String!
-  $postalcode: String!
-  $housenumber: String!
-  $paymentmethod: String!
-  $admin: Boolean!){
-  alterUser(
-    id: $id
-    name: $name
-    surname: $surname
-    mail: $mail
-    password: $password
-    aanhef: $aanhef
-    adres: $adres
-    city: $city
-    postalcode: $postalcode
-    housenumber: $housenumber
-    paymentmethod: $paymentmethod
-    admin: $admin)
-}
+  mutation AlterUser(
+    $id: Int!,
+    $name: String!
+    $surname: String!
+    $mail: String!
+    $password: String!
+    $aanhef: String!
+    $adres: String!
+    $city: String!
+    $postalcode: String!
+    $housenumber: String!
+    $paymentmethod: String!
+    $admin: Boolean!){
+    alterUser(
+      id: $id
+      name: $name
+      surname: $surname
+      mail: $mail
+      password: $password
+      aanhef: $aanhef
+      adres: $adres
+      city: $city
+      postalcode: $postalcode
+      housenumber: $housenumber
+      paymentmethod: $paymentmethod
+      admin: $admin)
+  }
 `;
 
 const theme = new createMuiTheme({
@@ -410,6 +410,7 @@ class Users extends Component {
     this.state = {
       activeStep: 0,
       dialogAddUser: false,
+      dialogEditUser: false,
       aanhef: 'Dhr.',
       name: '',
       nameError: false,
@@ -433,13 +434,13 @@ class Users extends Component {
       postalcodeError: false,
       postalcodeErrorMsg: '',
       city: '',
-      cityError: '',
-      cityErrorMsg: false,
+      cityError: false,
+      cityErrorMsg: '',
       paymentmethod: '',
       paymentmethodError: false,
       paymentmethodErrorMsg: '',
       admin: false,
-      adminError: '',
+      adminError: false,
       adminErrorMsg: '',
       ID: 404,
       page: 0,
@@ -1043,73 +1044,76 @@ class Users extends Component {
               </div>
             </DialogContent>
             <DialogActions className="buttonsInDialog">
-              <MuiThemeProvider theme={themeDeleteButton}>
-                <div className="dialog-action-delete">{activeStep === 0 ? (<Button variant="contained" color="primary">DELETE</Button>) : null}</div>
-              </MuiThemeProvider>
-              <div className="dialog-action-others"><Button onClick={this.handleClose}>
-                Annuleren
-              </Button>
-              </div>
-              {activeStep === 1 ? (
-                <div>
-                  <Button
-                    disabled={activeStep === 0}
-                    onClick={this.handleBack}
-                  >
-                    Terug
+                <MuiThemeProvider theme={themeDeleteButton}>
+                  <div className="dialog-action-delete">
+                    {activeStep === 0 ? (<Button variant="contained" color="primary">DELETE</Button>) : null}
+                  </div>
+                </MuiThemeProvider>
+                <div className="dialog-action-others">
+                  <Button onClick={this.handleClose}>
+                    Annuleren
                   </Button>
                 </div>
-              ) : null}
-              {activeStep === 1 ? (
-                <Mutation
-                  mutation={EDIT_USER}
-                  onCompleted={(data) => {
-                    console.log(`Query complete: ${data}`)
-                    this.handleClose()
-                    window.location.reload();
-                    this.props.handleSnackbarOpen('EDIT_USER_SUCCESS')
-                  }}
-                  onError={(err) => {
-                    console.log(`Query failed: ${err}`)
-                    this.props.handleSnackbarOpen('EDIT_USER_ERROR')
-                  }}
-                >
-                  {(alterUser, { data }) => (
-                    <div>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={e => {
-                          e.preventDefault()
+                {activeStep === 1 ? (
+                  <div>
+                    <Button
+                      disabled={activeStep === 0}
+                      onClick={this.handleBack}
+                    >
+                      Terug
+                  </Button>
+                  </div>
+                ) : null}
+                {activeStep === 1 ? (
+                  <Mutation
+                    mutation={EDIT_USER}
+                    onCompleted={(data) => {
+                      console.log(`Query complete: ${data}`)
+                      this.handleClose()
+                      window.location.reload();
+                      this.props.handleSnackbarOpen('EDIT_USER_SUCCESS')
+                    }}
+                    onError={(err) => {
+                      console.log(`Query failed: ${err}`)
+                      this.props.handleSnackbarOpen('EDIT_USER_ERROR')
+                    }}
+                  >
+                    {(alterUser) => (
+                      <div>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={e => {
+                            e.preventDefault()
 
-                          let variables = {
-                            id: this.state.ID,
-                            name: this.state.name,
-                            surname: this.state.surname,
-                            aanhef: this.state.aanhef,
-                            mail: this.state.mail,
-                            password: this.state.password,
-                            adres: this.state.adres,
-                            housenumber: this.state.housenumber,
-                            postalcode: this.state.postalcode,
-                            city: this.state.city,
-                            paymentmethod: this.state.paymentmethod,
-                            admin: this.state.admin,
-                          }
+                            let variables = {
+                              id: this.state.userID,
+                              name: this.state.name,
+                              surname: this.state.surname,
+                              aanhef: this.state.aanhef,
+                              mail: this.state.mail,
+                              password: this.state.password,
+                              adres: this.state.adres,
+                              housenumber: this.state.housenumber,
+                              postalcode: this.state.postalcode,
+                              city: this.state.city,
+                              paymentmethod: this.state.paymentmethod,
+                              admin: this.state.admin,
+                            }
 
-                          console.log(variables)
+                            console.log(variables)
 
-                          alterUser({ variables: variables })
+                            alterUser({ variables: variables })
 
-                        }}>
-                        Opslaan
+                          }}>
+                          Opslaan
                     </Button>
-                    </div>
-                  )}
-                </Mutation>
-              ) : (
-                  <Button variant="contained" color="primary" onClick={this.handleNext}>
-                    Volgende
+                      </div>
+                    )}
+                  </Mutation>
+                ) : (
+                    <Button variant="contained" color="primary" onClick={this.handleNext}>
+                      Volgende
               </Button>)}
             </DialogActions>
           </MuiThemeProvider>
