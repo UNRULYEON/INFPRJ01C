@@ -871,8 +871,7 @@ class Paintings extends Component {
       // eslint-disable-next-line no-alert
       onClick={() => this.handleAanpassenDialog(row.id)}
       style={{
-        cursor: 'pointer',
-        hover: true,
+        cursor: 'pointer'
       }}
     />
   )
@@ -972,8 +971,8 @@ class Paintings extends Component {
       ['period', this.state.period],
       ['description', this.state.description],
       ['physicalMedium', this.state.physicalMedium],
-      // ['src', this.state.src],
-      // ['bigsrc', this.state.bigsrc],
+      ['src', this.state.src],
+      ['bigsrc', this.state.bigsrc],
       ['principalMakersProductionPlaces', this.state.principalMakersProductionPlaces]]
 
       console.log(items)

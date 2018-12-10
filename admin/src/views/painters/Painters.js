@@ -33,6 +33,9 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 
+// Img
+import ImageOnLoad from 'react-image-onload'
+
 const PAINTERS = gql`
   query paintersPAG($page: Int!, $amount: Int!){
     paintersAdmin(page: $page, amount: $amount){
@@ -68,16 +71,29 @@ const GET_PAINTER_DETAILS = gql`
 
 
 const ADD_PAINTER = gql`
-  query collectionPainters{
-    painters{
-      id
-      name
-      city
-      dateofbirth
-      dateofdeath
-      occupation
-      nationality
-    }
+  mutation AddPainter(
+    $name: String!
+    $city: String!
+    $dateBirth: String!
+    $dateDeath: String!
+    $placeDeath: String!
+    $occupation: String!
+    $nationality: String!
+    $headerImage: String!
+    $thumbnail: String!
+    $description: String!){
+      addPainter(
+        name: $name
+        city: $city
+        dateBirth: $dateBirth
+        dateDeath: $dateDeath
+        placeDeath: $placeDeath
+        occupation: $occupation
+        nationality: $nationality
+        headerImage: $headerImage
+        thumbnail: $thumbnail
+        description: $description
+      )
   }
 `;
 
@@ -101,20 +117,75 @@ function getStepContent(stepIndex, state, handleChange) {
   switch (stepIndex) {
     case 0:
       return (
-
         <Grid container spacing={24}>
-          <Grid item xs={12}>
-            <FormControl fullWidth error={state.questionError}>
-              <InputLabel htmlFor="add-question">Vraag</InputLabel>
-              <Input id="add-question" multiline value={state.question} onChange={handleChange('question')} />
-              <FormHelperText id="add-question-error-text">{state.questionErrorMsg}</FormHelperText>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth error={state.nameError}>
+              <InputLabel htmlFor="add-name">Naam</InputLabel>
+              <Input id="add-name" value={state.name} onChange={handleChange('name')} />
+              <FormHelperText id="add-name-error-text">{state.nameErrorMsg}</FormHelperText>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth error={state.nationalityErrorMsg}>
+              <InputLabel htmlFor="add-nationality">Nationaliteit</InputLabel>
+              <Input id="add-nationality" value={state.nationality} onChange={handleChange('nationality')} />
+              <FormHelperText id="add-nationality-error-text">{state.nationalityErrorMsg}</FormHelperText>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth error={state.datebirthError}>
+              <InputLabel htmlFor="add-datebirth">Jaar van geboorte</InputLabel>
+              <Input id="add-datebirth" type="number" value={state.datebirth} onChange={handleChange('datebirth')} />
+              <FormHelperText id="add-datebirth-error-text">{state.datebirthErrorMsg}</FormHelperText>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth error={state.cityError}>
+              <InputLabel htmlFor="add-city">Stad van geboorte</InputLabel>
+              <Input id="add-city" value={state.city} onChange={handleChange('city')} />
+              <FormHelperText id="add-city-error-text">{state.cityErrorMsg}</FormHelperText>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth error={state.datedeathError}>
+              <InputLabel htmlFor="add-datedeath">Jaar van overlijden</InputLabel>
+              <Input id="add-datedeath" type="number" value={state.datedeath} onChange={handleChange('datedeath')} />
+              <FormHelperText id="add-datedeath-error-text">{state.datedeathErrorMsg}</FormHelperText>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth error={state.placedeathError}>
+              <InputLabel htmlFor="add-placedeath">Stad van overlijden</InputLabel>
+              <Input id="add-placedeath" value={state.placedeath} onChange={handleChange('placedeath')} />
+              <FormHelperText id="add-placedeath-error-text">{state.placedeathErrorMsg}</FormHelperText>
             </FormControl>
           </Grid>
           <Grid item xs={12}>
-            <FormControl fullWidth error={state.answerError}>
-              <InputLabel htmlFor="add-answer">Antwoord</InputLabel>
-              <Input id="add-answer" multiline value={state.answer} onChange={handleChange('answer')} />
-              <FormHelperText id="add-answer-error-text">{state.answerErrorMsg}</FormHelperText>
+            <FormControl fullWidth error={state.descriptionError}>
+              <InputLabel htmlFor="add-description">Beschrijving</InputLabel>
+              <Input id="add-description" multiline value={state.description} onChange={handleChange('description')} />
+              <FormHelperText id="add-description-error-text">{state.descriptionErrorMsg}</FormHelperText>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth error={state.headerimageError}>
+              <InputLabel htmlFor="add-headerimage">Header image (link)</InputLabel>
+              <Input id="add-headerimage" value={state.headerimage} onChange={handleChange('headerimage')} />
+              <FormHelperText id="add-headerimage-error-text">{state.headerimageErrorMsg}</FormHelperText>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth error={state.thumbnailError}>
+              <InputLabel htmlFor="add-thumbnail">Thumbnail (link)</InputLabel>
+              <Input id="add-thumbnail" value={state.thumbnail} onChange={handleChange('thumbnail')} />
+              <FormHelperText id="add-thumbnail-error-text">{state.thumbnailErrorMsg}</FormHelperText>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth error={state.occupationError}>
+              <InputLabel htmlFor="add-occupation">Beroep</InputLabel>
+              <Input id="add-occupation" multiline value={state.occupation} onChange={handleChange('occupation')} />
+              <FormHelperText id="add-occupation-error-text">{state.occupationErrorMsg}</FormHelperText>
             </FormControl>
           </Grid>
         </Grid>
@@ -123,13 +194,47 @@ function getStepContent(stepIndex, state, handleChange) {
       return (
         <Grid>
           <Grid container spacing={24}>
-            <Grid item xs={12} className="add-painting-review-container">
-              <span>Vraag</span>
-              <span>{state.question}</span>
+            <Grid item xs={12} className="add-painter-review-img-preview-container">
+              <img src={state.headerimage} alt="Preview" className="add-painter-review-img-preview"/>
+              {/* <ImageOnLoad
+                src={state.headerimage}
+                alt="Preview"
+                className="add-painter-review-img-preview"
+              /> */}
+            </Grid>
+          </Grid>
+          <Grid container spacing={24}>
+            <Grid item xs={12} sm={6} className="add-painting-review-container">
+              <span>Naam</span>
+              <span>{state.name}</span>
+            </Grid>
+            <Grid item xs={12} sm={6} className="add-painting-review-container">
+              <span>Nationaliteit</span>
+              <span>{state.nationality}</span>
+            </Grid>
+            <Grid item xs={12} sm={6} className="add-painting-review-container">
+              <span>Jaar van geboorte</span>
+              <span>{state.datebirth}</span>
+            </Grid>
+            <Grid item xs={12} sm={6} className="add-painting-review-container">
+              <span>Stad van geboorte</span>
+              <span>{state.city}</span>
+            </Grid>
+            <Grid item xs={12} sm={6} className="add-painting-review-container">
+              <span>Jaar van overlijden</span>
+              <span>{state.datedeath}</span>
+            </Grid>
+            <Grid item xs={12} sm={6} className="add-painting-review-container">
+              <span>Stad van overlijden</span>
+              <span>{state.placedeath}</span>
             </Grid>
             <Grid item xs={12} className="add-painting-review-container">
-              <span>Antwoord</span>
-              <span>{state.answer}</span>
+              <span>Beschrijving</span>
+              <span>{state.description}</span>
+            </Grid>
+            <Grid item xs={12} sm={6} className="add-painting-review-container">
+              <span>Beroep</span>
+              <span>{state.occupation}</span>
             </Grid>
           </Grid>
         </Grid>
@@ -202,6 +307,36 @@ class Painters extends Component {
     this.state = {
       activeStep: 0,
       dialogAddPainter: false,
+      name: '',
+      nameError: false,
+      nameErrorMsg: false,
+      city: '',
+      cityError: false,
+      cityErrorMsg: false,
+      datebirth: '',
+      datebirthError: false,
+      datebirthErrorMsg: false,
+      datedeath: '',
+      datedeathError: false,
+      datedeathErrorMsg: false,
+      placedeath: '',
+      placedeathError: false,
+      placedeathErrorMsg: false,
+      occupation: '',
+      occupationError: false,
+      occupationErrorMsg: false,
+      nationality: '',
+      nationalityError: false,
+      nationalityErrorMsg: false,
+      headerimage: '',
+      headerimageError: false,
+      headerimageErrorMsg: false,
+      thumbnail: '',
+      thumbnailError: false,
+      thumbnailErrorMsg: false,
+      description: '',
+      descriptionError: false,
+      descriptionErrorMsg: false,
       page: 0,
       rowsPerPage: 10,
     }
@@ -220,6 +355,34 @@ class Painters extends Component {
     this.setState({
       [name]: event.target.value,
     });
+
+    if (name === 'datebirth') {
+      if (event.target.value > new Date().getFullYear()) {
+        this.setState({
+          datebirthError: true,
+          datebirthErrorMsg: `Jaar van geboorte kan niet later dan ${new Date().getFullYear()} zijn`
+        });
+      } else {
+        this.setState({
+          datebirthError: false,
+          datebirthErrorMsg: ``
+        });
+      }
+    }
+
+    if (name === 'datedeath') {
+      if (event.target.value > new Date().getFullYear()) {
+        this.setState({
+          datedeathError: true,
+          datedeathErrorMsg: `Jaar van overlijden kan niet later dan ${new Date().getFullYear()} zijn`
+        });
+      } else {
+        this.setState({
+          datedeathError: false,
+          datedeathErrorMsg: ``
+        });
+      }
+    }
   };
 
   // Handle dialog whnen opening
@@ -231,11 +394,18 @@ class Painters extends Component {
 
   // Handle next button for stepper and check if fields are empty before continuing
   handleNext = () => {
-    this.setState(state => ({ activeStep: state.activeStep + 1, }));
-    if (!this.state.activeStep === 0) {
+    if (this.state.activeStep === 0) {
       let next = true
-      let items = [ ['question', this.state.question],
-                    ['answer', this.state.answer]]
+      let items = [ ['name', this.state.name],
+                    ['city', this.state.city],
+                    ['datebirth', this.state.datebirth],
+                    ['datedeath', this.state.datedeath],
+                    ['placedeath', this.state.placedeath],
+                    ['occupation', this.state.occupation],
+                    ['nationality', this.state.nationality],
+                    ['headerimage', this.state.headerimage],
+                    ['thumbnail', this.state.thumbnail],
+                    ['description', this.state.description]]
 
       console.log(items)
 
@@ -374,7 +544,7 @@ class Painters extends Component {
           disableEscapeKeyDown
           // scroll='scroll'
         >
-          <DialogTitle id="form-dialog-title">Schilderij toevoegen</DialogTitle>
+          <DialogTitle id="form-dialog-title">Schilder toevoegen</DialogTitle>
           <MuiThemeProvider theme={theme}>
             <DialogContent
               className="dialog-add-painting"
@@ -439,6 +609,16 @@ class Painters extends Component {
                         e.preventDefault()
 
                         let vars = {
+                          name: this.state.name,
+                          city: this.state.city,
+                          dateBirth: this.state.datebirth,
+                          dateDeath: this.state.datedeath,
+                          placeDeath: this.state.placedeath,
+                          occupation: this.state.occupation,
+                          nationality: this.state.nationality,
+                          headerImage: this.state.headerimage,
+                          thumbnail: this.state.thumbnail,
+                          description: this.state.description,
                         }
 
                         console.log(vars)
