@@ -348,6 +348,7 @@ var root = {
 
     db.one(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${painterId}, ${painting})`)
 
+    db.one(`UPDATE schilderijen SET document_vectors = (to_tsvector(coalesce('${title}'))) || (to_tsvector(coalesce('${principalmaker}'))) WHERE id_number = ${painting}`)
     return `Painting added to the product list`
   },
   //Alter products
@@ -382,6 +383,8 @@ var root = {
                           WHERE id_number = ${id_number}`,
       [id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker, price, rented, amountwatched])
       .then(data => { return data })
+    db.one(`UPDATE schilderijen SET document_vectors = (to_tsvector(coalesce('${title}'))) || (to_tsvector(coalesce('${principalmaker}'))) WHERE id_number = ${id_number}`)
+      return `Painting added to the product list`
   },
   //Delete products
   async deleteProduct({ id }) {
@@ -405,6 +408,8 @@ var root = {
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`, [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description])
       .then(data => { return data.id })
       .catch(err => { throw new Error(err) })
+    db.one(`UPDATE schilder SET document_vectors = (to_tsvector(coalesce('${name}'))) WHERE name = ${painter}`)
+      
   },
   async alterPainter({ name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched }) {
     const painter = await db.manyOrNone(`SELECT * from schilder WHERE name = ${name}`)
@@ -428,6 +433,7 @@ var root = {
                           WHERE name = ${name}`,
       [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched])
       .then(data => { return data })
+    db.one(`UPDATE schilder SET document_vectors = (to_tsvector(coalesce('${name}'))) WHERE name = ${painter}`)
   },
   async deletePainter({ name }) {
     let painter = await db.manyOrNone(`SELECT * from schilder WHERE name = ${name}`)
