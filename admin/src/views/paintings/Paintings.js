@@ -320,15 +320,15 @@ function getStepContent(stepIndex, state, handleChange, handeImage, handleChoose
                     if (error) return `Error! ${error.message}`;
 
                     let columns = [
-                      {name: 'id', title: 'ID'},
-                      {name: 'name', title: 'Naam'}
+                      { name: 'id', title: 'ID' },
+                      { name: 'name', title: 'Naam' }
                     ]
 
                     let rows = []
 
                     for (let i = 0; i < data.paintersAll.length; i++) {
                       rows.push(
-                        {id: data.paintersAll[i].id, name: data.paintersAll[i].name}
+                        { id: data.paintersAll[i].id, name: data.paintersAll[i].name }
                       )
                     }
                     return (
@@ -555,11 +555,11 @@ class Paintings extends Component {
     this.changeCurrentPage = this.changeCurrentPage.bind(this);
     this.changePageSize = pageSize => this.setState({ pageSize });
     this.changeSorting = sorting => this.setState({ sorting });
-    this.hiddenColumnNamesChange = (hiddenColumnNames) => {this.setState({ hiddenColumnNames });};
+    this.hiddenColumnNamesChange = (hiddenColumnNames) => { this.setState({ hiddenColumnNames }); };
   }
 
-  checkRented(){
-    if(this.state.rented == null){
+  checkRented() {
+    if (this.state.rented == null) {
       this.setState({
         rented: false,
       })
@@ -586,11 +586,11 @@ class Paintings extends Component {
                   physicalMedium: data.paintingByID[0].physicalmedium,
                   amount: data.paintingByID[0].amountofpaintings,
                   src: data.paintingByID[0].src,
-                  bigsrc: data.paintingByID[0].bigsrc,                  
+                  bigsrc: data.paintingByID[0].bigsrc,
                   principalMakersProductionPlaces: data.paintingByID[0].principalmakersproductionplaces,
                   productWidth: data.paintingByID[0].width,
                   productHeight: data.paintingByID[0].height,
-                  principalMaker: data.paintingByID[0].principalmaker,                  
+                  principalMaker: data.paintingByID[0].principalmaker,
                   price: data.paintingByID[0].price,
                   rented: data.paintingByID[0].rented,
                   amountwatched: data.paintingByID[0].amountwatched,
@@ -609,6 +609,21 @@ class Paintings extends Component {
                       <InputLabel>ID</InputLabel>
                       <Input disabled={true} value={state.paintingID} onChange={handleChange('title')} />
                     </FormControl>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    style={{
+                      display: 'flex',
+                      flexFlow: 'column nowrap',
+                      justifyContent: 'center'
+                    }}
+                    onClick={this.handleChoosePainterDialog}
+                  >
+                    <Button variant="outlined" fullWidth>
+                      {state.principalMaker.length > 0 ? state.principalMaker : 'Kies een schilder'}
+                    </Button>
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <FormControl fullWidth>
@@ -648,7 +663,7 @@ class Paintings extends Component {
                   <Grid item xs={12} sm={6}>
                     <FormControl fullWidth>
                       <InputLabel htmlFor="add-amount">Hoeveelheid (staat vast)</InputLabel>
-                      <Input id="add-amount" inputProps={{ readOnly: true, }} value={state.amount} />
+                      <Input id="add-amount" disabled={true} value={state.amount} />
                       <FormHelperText id="add-amount-error-text"></FormHelperText>
                     </FormControl>
                   </Grid>
@@ -662,12 +677,68 @@ class Paintings extends Component {
                   <Grid item xs={12} sm={6}>
                     <FormControl fullWidth>
                       <InputLabel htmlFor="add-price">Prijs (wordt berekend</InputLabel>
-                      <Input id="add-price" inputProps={{ readOnly: true, }} value={state.price} />
+                      <Input id="add-price" disabled={true} value={state.price} />
                       <FormHelperText id="add-price-error-text"></FormHelperText>
                     </FormControl>
                   </Grid>
-                </Grid>
 
+                  <Dialog
+                    open={this.state.dialogChoosePainter}
+                    onClose={this.handleChoosePainterDialogClose}
+                    disableBackdropClick
+                    disableEscapeKeyDown
+                  // scroll='scroll'
+                  >
+                    <DialogTitle id="form-dialog-title">Kies een schilder</DialogTitle>
+                    <MuiThemeProvider theme={theme}>
+                      <DialogContent>
+                        <Query query={PAINTERS}>
+                          {({ loading, error, data }) => {
+                            if (loading) return "Loading...";
+                            if (error) return `Error! ${error.message}`;
+
+                            let columns = [
+                              { name: 'id', title: 'ID' },
+                              { name: 'name', title: 'Naam' }
+                            ]
+
+                            let rows = []
+
+                            for (let i = 0; i < data.paintersAll.length; i++) {
+                              rows.push(
+                                { id: data.paintersAll[i].id, name: data.paintersAll[i].name }
+                              )
+                            }
+                            return (
+                              <GridR
+                                rows={rows}
+                                columns={columns}
+                              >
+                                <SearchState defaultValue="" />
+                                <IntegratedFiltering />
+                                <Table rowComponent={this.TableRowChoosePainter} />
+                                <TableHeaderRow />
+                                <Toolbar />
+                                <SearchPanel />
+                              </GridR>
+                            );
+                          }}
+                        </Query>
+                      </DialogContent>
+                      <DialogActions>
+                        <Button
+                          variant="outlined"
+                          fullWidth
+                          onClick={() => {
+                            this.handleChoosePainterDialogClose()
+                          }}
+                        >
+                          Annuleren
+                        </Button>
+                      </DialogActions>
+                    </MuiThemeProvider>
+                  </Dialog>
+                </Grid>
               )
             }}
           </Query>
@@ -1017,18 +1088,18 @@ class Paintings extends Component {
             page: currentPage,
             amount: pageSize
           }}
-          // pollInterval={1000}
+          pollInterval={1000}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading... :)</p>;
             if (error) return <p>Error :(</p>;
 
             let columns = [
-              {name: 'id', title: 'ID'},
-              {name: 'title', title: 'Titel'},
-              {name: 'principalmaker', title: 'Schilder'},
-              {name: 'releasedate', title: 'Jaar van uitgave'},
-              {name: 'description', title: 'Beschrijving'}
+              { name: 'id', title: 'ID' },
+              { name: 'title', title: 'Titel' },
+              { name: 'principalmaker', title: 'Schilder' },
+              { name: 'releasedate', title: 'Jaar van uitgave' },
+              { name: 'description', title: 'Beschrijving' }
             ]
 
             let rows = []
@@ -1068,7 +1139,7 @@ class Paintings extends Component {
                     rowComponent={this.TableRow}
                     columnExtensions={tableColumnExtensions}
                   />
-                  <TableHeaderRow showSortingControls/>
+                  <TableHeaderRow showSortingControls />
                   <TableColumnVisibility
                     hiddenColumnNames={hiddenColumnNames}
                     onHiddenColumnNamesChange={this.hiddenColumnNamesChange}

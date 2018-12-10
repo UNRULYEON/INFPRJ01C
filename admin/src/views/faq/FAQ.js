@@ -45,13 +45,19 @@ const GET_FAQ_DETAILS = gql`
       body
     }
   }
-`
+`;
 
 const ADD_FAQ = gql`
   mutation FAQ{
     add_faq
   }
-`
+`;
+
+const EDIT_FAQ = gql`
+mutation FAQ($id: Int!, $question: String!, $answer: String!){
+  faqUpdate(id: $id, question: $question, answer: $answer)
+}
+`;
 
 const theme = new createMuiTheme({
   palette: {
@@ -69,60 +75,63 @@ function getSteps() {
   return ['Vul informatie in', 'Review FAQ'];
 }
 
-function getStepContent(stepIndex, state, handleChange) {
-  switch (stepIndex) {
-    case 0:
-      return (
+// function getStepContent(stepIndex, state, handleChange) {
+//   switch (stepIndex) {
+//     case 0:
+//       return (
 
-        <Grid container spacing={24}>
-          <Grid item xs={12}>
-            <FormControl fullWidth error={state.questionError}>
-              <InputLabel htmlFor="add-question">Vraag</InputLabel>
-              <Input id="add-question" multiline value={state.question} onChange={handleChange('question')} />
-              <FormHelperText id="add-question-error-text">{state.questionErrorMsg}</FormHelperText>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12}>
-            <FormControl fullWidth error={state.answerError}>
-              <InputLabel htmlFor="add-answer">Antwoord</InputLabel>
-              <Input id="add-answer" multiline value={state.answer} onChange={handleChange('answer')} />
-              <FormHelperText id="add-answer-error-text">{state.answerErrorMsg}</FormHelperText>
-            </FormControl>
-          </Grid>
-        </Grid>
-      )
-    case 1:
-      return (
-        <Grid>
-          <Grid container spacing={24}>
-            <Grid item xs={12} className="add-painting-review-container">
-              <span>Vraag</span>
-              <span>{state.question}</span>
-            </Grid>
-            <Grid item xs={12} className="add-painting-review-container">
-              <span>Antwoord</span>
-              <span>{state.answer}</span>
-            </Grid>
-          </Grid>
-        </Grid>
-      )
-    default:
-      return 'Uknown stepIndex';
-  }
-}
+//         <Grid container spacing={24}>
+//           <Grid item xs={12}>
+//             <FormControl fullWidth error={state.questionError}>
+//               <InputLabel htmlFor="add-question">Vraag</InputLabel>
+//               <Input id="add-question" multiline value={state.question} onChange={handleChange('question')} />
+//               <FormHelperText id="add-question-error-text">{state.questionErrorMsg}</FormHelperText>
+//             </FormControl>
+//           </Grid>
+//           <Grid item xs={12}>
+//             <FormControl fullWidth error={state.answerError}>
+//               <InputLabel htmlFor="add-answer">Antwoord</InputLabel>
+//               <Input id="add-answer" multiline value={state.answer} onChange={handleChange('answer')} />
+//               <FormHelperText id="add-answer-error-text">{state.answerErrorMsg}</FormHelperText>
+//             </FormControl>
+//           </Grid>
+//         </Grid>
+//       )
+//     case 1:
+//       return (
+//         <Grid>
+//           <Grid container spacing={24}>
+//             <Grid item xs={12} className="add-painting-review-container">
+//               <span>Vraag</span>
+//               <span>{state.question}</span>
+//             </Grid>
+//             <Grid item xs={12} className="add-painting-review-container">
+//               <span>Antwoord</span>
+//               <span>{state.answer}</span>
+//             </Grid>
+//           </Grid>
+//         </Grid>
+//       )
+//     default:
+//       return 'Uknown stepIndex';
+//   }
+// }
 
 class FAQ extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      faqId: 0,
       activeStep: 0,
       dialogAddFAQ: false,
+      dialogEditFAQ: false,
       question: '',
       questionError: false,
       questionErrorMsg: '',
       answer: '',
       answerError: false,
-      answerErrorMsg: ''
+      answerErrorMsg: '',
+      addedData: false,
     }
   }
 
@@ -130,7 +139,6 @@ class FAQ extends Component {
     switch (stepIndex) {
       case 0:
         return (
-
           <Grid container spacing={24}>
             <Grid item xs={12}>
               <FormControl fullWidth error={state.questionError}>
@@ -168,6 +176,68 @@ class FAQ extends Component {
     }
   }
 
+  getEditStepContent(stepIndex, state, handleChange) {
+    switch (stepIndex) {
+      case 0:
+        return (
+          <Query
+            query={GET_FAQ_DETAILS}
+            variables={{ id: state.faqId }}
+            onCompleted={(data) => {
+              if (this.state.addedData === false) {
+                this.setState({
+                  question: data.faqId.title,
+                  answer: data.faqId.body,
+                  addedData: true,
+                })
+              }
+            }}
+          >
+            {({ loading, error }) => {
+              if (loading) return <p>Loading...</p>;
+              if (error) return <p>Error</p>;
+              return (
+                <Grid container spacing={24}>
+                  <Grid item xs={12}>
+                    <FormControl fullWidth error={state.questionError}>
+                      <InputLabel htmlFor="add-question">Vraag</InputLabel>
+                      <Input id="add-question" multiline value={state.question} onChange={handleChange('question')} />
+                      <FormHelperText id="add-question-error-text">{state.questionErrorMsg}</FormHelperText>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <FormControl fullWidth error={state.answerError}>
+                      <InputLabel htmlFor="add-answer">Antwoord</InputLabel>
+                      <Input id="add-answer" multiline value={state.answer} onChange={handleChange('answer')} />
+                      <FormHelperText id="add-answer-error-text">{state.answerErrorMsg}</FormHelperText>
+                    </FormControl>
+                  </Grid>
+                </Grid>
+              )
+            }}
+          </Query>
+
+        )
+      case 1:
+        return (
+          <Grid>
+            <Grid container spacing={24}>
+              <Grid item xs={12} className="add-painting-review-container">
+                <span>Vraag</span>
+                <span>{state.question}</span>
+              </Grid>
+              <Grid item xs={12} className="add-painting-review-container">
+                <span>Antwoord</span>
+                <span>{state.answer}</span>
+              </Grid>
+            </Grid>
+          </Grid>
+        )
+      default:
+        return 'Uknown stepIndex';
+    }
+  }
+
   // Handle input change
   handleChange = name => event => {
     this.setState({
@@ -176,10 +246,21 @@ class FAQ extends Component {
   };
 
   // Handle dialog whnen opening
-  handleClickOpen = () => {
+  handleClickOpenAdd = () => {
     this.setState({
-      dialogAddFAQ: true
+      dialogAddFAQ: true,
     });
+  };
+
+  // Handle dialog whnen opening
+  handleClickOpenEdit = (faqId) => {
+    this.setState({
+      dialogEditFAQ: true,
+      faqId: faqId,
+      addedData: false,
+    });
+
+
   };
 
   // Handle next button for stepper and check if fields are empty before continuing
@@ -220,8 +301,17 @@ class FAQ extends Component {
 
   // Handle dialog when closing
   handleClose = () => {
-    this.setState({ dialogAddFAQ: false });
+    this.setState({ dialogAddFAQ: false, dialogEditFAQ: false, question: '', answer: '', addedData: false,});
+    // this.emptyState()
   };
+
+  emptyState(){
+    this.setState({
+      question: '',
+      answer: '',
+      addedData: false,
+    })
+  }
 
   // Handle back button for stepper
   handleBack = () => {
@@ -238,14 +328,16 @@ class FAQ extends Component {
           <h2>Acties</h2>
           <Button
             variant="contained"
-            onClick={this.handleClickOpen}
+            onClick={this.handleClickOpenAdd}
           >
             FAQ toevoegen
           </Button>
         </div>
+
+        {/* Query Show all FAQ's */}
         <Query
           query={FAQS}
-          // pollInterval={1000}
+        // pollInterval={1000}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading... :)</p>;
@@ -262,7 +354,7 @@ class FAQ extends Component {
                   <TableBody>
                     {data.faq.map(row => {
                       return (
-                        <TableRow key={row.id}>
+                        <TableRow hover onClick={() => this.handleClickOpenEdit(row.id)} key={row.id}>
                           <TableCell component="th" scope="row">
                             {row.title}
                           </TableCell>
@@ -275,6 +367,7 @@ class FAQ extends Component {
             )
           }}
         </Query>
+        {/* Dialog Add FAQ */}
         <Dialog
           open={this.state.dialogAddFAQ}
           onClose={this.handleClose}
@@ -304,7 +397,7 @@ class FAQ extends Component {
                   </div>
                 ) : (
                     <div>
-                      <div>{getStepContent(activeStep, this.state, this.handleChange, this.handeImage)}</div>
+                      <div>{this.getStepContent(activeStep, this.state, this.handleChange, this.handeImage)}</div>
                     </div>
                   )}
               </div>
@@ -365,6 +458,101 @@ class FAQ extends Component {
             </DialogActions>
           </MuiThemeProvider>
         </Dialog>
+
+
+        {/* Dialog Edit FAQ */}
+        <Dialog
+          open={this.state.dialogEditFAQ}
+          onClose={this.handleClose}
+          disableBackdropClick
+          disableEscapeKeyDown
+        >
+          <DialogTitle id="form-dialog-title">Schilderij aanpassen</DialogTitle>
+          <MuiThemeProvider theme={theme}>
+            <DialogContent
+              className="dialog-add-painting"
+            >
+              <Stepper activeStep={activeStep} alternativeLabel>
+                {steps.map(label => {
+                  return (
+                    <Step key={label}>
+                      <StepLabel>{label}</StepLabel>
+                    </Step>
+                  );
+                })}
+              </Stepper>
+              <div>
+                {this.state.activeStep === steps.length ? (
+                  <div>
+                    <div>All steps completed</div>
+                    <Button onClick={this.handleReset}>Reset</Button>
+                  </div>
+                ) : (
+                    <div>
+                      <div>{this.getEditStepContent(activeStep, this.state, this.handleChange)}</div>
+                    </div>
+                  )}
+              </div>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={this.handleClose}>
+                Annuleren
+              </Button>
+              {activeStep === 1 ? (
+                <div>
+                  <Button
+                    disabled={activeStep === 0}
+                    onClick={this.handleBack}
+                  >
+                    Terug
+                  </Button>
+                </div>
+              ) : null}
+              {activeStep === 1 ? (
+                <Mutation
+                  mutation={EDIT_FAQ}
+                  onCompleted={(data) => {
+                    console.log(`Query complete: ${data.addProduct}`)
+                    this.handleClose()
+                    window.location.reload();
+                    this.props.handleSnackbarOpen('EDIT_FAQ_SUCCESS')
+                  }}
+                  onError={(err) => {
+                    console.log(`Query failed: ${err}`)
+                    this.props.handleSnackbarOpen('EDIT_FAQ_ERROR')
+                  }}
+                >
+                  {(editPainting, { data }) => (
+                    <div>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={e => {
+                          e.preventDefault()
+
+                          let vars = {
+                            id: this.state.faqId,
+                            question: this.state.question,
+                            answer: this.state.answer
+                          }
+
+                          console.log(vars)
+
+                          editPainting({ variables: vars })
+                        }}>
+                        Opslaan
+                    </Button>
+                    </div>
+                  )}
+                </Mutation>
+              ) : (
+                  <Button variant="contained" color="primary" onClick={this.handleNext}>
+                    Volgende
+              </Button>)}
+            </DialogActions>
+          </MuiThemeProvider>
+        </Dialog>
+
       </section>
     );
   }

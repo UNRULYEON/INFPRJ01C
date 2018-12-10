@@ -332,6 +332,7 @@ var root = {
 
     db.one(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${painterId}, ${painting})`)
 
+    db.one(`UPDATE schilderijen SET document_vectors = (to_tsvector(coalesce('${title}'))) || (to_tsvector(coalesce('${principalmaker}'))) WHERE id_number = ${painting}`)
     return 200
   },
   //Alter products
@@ -345,7 +346,7 @@ var root = {
     db.one(`UPDATE schilderijen set 
             id_number = $1, id = $2, title = $3, releasedate = $4, period = $5, description = $6, physicalmedium = $7, amountofpaintings = $8, src = $9, bigsrc = $10, principalmakersproductionplaces = $11, width = $12, height = $13, principalmaker = $14, price = $15, rented = $16, amountwatched = $17 WHERE id_number = ${id_number}`,
             [id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker, price, rented, amountwatched])
-
+    db.one(`UPDATE schilderijen SET document_vectors = (to_tsvector(coalesce('${title}'))) || (to_tsvector(coalesce('${principalmaker}'))) WHERE id_number = ${id_number}`)
       return 200
   },
   //Delete products
@@ -366,6 +367,7 @@ var root = {
       return 310
     }
     db.one(`INSERT INTO schilder(name, city, dateofbirth, dateofdeath, placeofdeath, occupation, nationality, headerimage, thumbnail, description) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`, [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description])
+    db.one(`UPDATE schilder SET document_vectors = (to_tsvector(coalesce('${name}'))) WHERE name = ${painter}`)
     return 200
   },
   async alterPainter({ name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched }) {
@@ -377,6 +379,7 @@ var root = {
     }
     db.one(`UPDATE schilder set
             name = $1, city = $2, dateofbirth = $3, dateofdeath = $4, placeofdeath = $5, occupation = $6, nationality = $7, headerimage = $8, thumbnail = $9, description = $10, amountwatched = $11 WHERE name = ${name}`, [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched])
+    db.one(`UPDATE schilder SET document_vectors = (to_tsvector(coalesce('${name}'))) WHERE name = ${name}`)
     return 200
     },
   async deletePainter({ name }) {
@@ -400,7 +403,7 @@ var root = {
     if (!faq.length) {
       return 311
     }
-      db.one(`UPDATE faq set question = $1,answer = $2 
+    db.one(`UPDATE faq set title = $1, body = $2 
               WHERE id = ${id}`, [question, answer])
       return 200
   },
@@ -417,11 +420,11 @@ var root = {
 
   //#region  FAQ
   faq: () => {
-    let query = ('SELECT * from faq')
+    let query = ('SELECT * from faq ORDER BY id')
     return db.manyOrNone(query)
   },
-  faqId: ({ id }) => {
-    return db.manyOrNone(`SELECT * from faq where id = ${id}`)
+  faqId: ( {id} ) => {
+    return db.oneOrNone(`SELECT * from faq where id = ${id}`)
   },
   //#endregion
 
