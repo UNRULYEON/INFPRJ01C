@@ -48,15 +48,32 @@ const GET_FAQ_DETAILS = gql`
 `;
 
 const ADD_FAQ = gql`
-  mutation FAQ{
-    add_faq
-  }
+mutation FAQ(
+  $question: String!, 
+  $answer: String!){
+  faqCreate(
+    question: $question,
+    answer: $answer
+  )
+}
 `;
 
 const EDIT_FAQ = gql`
-mutation FAQ($id: Int!, $question: String!, $answer: String!){
-  faqUpdate(id: $id, question: $question, answer: $answer)
+mutation FAQ(
+  $id: Int!, 
+  $question: String!, 
+  $answer: String!){
+  faqUpdate(
+    id: $id, 
+    question: $question, 
+    answer: $answer)
 }
+`;
+
+const DELETE_FAQ = gql`
+  mutation FAQ($id: Int!){
+    faqDelete(id: $id)
+  }
 `;
 
 const theme = new createMuiTheme({
@@ -71,51 +88,21 @@ const theme = new createMuiTheme({
   }
 });
 
+const themeDeleteButton = new createMuiTheme({
+  palette: {
+    primary: {
+      main: '#D32F2F'
+    },
+    type: 'dark'
+  },
+  typography: {
+    useNextVariants: true,
+  }
+});
+
 function getSteps() {
   return ['Vul informatie in', 'Review FAQ'];
 }
-
-// function getStepContent(stepIndex, state, handleChange) {
-//   switch (stepIndex) {
-//     case 0:
-//       return (
-
-//         <Grid container spacing={24}>
-//           <Grid item xs={12}>
-//             <FormControl fullWidth error={state.questionError}>
-//               <InputLabel htmlFor="add-question">Vraag</InputLabel>
-//               <Input id="add-question" multiline value={state.question} onChange={handleChange('question')} />
-//               <FormHelperText id="add-question-error-text">{state.questionErrorMsg}</FormHelperText>
-//             </FormControl>
-//           </Grid>
-//           <Grid item xs={12}>
-//             <FormControl fullWidth error={state.answerError}>
-//               <InputLabel htmlFor="add-answer">Antwoord</InputLabel>
-//               <Input id="add-answer" multiline value={state.answer} onChange={handleChange('answer')} />
-//               <FormHelperText id="add-answer-error-text">{state.answerErrorMsg}</FormHelperText>
-//             </FormControl>
-//           </Grid>
-//         </Grid>
-//       )
-//     case 1:
-//       return (
-//         <Grid>
-//           <Grid container spacing={24}>
-//             <Grid item xs={12} className="add-painting-review-container">
-//               <span>Vraag</span>
-//               <span>{state.question}</span>
-//             </Grid>
-//             <Grid item xs={12} className="add-painting-review-container">
-//               <span>Antwoord</span>
-//               <span>{state.answer}</span>
-//             </Grid>
-//           </Grid>
-//         </Grid>
-//       )
-//     default:
-//       return 'Uknown stepIndex';
-//   }
-// }
 
 class FAQ extends Component {
   constructor(props) {
@@ -132,6 +119,7 @@ class FAQ extends Component {
       answerError: false,
       answerErrorMsg: '',
       addedData: false,
+      toggleDelete: false,
     }
   }
 
@@ -242,6 +230,7 @@ class FAQ extends Component {
   handleChange = name => event => {
     this.setState({
       [name]: event.target.value,
+      addedData: false,
     });
   };
 
@@ -249,6 +238,10 @@ class FAQ extends Component {
   handleClickOpenAdd = () => {
     this.setState({
       dialogAddFAQ: true,
+      dialogEditFAQ: false,
+      question: '',
+      answer: '',
+      addedData: false,
     });
   };
 
@@ -301,17 +294,9 @@ class FAQ extends Component {
 
   // Handle dialog when closing
   handleClose = () => {
-    this.setState({ dialogAddFAQ: false, dialogEditFAQ: false, question: '', answer: '', addedData: false,});
+    this.setState({ dialogAddFAQ: false, dialogEditFAQ: false, question: '', answer: '', addedData: false, });
     // this.emptyState()
   };
-
-  emptyState(){
-    this.setState({
-      question: '',
-      answer: '',
-      addedData: false,
-    })
-  }
 
   // Handle back button for stepper
   handleBack = () => {
@@ -348,6 +333,7 @@ class FAQ extends Component {
                 <Table>
                   <TableHead>
                     <TableRow>
+                      <TableCell>ID</TableCell>
                       <TableCell>Vraag</TableCell>
                     </TableRow>
                   </TableHead>
@@ -355,6 +341,9 @@ class FAQ extends Component {
                     {data.faq.map(row => {
                       return (
                         <TableRow hover onClick={() => this.handleClickOpenEdit(row.id)} key={row.id}>
+                          <TableCell component="th" scope="row">
+                            {row.id}
+                          </TableCell>
                           <TableCell component="th" scope="row">
                             {row.title}
                           </TableCell>
@@ -422,6 +411,7 @@ class FAQ extends Component {
                   onCompleted={(data) => {
                     console.log(`Query complete: ${data.addProduct}`)
                     this.handleClose()
+                    window.location.reload();
                     this.setState({
                     })
                     this.props.handleSnackbarOpen('ADD_FAQ_SUCCESS')
@@ -440,6 +430,8 @@ class FAQ extends Component {
                           e.preventDefault()
 
                           let vars = {
+                            question: this.state.question,
+                            answer: this.state.answer,
                           }
 
                           console.log(vars)
@@ -494,61 +486,72 @@ class FAQ extends Component {
                   )}
               </div>
             </DialogContent>
-            <DialogActions>
-              <Button onClick={this.handleClose}>
-                Annuleren
+            <DialogActions className="buttonsInDialog">
+              <MuiThemeProvider theme={themeDeleteButton}>
+                <div className="dialog-action-delete">{activeStep === 0 ? (<Button align="left" variant="contained" color="primary">DELETE</Button>) : null}</div>
+              </MuiThemeProvider>
+              <div className="dialog-action-others">
+                <Button onClick={this.handleClose}>
+                  Annuleren
               </Button>
-              {activeStep === 1 ? (
-                <div>
-                  <Button
-                    disabled={activeStep === 0}
-                    onClick={this.handleBack}
-                  >
-                    Terug
+
+                {activeStep === 1 ? (
+                  <div>
+
+                    <Button
+                      disabled={activeStep === 0}
+                      onClick={this.handleBack}
+                    >
+                      Terug
                   </Button>
-                </div>
-              ) : null}
-              {activeStep === 1 ? (
-                <Mutation
-                  mutation={EDIT_FAQ}
-                  onCompleted={(data) => {
-                    console.log(`Query complete: ${data.addProduct}`)
-                    this.handleClose()
-                    window.location.reload();
-                    this.props.handleSnackbarOpen('EDIT_FAQ_SUCCESS')
-                  }}
-                  onError={(err) => {
-                    console.log(`Query failed: ${err}`)
-                    this.props.handleSnackbarOpen('EDIT_FAQ_ERROR')
-                  }}
-                >
-                  {(editPainting, { data }) => (
-                    <div>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={e => {
-                          e.preventDefault()
+                  </div>
+                ) : null}
+                {activeStep === 1 ? (
+                  <div>
 
-                          let vars = {
-                            id: this.state.faqId,
-                            question: this.state.question,
-                            answer: this.state.answer
-                          }
+                    <Mutation
+                      mutation={EDIT_FAQ}
+                      onCompleted={(data) => {
+                        console.log(`Query complete: ${data.addProduct}`)
+                        this.handleClose()
+                        window.location.reload();
+                        this.props.handleSnackbarOpen('EDIT_FAQ_SUCCESS')
+                      }}
+                      onError={(err) => {
+                        console.log(`Query failed: ${err}`)
+                        this.props.handleSnackbarOpen('EDIT_FAQ_ERROR')
+                      }}
+                    >
+                      {(editPainting, { data }) => (
+                        <div>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={e => {
+                              e.preventDefault()
 
-                          console.log(vars)
+                              let vars = {
+                                id: this.state.faqId,
+                                question: this.state.question,
+                                answer: this.state.answer
+                              }
 
-                          editPainting({ variables: vars })
-                        }}>
-                        Opslaan
+                              console.log(vars)
+
+                              editPainting({ variables: vars })
+                            }}>
+                            Opslaan
                     </Button>
-                    </div>
-                  )}
-                </Mutation>
-              ) : (
-                  <Button variant="contained" color="primary" onClick={this.handleNext}>
-                    Volgende
-              </Button>)}
+                        </div>
+                      )}
+                    </Mutation>
+                  </div>
+                ) : (
+                    <div>
+                      <Button variant="contained" color="primary" onClick={this.handleNext}>
+                        Volgende
+              </Button></div>)}
+              </div>
             </DialogActions>
           </MuiThemeProvider>
         </Dialog>

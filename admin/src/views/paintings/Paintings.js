@@ -206,6 +206,18 @@ const theme = new createMuiTheme({
   }
 });
 
+const themeDeleteButton = new createMuiTheme({
+  palette: {
+    primary: {
+      main: '#D32F2F'
+    },
+    type: 'dark'
+  },
+  typography: {
+    useNextVariants: true,
+  }
+});
+
 function getStepsAanmaken() {
   return ['Vul informatie in', 'Review schilderij'];
 }
@@ -1298,13 +1310,16 @@ class Paintings extends Component {
               )}
 
           </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleClose}>Annuleren</Button>
+          <DialogActions className="buttonsInDialog">
+            <MuiThemeProvider theme={themeDeleteButton}>
+              <div className="dialog-action-delete">{activeStep === 0 ? (<Button align="left" variant="contained" color="primary">DELETE</Button>) : null}</div>
+            </MuiThemeProvider>
+            <div className="dialog-action-others"><Button onClick={this.handleClose}>Annuleren</Button></div>
             {activeStep === 1 ? (
               <div>
                 <Button disabled={activeStep === 0} onClick={this.handleBack}>
                   Terug
-                      </Button>
+                </Button>
               </div>
             ) : null}
             {activeStep === 1 ? (
