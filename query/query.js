@@ -475,8 +475,8 @@ var root = {
     let query = ('SELECT * from faq')
     return db.manyOrNone(query)
   },
-  faqId: ({ id }) => {
-    return db.manyOrNone(`SELECT * from faq where id = ${id}`)
+  faqId: ( {id} ) => {
+    return db.oneOrNone(`SELECT * from faq where id = ${id}`)
   },
   dateToString: (givenDate) => {
     let DateDB = givenDate.toString()

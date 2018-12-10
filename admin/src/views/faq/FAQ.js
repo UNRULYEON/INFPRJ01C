@@ -45,13 +45,13 @@ const GET_FAQ_DETAILS = gql`
       body
     }
   }
-`
+`;
 
 const ADD_FAQ = gql`
   mutation FAQ{
     add_faq
   }
-`
+`;
 
 const theme = new createMuiTheme({
   palette: {
