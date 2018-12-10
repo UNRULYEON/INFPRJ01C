@@ -30,3 +30,12 @@ section {
 .footer-actions{
   flex-shrink: 0;
 }
+
+tbody > tr{
+  transition: .2s all ease-in-out;
+}
+
+tbody > tr:hover{
+  background-color: #515151;
+  transition: .2s all ease-in-out;
+}
