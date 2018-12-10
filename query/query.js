@@ -379,7 +379,7 @@ var root = {
     }
     db.one(`UPDATE schilder set
             name = $1, city = $2, dateofbirth = $3, dateofdeath = $4, placeofdeath = $5, occupation = $6, nationality = $7, headerimage = $8, thumbnail = $9, description = $10, amountwatched = $11 WHERE name = ${name}`, [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched])
-    db.one(`UPDATE schilder SET document_vectors = (to_tsvector(coalesce('${name}'))) WHERE name = ${painter}`)
+    db.one(`UPDATE schilder SET document_vectors = (to_tsvector(coalesce('${name}'))) WHERE name = ${name}`)
     return 200
     },
   async deletePainter({ name }) {
