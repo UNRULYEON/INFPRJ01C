@@ -400,7 +400,7 @@ var root = {
     if (!faq.length) {
       return 311
     }
-      db.one(`UPDATE faq set question = $1,answer = $2 
+    db.one(`UPDATE faq set title = $1, body = $2 
               WHERE id = ${id}`, [question, answer])
       return 200
   },
@@ -417,7 +417,7 @@ var root = {
 
   //#region  FAQ
   faq: () => {
-    let query = ('SELECT * from faq')
+    let query = ('SELECT * from faq ORDER BY id')
     return db.manyOrNone(query)
   },
   faqId: ({ id }) => {
