@@ -194,6 +194,12 @@ const EDIT_PAINTING = gql`
   }
 `;
 
+const DELETE_PAINTING = gql`
+  mutation PRODUCT($id: Int!){
+    deleteProduct(id: $id)
+  }
+`;
+
 const theme = new createMuiTheme({
   palette: {
     primary: {
@@ -1311,7 +1317,44 @@ class Paintings extends Component {
           </DialogContent>
           <DialogActions className="buttonsInDialog">
             <MuiThemeProvider theme={themeDeleteButton}>
-              <div className="dialog-action-delete">{activeStep === 0 ? (<Button align="left" variant="contained" color="primary">DELETE</Button>) : null}</div>
+              <div className="dialog-action-delete">
+                {activeStep === 0 ? (
+                  <Mutation
+                    mutation={DELETE_PAINTING}
+                    onCompleted={(data) => {
+                      console.log(`Mutation complete: ${data.deleteProduct}`)
+                      this.handleClose()
+                      window.location.reload();
+                      this.props.handleSnackbarOpen('DELETE_PAINTING_SUCCESS')
+                    }}
+                    onError={(err) => {
+                      console.log(`Mutation failed: ${err}`)
+                      this.props.handleSnackbarOpen('DELETE_PAINTING_ERROR')
+                    }}
+                  >
+                    {(deletePainting) => (
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={e => {
+                          e.preventDefault()
+
+                          let vars = {
+                            id: this.state.paintingID,
+                          }
+
+                          console.log(vars)
+
+                          deletePainting({ variables: vars })
+                        }}
+                      >
+                        DELETE
+                      </Button>
+                    )}
+
+                  </Mutation>
+
+                ) : null}</div>
             </MuiThemeProvider>
             <div className="dialog-action-others"><Button onClick={this.handleClose}>Annuleren</Button></div>
             {activeStep === 1 ? (

@@ -504,7 +504,6 @@ class FAQ extends Component {
                     >
                       {(deletePainting) => (
                         <Button
-                          align="left"
                           variant="contained"
                           color="primary"
                           onClick={e => {
