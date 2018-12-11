@@ -295,7 +295,7 @@ var root = {
       // .catch(err => {throw new Error(err)})
     return 200
   },
-  async alterUser({ id, name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod }) {
+  async alterUser({ id, name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin}) {
     const user = await db.manyOrNone(`SELECT * from gebruiker where id = ${[id]}`)
       .then(data => { return data })
       .catch(err => { throw new Error(err)})
@@ -306,8 +306,8 @@ var root = {
     db.one(`UPDATE gebruiker set 
             name = $1, surname = $2, mail = $3, password = $4,
             aanhef = $5, adres = $6, city = $7, postalcode = $8,
-            housenumber = $9, paymentmethod = $10 WHERE id = ${id}`,
-            [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber, paymentmethod])
+            housenumber = $9, paymentmethod = $10, admin = $11 WHERE id = ${id}`,
+            [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin])
         .catch(err => {throw new Error(510)})
       return 200
   },
