@@ -344,6 +344,20 @@ class App extends Component {
           snackbarMessage: "Er is een fout opgetreden bij het aanpassen van een gebruiker"
         });
         break;
+      case 'DELETE_FAQ_SUCCESS':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "Item is successvol verwijderd"
+        });
+        break;
+      case 'DELETE_FAQ_ERROR':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "error",
+          snackbarMessage: "Er is een fout opgetreden bij het verwijderen van een item"
+        });
+        break;
       default:
         break;
     }

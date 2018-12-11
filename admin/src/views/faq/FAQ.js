@@ -408,7 +408,7 @@ class FAQ extends Component {
                 <Mutation
                   mutation={ADD_FAQ}
                   onCompleted={(data) => {
-                    console.log(`Query complete: ${data.addProduct}`)
+                    console.log(`Query complete: ${data.faqCreate}`)
                     this.handleClose()
                     window.location.reload();
                     this.setState({
@@ -487,7 +487,45 @@ class FAQ extends Component {
             </DialogContent>
             <DialogActions className="buttonsInDialog">
               <MuiThemeProvider theme={themeDeleteButton}>
-                <div className="dialog-action-delete">{activeStep === 0 ? (<Button align="left" variant="contained" color="primary">DELETE</Button>) : null}</div>
+                <div className="dialog-action-delete">
+                  {activeStep === 0 ? (
+                    <Mutation
+                      mutation={DELETE_FAQ}
+                      onCompleted={(data) => {
+                        console.log(`Mutation complete: ${data.faqDelete}`)
+                        this.handleClose()
+                        window.location.reload();
+                        this.props.handleSnackbarOpen('DELETE_FAQ_SUCCESS')
+                      }}
+                      onError={(err) => {
+                        console.log(`Mutation failed: ${err}`)
+                        this.props.handleSnackbarOpen('DELETE_FAQ_ERROR')
+                      }}
+                    >
+                      {(deletePainting) => (
+                        <Button
+                          align="left"
+                          variant="contained"
+                          color="primary"
+                          onClick={e => {
+                            e.preventDefault()
+
+                            let vars = {
+                              id: this.state.faqId,
+                            }
+
+                            console.log(vars)
+
+                            deletePainting({ variables: vars })
+                          }}
+                        >
+                          DELETE
+                        </Button>
+                      )}
+                    </Mutation>
+
+                  ) : null}
+                </div>
               </MuiThemeProvider>
               <div className="dialog-action-others">
                 <Button onClick={this.handleClose}>
@@ -511,7 +549,7 @@ class FAQ extends Component {
                     <Mutation
                       mutation={EDIT_FAQ}
                       onCompleted={(data) => {
-                        console.log(`Query complete: ${data.addProduct}`)
+                        console.log(`Query complete: ${data.faqUpdate}`)
                         this.handleClose()
                         window.location.reload();
                         this.props.handleSnackbarOpen('EDIT_FAQ_SUCCESS')
@@ -538,9 +576,10 @@ class FAQ extends Component {
                               console.log(vars)
 
                               editPainting({ variables: vars })
-                            }}>
+                            }}
+                          >
                             Opslaan
-                    </Button>
+                          </Button>
                         </div>
                       )}
                     </Mutation>
