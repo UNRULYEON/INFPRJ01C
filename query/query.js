@@ -364,11 +364,12 @@ var root = {
   async addPainter({ name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description }) {
     const painter = await db.manyOrNone(`SELECT name from schilder where name = $1`, [name])
     if (painter.length) {
-      console.log('painter already exists')
       return 310
     }
     let id = await db.one(`INSERT INTO schilder(name, city, dateofbirth, dateofdeath, placeofdeath, occupation, nationality, headerimage, thumbnail, description) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`, [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description])
-    db.manyOrNone('UPDATE schilder SET document_vectors = (to_tsvector(coalesce(\'\'$1\'\'))) WHERE id = $2', [name, id.id])
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
+    db.one('UPDATE schilder SET document_vectors = (to_tsvector(coalesce(\'\'$1\'\'))) WHERE id = $2', [name, id])
     return 200
   },
   async alterPainter({ name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched }) {
@@ -378,9 +379,11 @@ var root = {
     if (!painter.length) {
       return 310
     }
-    db.one(`UPDATE schilder set
+    let id = db.one(`UPDATE schilder set
             name = $1, city = $2, dateofbirth = $3, dateofdeath = $4, placeofdeath = $5, occupation = $6, nationality = $7, headerimage = $8, thumbnail = $9, description = $10, amountwatched = $11 WHERE name = ${name} RETURNING id`, [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched])
-    db.manyOrNone('UPDATE schilder SET document_vectors = (to_tsvector(coalesce(\'\'$1\'\'))) WHERE id = $2', [name, id.id])
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
+    db.one('UPDATE schilder SET document_vectors = (to_tsvector(coalesce(\'\'$1\'\'))) WHERE id = $2', [name, id])
     return 200
     },
   async deletePainter({ name }) {
