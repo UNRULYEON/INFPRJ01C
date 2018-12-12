@@ -193,6 +193,13 @@ var root = {
   papatabel: () => {
     return db.manyOrNone(`SELECT * FROM papatabel`)
   },
+  async babyTabelSelect({tabelName}){
+    console.log(`\nBabyselect`)
+    let init = await db.manyOrNone(`SELECT * FROM papatabel where naam = ${tabelName}`)
+    console.log(init)
+    let query = await db.manyOrNone(`SELECT * FROM ${tabelName}`)
+    console.log(query)
+  },
   //Create tabel and insert data
   async createBabyTabel({ tabelnaam, foreignkey, type }) {
     if (tabelnaam == "") {
@@ -212,6 +219,7 @@ var root = {
     db.one(`CREATE TABLE ${tabelnaam} (id serial PRIMARY KEY, foreignKey int)`)
       .catch(err => { throw new Error(err)})
 
+    console.log(foreignkey)
     //Inserting all data into the table
     foreignkey.forEach(element => {
       db.one(`INSERT INTO ${tabelnaam}(foreignkey) VALUES($1)`, [element.foreignkey])

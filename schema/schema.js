@@ -46,6 +46,7 @@ var schema = buildSchema(`
     """Test to see if the server is running"""
     status: Int 
     papatabel: [PapaGet]
+    babyTabelSelect(tabelName: String!): [BabyReturn]
     orderListSelect(buyerId: Int!): [Orders]
     selectShoppingCart(userId: Int!): [Cart]
     searchbar(query: String!, page: Int!, amount: Int): searchResult
@@ -99,6 +100,10 @@ var schema = buildSchema(`
     naam: String,
     type: String
   },
+  type BabyReturn{
+    id: Int!,
+    foreignKey: Int!
+  }
   type Cart{
     id: Int,
     gebruikerid: Int,
