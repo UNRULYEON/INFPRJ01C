@@ -31,11 +31,24 @@ section {
   flex-shrink: 0;
 }
 
-tbody > tr{
-  /* transition: .2s all ease-in-out; */
-}
-
 tbody > tr:hover{
   background-color: #515151;
   /* transition: .2s all ease-in-out; */
+}
+
+.buttonsInDialog {
+  display: flex;
+  flex-flow: row nowrap;
+  padding: 0 24px 15px;
+}
+
+.dialog-action-delete{
+  display: flex;
+  flex-basis: 50%;
+}
+
+.dialog-action-others{
+  display: flex;
+  flex-basis: 50%;
+  justify-content: flex-end;
 }

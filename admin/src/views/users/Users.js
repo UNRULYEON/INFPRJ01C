@@ -112,10 +112,58 @@ const ADD_USER = gql`
   }
 `;
 
+const EDIT_USER = gql`
+  mutation AlterUser(
+    $id: Int!,
+    $name: String!
+    $surname: String!
+    $mail: String!
+    $password: String!
+    $aanhef: String!
+    $adres: String!
+    $city: String!
+    $postalcode: String!
+    $housenumber: String!
+    $paymentmethod: String!
+    $admin: Boolean!){
+    alterUser(
+      id: $id
+      name: $name
+      surname: $surname
+      mail: $mail
+      password: $password
+      aanhef: $aanhef
+      adres: $adres
+      city: $city
+      postalcode: $postalcode
+      housenumber: $housenumber
+      paymentmethod: $paymentmethod
+      admin: $admin)
+  }
+`;
+
+const DELETE_USER = gql`
+  mutation USER($id: Int!){
+    deleteUser(id: $id)
+  }
+`
+
 const theme = new createMuiTheme({
   palette: {
     primary: {
       main: '#FFFFFF'
+    },
+    type: 'dark'
+  },
+  typography: {
+    useNextVariants: true,
+  }
+});
+
+const themeDeleteButton = new createMuiTheme({
+  palette: {
+    primary: {
+      main: '#D32F2F'
     },
     type: 'dark'
   },
@@ -368,6 +416,7 @@ class Users extends Component {
     this.state = {
       activeStep: 0,
       dialogAddUser: false,
+      dialogEditUser: false,
       aanhef: 'Dhr.',
       name: '',
       nameError: false,
@@ -391,17 +440,223 @@ class Users extends Component {
       postalcodeError: false,
       postalcodeErrorMsg: '',
       city: '',
-      cityError: '',
-      cityErrorMsg: false,
+      cityError: false,
+      cityErrorMsg: '',
       paymentmethod: '',
       paymentmethodError: false,
       paymentmethodErrorMsg: '',
       admin: false,
-      adminError: '',
+      adminError: false,
       adminErrorMsg: '',
       ID: 404,
       page: 0,
       rowsPerPage: 10,
+      userID: 0,
+      addedData: false,
+    }
+  }
+
+  // Handle dialog whnen opening
+  handleClickOpenEdit = (userID) => {
+    this.setState({
+      dialogEditUser: true,
+      userID: userID,
+      addedData: false,
+    });
+  }
+
+  getEditStepContent(stepIndex, state, handleChange) {
+    switch (stepIndex) {
+      case 0:
+        return (
+          <Query
+            query={GET_USER_DETAILS}
+            variables={{ id: state.userID }}
+            onCompleted={(data) => {
+              if (this.state.addedData === false) {
+                this.setState({
+                  userID: data.selectUserById.id,
+                  aanhef: data.selectUserById.aanhef,
+                  name: data.selectUserById.name,
+                  surname: data.selectUserById.surname,
+                  mail: data.selectUserById.mail,
+                  password: data.selectUserById.password,
+                  adres: data.selectUserById.adres,
+                  housenumber: data.selectUserById.housenumber,
+                  postalcode: data.selectUserById.postalcode,
+                  city: data.selectUserById.city,
+                  paymentmethod: data.selectUserById.paymentmethod,
+                  admin: data.selectUserById.admin,
+                  addedData: true,
+                })
+              }
+            }}
+          >
+            {({ loading, error }) => {
+              if (loading) return <p>Loading...</p>;
+              if (error) return <p>Error</p>;
+
+              return (
+                <Grid container spacing={24}>
+                  <Grid item xs={12} sm={2}>
+                    <FormControl component="fieldset" className="order-form-details-radio">
+                      <RadioGroup
+                        className="order-form-details-radio"
+                        aria-label="Aanhef"
+                        name="aanhef"
+                        value={state.aanhef}
+                        onChange={handleChange('aanhef')}
+                      >
+                        <FormControlLabel value="Dhr." control={<Radio color="primary" />} label="Dhr." />
+                        <FormControlLabel value="Mevr." control={<Radio color="primary" />} label="Mevr." />
+                      </RadioGroup>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={5}>
+                    <FormControl fullWidth error={state.nameError}>
+                      <InputLabel htmlFor="add-name">Naam</InputLabel>
+                      <Input id="add-name" value={state.name} onChange={handleChange('name')} />
+                      <FormHelperText id="add-name-error-text">{state.nameErrorMsg}</FormHelperText>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={5}>
+                    <FormControl fullWidth error={state.surnameError}>
+                      <InputLabel htmlFor="add-surname">Achternaam</InputLabel>
+                      <Input id="add-surname" value={state.surname} onChange={handleChange('surname')} />
+                      <FormHelperText id="add-surname-error-text">{state.surnameErrorMsg}</FormHelperText>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth error={state.mailError}>
+                      <InputLabel htmlFor="add-mail">E-mail</InputLabel>
+                      <Input id="add-mail" type="mail" value={state.mail} onChange={handleChange('mail')} />
+                      <FormHelperText id="add-mail-error-text">{state.mailErrorMsg}</FormHelperText>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth error={state.adresError}>
+                      <InputLabel htmlFor="add-adres">Adres</InputLabel>
+                      <Input id="add-adres" value={state.adres} onChange={handleChange('adres')} />
+                      <FormHelperText id="add-adres-error-text">{state.adresErrorMsg}</FormHelperText>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth error={state.housenumberError}>
+                      <InputLabel htmlFor="add-housenumber">Huisnummer</InputLabel>
+                      <Input id="add-housenumber" value={state.housenumber} onChange={handleChange('housenumber')} />
+                      <FormHelperText id="add-housenumber-error-text">{state.housenumberErrorMsg}</FormHelperText>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth error={state.postalcodeError}>
+                      <InputLabel htmlFor="add-postalcode">Postcode</InputLabel>
+                      <Input id="add-postalcode" value={state.postalcode} onChange={handleChange('postalcode')} />
+                      <FormHelperText id="add-postalcode-error-text">{state.postalcodeErrorMsg}</FormHelperText>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth error={state.cityError}>
+                      <InputLabel htmlFor="add-city">Stad</InputLabel>
+                      <Input id="add-city" value={state.city} onChange={handleChange('city')} />
+                      <FormHelperText id="add-city-error-text">{state.cityErrorMsg}</FormHelperText>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth error={state.paymentmethodError}>
+                      <InputLabel htmlFor="name-paymentmethod">Betaalwijze</InputLabel>
+                      <Select
+                        value={state.paymentmethod}
+                        onChange={handleChange('paymentmethod')}
+                        name="Betaalwijze"
+                        renderValue={value => `${value}`}
+                        input={<Input id="name-paymentmethod" />}
+                      >
+                        <MenuItem value="">
+                          <em>Geen</em>
+                        </MenuItem>
+                        <MenuItem value="iDeal">iDeal</MenuItem>
+                        <MenuItem value="Creditcard">Creditcard</MenuItem>
+                        <MenuItem value="Paypal">Paypal</MenuItem>
+                      </Select>
+                      <FormHelperText>{state.paymentmethodErrorMsg}</FormHelperText>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormGroup>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={state.admin}
+                            onChange={handleChange('admin')}
+                            value="admin"
+                          />
+                        }
+                        label="Admin"
+                      />
+                    </FormGroup>
+
+                    <FormControl error={state.adminError} component="fieldset">
+                      <FormLabel component="legend">Is de gebruiker een admin?</FormLabel>
+                      <FormGroup>
+                        <FormControlLabel
+                          control={
+                            <Checkbox checked={state.admin} onChange={handleChange('admin')} value="gilad" />
+                          }
+                          label="Admin"
+                        />
+                      </FormGroup>
+                      <FormHelperText>{state.adminErrorMsg}</FormHelperText>
+                    </FormControl>
+                  </Grid>
+                </Grid>
+              )
+            }}
+          </Query>
+        )
+      case 1:
+        return (
+          <Grid>
+            <Grid container spacing={24}>
+              <Grid item xs={12} className="add-user-review-container">
+                <span className="add-user-name-surname">{state.aanhef} {state.name} {state.surname}</span>
+                <span className="add-user-role">{state.admin ? 'Admin' : 'Gebruiker'}</span>
+              </Grid>
+              <Grid item xs={3} className="add-user-review-container">
+                <span className="add-user-column-left">Mail</span>
+              </Grid>
+              <Grid item xs={7} className="add-user-review-container">
+                <span className="add-user-column-right">{state.mail}</span>
+              </Grid>
+              <Grid item xs={12} className="add-user-review-container-divider" />
+              <Grid item xs={3} className="add-user-review-container">
+                <span className="add-user-column-left">Wachtwoord</span>
+              </Grid>
+              <Grid item xs={7} className="add-user-review-container">
+                <span className="add-user-column-right">{state.password}</span>
+              </Grid>
+              <Grid item xs={12} className="add-user-review-container-divider" />
+              <Grid item xs={3} className="add-user-review-container">
+                <span className="add-user-column-left">Adres</span>
+              </Grid>
+              <Grid item xs={7} className="add-user-review-container">
+                <span className="add-user-column-right">{state.adres} {state.housenumber}</span>
+              </Grid>
+              <Grid item xs={3} className="add-user-review-container"></Grid>
+              <Grid item xs={7} className="add-user-review-container" style={{ padding: '0 12px 12px 12px' }}>
+                <span className="add-user-column-right">{state.postalcode} {state.city}</span>
+              </Grid>
+              <Grid item xs={12} className="add-user-review-container-divider" />
+              <Grid item xs={3} className="add-user-review-container">
+                <span className="add-user-column-left">Betaalwijze</span>
+              </Grid>
+              <Grid item xs={7} className="add-user-review-container">
+                <span className="add-user-column-right">{state.paymentmethod}</span>
+              </Grid>
+            </Grid>
+          </Grid>
+        )
+      default:
+        return 'Uknown stepIndex';
     }
   }
 
@@ -440,8 +695,48 @@ class Users extends Component {
 
   // Handle dialog when closing
   handleClose = () => {
-    this.setState({ dialogAddUser: false });
+    this.setState({ dialogAddUser: false, dialogEditUser: false, });
+    this.emptyState()
   };
+
+  emptyState() {
+    this.setState({
+      activeStep: 0,
+      dialogAddUser: false,
+      aanhef: 'Dhr.',
+      name: '',
+      nameError: false,
+      nameErrorMsg: '',
+      surname: '',
+      surnameError: false,
+      surnameErrorMsg: '',
+      mail: '',
+      mailError: false,
+      mailErrorMsg: '',
+      password: '',
+      passwordError: false,
+      passwordErrorMsg: '',
+      adres: '',
+      adresError: false,
+      adresErrorMsg: '',
+      housenumber: '',
+      housenumberError: false,
+      housenumberErrorMsg: '',
+      postalcode: '',
+      postalcodeError: false,
+      postalcodeErrorMsg: '',
+      city: '',
+      cityError: '',
+      cityErrorMsg: false,
+      paymentmethod: '',
+      paymentmethodError: false,
+      paymentmethodErrorMsg: '',
+      admin: false,
+      ID: 404,
+      addedData: false,
+      userID: 0,
+    })
+  }
 
   // Handle next button for stepper and check if fields are empty before continuing
   handleNext = () => {
@@ -523,7 +818,7 @@ class Users extends Component {
             page: page,
             amount: rowsPerPage
           }}
-          // pollInterval={1000}
+        // pollInterval={1000}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading... :)</p>;
@@ -544,10 +839,9 @@ class Users extends Component {
                   <TableBody>
                     {data.selectAllUsers.totaluser.map(row => {
                       return (
-                        <TableRow key={row.id} hover onClick={() => {
-                          console.log(`clicked on ${row.id}`)
-                          this.props.history.push('/gebruiker/' + row.id)
-                        }}>
+                        <TableRow key={row.id} hover onClick={() =>
+                          this.handleClickOpenEdit(row.id)}
+                        >
                           <TableCell >
                             {row.id}
                           </TableCell>
@@ -586,6 +880,8 @@ class Users extends Component {
             )
           }}
         </Query>
+
+        {/* Dialog Add User */}
         <Dialog
           open={this.state.dialogAddUser}
           onClose={this.handleClose}
@@ -715,6 +1011,156 @@ class Users extends Component {
             </DialogActions>
           </MuiThemeProvider>
         </Dialog>
+
+
+        {/* Dialog Edit User */}
+        <Dialog
+          open={this.state.dialogEditUser}
+          onClose={this.handleClose}
+          disableBackdropClick
+          disableEscapeKeyDown
+        // scroll='scroll'
+        >
+          <DialogTitle id="form-dialog-title">Gebruiker aanpassen</DialogTitle>
+          <MuiThemeProvider theme={theme}>
+            <DialogContent
+              className="dialog-add-painting"
+            >
+              <Stepper activeStep={activeStep} alternativeLabel>
+                {steps.map(label => {
+                  return (
+                    <Step key={label}>
+                      <StepLabel>{label}</StepLabel>
+                    </Step>
+                  );
+                })}
+              </Stepper>
+              <div>
+                {this.state.activeStep === steps.length ? (
+                  <div>
+                    <div>All steps completed</div>
+                    <Button onClick={this.handleReset}>Reset</Button>
+                  </div>
+                ) : (
+                    <div>
+                      <div>{this.getEditStepContent(activeStep, this.state, this.handleChange)}</div>
+                    </div>
+                  )}
+              </div>
+            </DialogContent>
+            <DialogActions className="buttonsInDialog">
+              <MuiThemeProvider theme={themeDeleteButton}>
+                <div className="dialog-action-delete">
+                  {activeStep === 0 ? (
+                    <Mutation
+                      mutation={DELETE_USER}
+                      onCompleted={(data) => {
+                        console.log(`Mutation complete: ${data.deleteUser}`)
+                        this.handleClose()
+                        window.location.reload();
+                        this.props.handleSnackbarOpen('DELETE_USER_SUCCESS')
+                      }}
+                      onError={(err) => {
+                        console.log(`Mutation failed: ${err}`)
+                        this.props.handleSnackbarOpen('DELETE_USER_ERROR')
+                      }}
+                    >
+                      {(deleteUser) => (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={e => {
+                            e.preventDefault()
+
+                            let vars = {
+                              id: this.state.userID,
+                            }
+
+                            console.log(vars)
+
+                            deleteUser({ variables: vars })
+                          }}
+                        >
+                          DELETE
+                      </Button>
+                      )}
+
+                    </Mutation>
+
+                  ) : null}
+                </div>
+              </MuiThemeProvider>
+              <div className="dialog-action-others">
+                <Button onClick={this.handleClose}>
+                  Annuleren
+                  </Button>
+              </div>
+              {activeStep === 1 ? (
+                <div>
+                  <Button
+                    disabled={activeStep === 0}
+                    onClick={this.handleBack}
+                  >
+                    Terug
+                  </Button>
+                </div>
+              ) : null}
+              {activeStep === 1 ? (
+                <Mutation
+                  mutation={EDIT_USER}
+                  onCompleted={(data) => {
+                    console.log(`Query complete: ${data}`)
+                    this.handleClose()
+                    window.location.reload();
+                    this.props.handleSnackbarOpen('EDIT_USER_SUCCESS')
+                  }}
+                  onError={(err) => {
+                    console.log(`Query failed: ${err}`)
+                    this.props.handleSnackbarOpen('EDIT_USER_ERROR')
+                  }}
+                >
+                  {(alterUser) => (
+                    <div>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={e => {
+                          e.preventDefault()
+
+                          let variables = {
+                            id: this.state.userID,
+                            name: this.state.name,
+                            surname: this.state.surname,
+                            aanhef: this.state.aanhef,
+                            mail: this.state.mail,
+                            password: this.state.password,
+                            adres: this.state.adres,
+                            housenumber: this.state.housenumber,
+                            postalcode: this.state.postalcode,
+                            city: this.state.city,
+                            paymentmethod: this.state.paymentmethod,
+                            admin: this.state.admin,
+                          }
+
+                          console.log(variables)
+
+                          alterUser({ variables: variables })
+
+                        }}>
+                        Opslaan
+                    </Button>
+                    </div>
+                  )}
+                </Mutation>
+              ) : (
+                  <Button variant="contained" color="primary" onClick={this.handleNext}>
+                    Volgende
+              </Button>)}
+            </DialogActions>
+          </MuiThemeProvider>
+        </Dialog>
+
+
       </section>
     );
   }

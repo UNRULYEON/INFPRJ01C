@@ -316,7 +316,7 @@ class App extends Component {
           snackbarMessage: "Er is een fout opgetreden bij het aanpassen van een schilderij"
         });
         break;
-        case 'EDIT_FAQ_SUCCESS':
+      case 'EDIT_FAQ_SUCCESS':
         this.setState({
           snackbarOpen: true,
           snackbarVariant: "success",
@@ -328,6 +328,62 @@ class App extends Component {
           snackbarOpen: true,
           snackbarVariant: "error",
           snackbarMessage: "Er is een fout opgetreden bij het aanpassen van een FAQ item"
+        });
+        break;
+      case 'EDIT_USER_SUCCESS':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "Gebruiker is successvol aangepast"
+        });
+        break;
+      case 'EDIT_USER_ERROR':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "error",
+          snackbarMessage: "Er is een fout opgetreden bij het aanpassen van een gebruiker"
+        });
+        break;
+      case 'DELETE_FAQ_SUCCESS':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "Item is successvol verwijderd"
+        });
+        break;
+      case 'DELETE_FAQ_ERROR':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "error",
+          snackbarMessage: "Er is een fout opgetreden bij het verwijderen van een item"
+        });
+        break;
+      case 'DELETE_USER_SUCCESS':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "Gebruiker is successvol verwijderd"
+        });
+        break;
+      case 'DELETE_USER_ERROR':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "error",
+          snackbarMessage: "Er is een fout opgetreden bij het verwijderen van een gebruiker"
+        });
+        break;
+      case 'DELETE_PAINTING_SUCCESS':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "Schilderij is successvol verwijderd"
+        });
+        break;
+      case 'DELETE_PAINTING_ERROR':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "error",
+          snackbarMessage: "Er is een fout opgetreden bij het verwijderen van een schilderij"
         });
         break;
       default:
