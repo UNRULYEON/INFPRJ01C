@@ -7,13 +7,6 @@ import gql from "graphql-tag";
 // Material-UI
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TableFooter from '@material-ui/core/TableFooter';
-import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -27,20 +20,35 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
-import IconButton from '@material-ui/core/IconButton';
-import FirstPageIcon from '@material-ui/icons/FirstPage';
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import LastPageIcon from '@material-ui/icons/LastPage';
-
 // Img
 import ImageOnLoad from 'react-image-onload'
+
+// React Grid
+import {
+  PagingState,
+  CustomPaging,
+  SortingState,
+  IntegratedSorting,
+  SearchState,
+  IntegratedFiltering,
+} from '@devexpress/dx-react-grid';
+import {
+  Grid as GridR,
+  Table,
+  TableHeaderRow,
+  PagingPanel,
+  ColumnChooser,
+  TableColumnVisibility,
+  Toolbar,
+  SearchPanel,
+} from '@devexpress/dx-react-grid-material-ui';
 
 const PAINTERS = gql`
   query paintersPAG($page: Int!, $amount: Int!){
     paintersAdmin(page: $page, amount: $amount){
       total
       painterpagination{
+        id
         name
         nationality
         dateofdeath
@@ -243,63 +251,6 @@ function getStepContent(stepIndex, state, handleChange) {
       return 'Uknown stepIndex';
   }
 }
-class TablePaginationActions extends React.Component {
-  handleFirstPageButtonClick = event => {
-    this.props.onChangePage(event, 0);
-  };
-
-  handleBackButtonClick = event => {
-    this.props.onChangePage(event, this.props.page - 1);
-  };
-
-  handleNextButtonClick = event => {
-    this.props.onChangePage(event, this.props.page + 1);
-  };
-
-  handleLastPageButtonClick = event => {
-    this.props.onChangePage(
-      event,
-      Math.max(0, Math.ceil(this.props.count / this.props.rowsPerPage) - 1),
-    );
-  };
-
-  render() {
-    const { count, page, rowsPerPage } = this.props;
-
-    return (
-      <div className='footer-actions'>
-        <IconButton
-          onClick={this.handleFirstPageButtonClick}
-          disabled={page === 0}
-          aria-label="Eerste pagina"
-        >
-          <FirstPageIcon/>
-        </IconButton>
-        <IconButton
-          onClick={this.handleBackButtonClick}
-          disabled={page === 0}
-          aria-label="Vorige pagina"
-        >
-          <KeyboardArrowLeft/>
-        </IconButton>
-        <IconButton
-          onClick={this.handleNextButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="Volgende pagina"
-        >
-          <KeyboardArrowRight/>
-        </IconButton>
-        <IconButton
-          onClick={this.handleLastPageButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="Laatste pagina"
-        >
-          <LastPageIcon/>
-        </IconButton>
-      </div>
-    );
-  }
-}
 
 class Painters extends Component {
   constructor(props) {
@@ -337,10 +288,45 @@ class Painters extends Component {
       description: '',
       descriptionError: false,
       descriptionErrorMsg: false,
+      rows: [],
+      totalCount: 0,
+      pageSize: 15,
+      currentPage: 0,
+      pageSizes: [15, 20, 25, 30],
+      sorting: [{ columnName: 'id', direction: 'asc' }],
+      tableColumnExtensions: [
+        { columnName: 'id', width: 70 },
+      ],
+      hiddenColumnNames: ['releasedate', 'description'],
       page: 0,
       rowsPerPage: 10,
     }
+
+    this.changeCurrentPage = this.changeCurrentPage.bind(this);
+    this.changePageSize = pageSize => this.setState({ pageSize });
+    this.changeSorting = sorting => this.setState({ sorting });
+    this.hiddenColumnNamesChange = (hiddenColumnNames) => { this.setState({ hiddenColumnNames }); };
   }
+
+
+  changeCurrentPage(currentPage) {
+    this.setState({
+      loading: true,
+      currentPage,
+    });
+  }
+
+
+  TableRow = ({ row, ...restProps }) => (
+    <Table.Row
+      {...restProps}
+      // eslint-disable-next-line no-alert
+      onClick={() => this.handleAanpassenDialog(row.id)}
+      style={{
+        cursor: 'pointer'
+      }}
+    />
+  )
 
   handleChangePage = (event, page) => {
     this.setState({ page });
@@ -449,7 +435,9 @@ class Painters extends Component {
   render() {
     const steps = getSteps();
     const { activeStep } = this.state;
-    const { rowsPerPage, page } = this.state;
+    const {
+      pageSize, currentPage, pageSizes, sorting, tableColumnExtensions, hiddenColumnNames
+    } = this.state;
 
     return (
       <section>
@@ -465,8 +453,8 @@ class Painters extends Component {
         <Query
           query={PAINTERS}
           variables={{
-            page: page,
-            amount: rowsPerPage
+            page: currentPage,
+            amount: pageSize
           }}
           // pollInterval={1000}
         >
@@ -474,65 +462,67 @@ class Painters extends Component {
             if (loading) return <p>Loading... :)</p>;
             if (error) return <p>Error :(</p>;
 
+            let columns = [
+              { name: 'id', title: 'ID' },
+              { name: 'name', title: 'Naam' },
+              { name: 'city', title: 'Stad' },
+              { name: 'datebirth', title: 'Datum vab geboorte' },
+              { name: 'datedeath', title: 'Datum van overlijden' },
+              { name: 'occupation', title: 'Beroep' },
+              { name: 'nationality', title: 'Nationaliteit' }
+            ]
+
+            let rows = []
+
+            for (let i = 0; i < data.paintersAdmin.painterpagination.length; i++) {
+              rows.push(
+                {
+                  id: data.paintersAdmin.painterpagination[i].id,
+                  name: data.paintersAdmin.painterpagination[i].name,
+                  city: data.paintersAdmin.painterpagination[i].city,
+                  datebirth: data.paintersAdmin.painterpagination[i].dateofbirth,
+                  datedeath: data.paintersAdmin.painterpagination[i].dateofdeath,
+                  occupation: data.paintersAdmin.painterpagination[i].occupation,
+                  nationality: data.paintersAdmin.painterpagination[i].nationality
+                }
+              )
+            }
+
             return (
               <Paper>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Naam</TableCell>
-                      <TableCell>Stad</TableCell>
-                      <TableCell>Geboortedatum</TableCell>
-                      <TableCell>Datum van overlijden</TableCell>
-                      <TableCell>Beroep</TableCell>
-                      <TableCell>Nationaliteit</TableCell>
-                      {/* <TableCell>Beschrijving</TableCell> */}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {data.paintersAdmin.painterpagination.map(row => {
-                      return (
-                        <TableRow key={row.id}>
-                          <TableCell component="th" scope="row">
-                            {row.name}
-                          </TableCell>
-                          <TableCell>
-                            {row.city}
-                          </TableCell>
-                          <TableCell>
-                            {row.dateofbirth}
-                          </TableCell>
-                          <TableCell>
-                            {row.dateofdeath}
-                          </TableCell>
-                          <TableCell>
-                            {row.occupation}
-                          </TableCell>
-                          <TableCell>
-                            {row.nationality}
-                          </TableCell>
-                          {/* find a way to wrap the description text */}
-                          {/* <TableCell >
-                            {row.description}
-                          </TableCell> */}
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                  <TableFooter>
-                    <TableRow className='footer-row'>
-                      <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        colSpan={6}
-                        count={data.paintersAdmin.total}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onChangePage={this.handleChangePage}
-                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                        ActionsComponent={TablePaginationActions}
-                      />
-                    </TableRow>
-                  </TableFooter>
-                </Table>
+                <GridR
+                  rows={rows}
+                  columns={columns}
+                >
+                  <PagingState
+                    currentPage={currentPage}
+                    onCurrentPageChange={this.changeCurrentPage}
+                    pageSize={pageSize}
+                    onPageSizeChange={this.changePageSize}
+                  />
+                  <CustomPaging
+                    totalCount={data.paintersAdmin.total}
+                  />
+                  <SortingState
+                    sorting={sorting}
+                    onSortingChange={this.changeSorting}
+                  />
+                  <IntegratedSorting />
+                  <Table
+                    rowComponent={this.TableRow}
+                    columnExtensions={tableColumnExtensions}
+                  />
+                  <TableHeaderRow showSortingControls />
+                  <TableColumnVisibility
+                    hiddenColumnNames={hiddenColumnNames}
+                    onHiddenColumnNamesChange={this.hiddenColumnNamesChange}
+                  />
+                  <Toolbar />
+                  <ColumnChooser />
+                  <PagingPanel
+                    pageSizes={pageSizes}
+                  />
+                </GridR>
               </Paper>
             )
           }}
