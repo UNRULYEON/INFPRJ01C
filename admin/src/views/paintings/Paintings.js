@@ -4,13 +4,6 @@ import './Paintings.css';
 // Material-UI
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-// import Table from '@material-ui/core/Table';
-// import TableBody from '@material-ui/core/TableBody';
-// import TableCell from '@material-ui/core/TableCell';
-// import TableHead from '@material-ui/core/TableHead';
-// import TableRow from '@material-ui/core/TableRow';
-// import TableFooter from '@material-ui/core/TableFooter';
-// import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -24,11 +17,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
-import IconButton from '@material-ui/core/IconButton';
-import FirstPageIcon from '@material-ui/icons/FirstPage';
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import LastPageIcon from '@material-ui/icons/LastPage';
 
 // React Grid
 import {
@@ -448,63 +436,6 @@ function getStepContent(stepIndex, state, handleChange, handeImage, handleChoose
       return 'Uknown stepIndex';
   }
 }
-class TablePaginationActions extends React.Component {
-  handleFirstPageButtonClick = event => {
-    this.props.onChangePage(event, 0);
-  };
-
-  handleBackButtonClick = event => {
-    this.props.onChangePage(event, this.props.page - 1);
-  };
-
-  handleNextButtonClick = event => {
-    this.props.onChangePage(event, this.props.page + 1);
-  };
-
-  handleLastPageButtonClick = event => {
-    this.props.onChangePage(
-      event,
-      Math.max(0, Math.ceil(this.props.count / this.props.rowsPerPage) - 1),
-    );
-  };
-
-  render() {
-    const { count, page, rowsPerPage } = this.props;
-
-    return (
-      <div className='footer-actions'>
-        <IconButton
-          onClick={this.handleFirstPageButtonClick}
-          disabled={page === 0}
-          aria-label="Eerste pagina"
-        >
-          <FirstPageIcon />
-        </IconButton>
-        <IconButton
-          onClick={this.handleBackButtonClick}
-          disabled={page === 0}
-          aria-label="Vorige pagina"
-        >
-          <KeyboardArrowLeft />
-        </IconButton>
-        <IconButton
-          onClick={this.handleNextButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="Volgende pagina"
-        >
-          <KeyboardArrowRight />
-        </IconButton>
-        <IconButton
-          onClick={this.handleLastPageButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="Laatste pagina"
-        >
-          <LastPageIcon />
-        </IconButton>
-      </div>
-    );
-  }
-}
 
 class Paintings extends Component {
   constructor(props) {
@@ -559,7 +490,7 @@ class Paintings extends Component {
       pageSize: 15,
       currentPage: 0,
       pageSizes: [15, 20, 25, 30],
-      sorting: [{ columnName: 'titel', direction: 'asc' }],
+      sorting: [{ columnName: 'id', direction: 'asc' }],
       tableColumnExtensions: [
         { columnName: 'id', width: 70 },
       ],
@@ -882,11 +813,6 @@ class Paintings extends Component {
     />
   )
 
-  EditPaintingDialog = () => {
-    console.log("EditPaintingDialog called")
-
-  }
-
   handleChoosePainterDialog = () => {
     this.setState({
       dialogChoosePainter: true
@@ -1106,7 +1032,7 @@ class Paintings extends Component {
             page: currentPage,
             amount: pageSize
           }}
-          pollInterval={1000}
+          // pollInterval={1000}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading... :)</p>;
