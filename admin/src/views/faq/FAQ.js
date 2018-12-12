@@ -4,11 +4,6 @@ import './FAQ.css';
 // Material-UI
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -26,6 +21,26 @@ import StepLabel from '@material-ui/core/StepLabel';
 // Apollo
 import { Query, Mutation } from "react-apollo";
 import gql from "graphql-tag";
+
+// React Grid
+import {
+  PagingState,
+  CustomPaging,
+  SortingState,
+  IntegratedSorting,
+  SearchState,
+  IntegratedFiltering,
+} from '@devexpress/dx-react-grid';
+import {
+  Grid as GridR,
+  Table,
+  TableHeaderRow,
+  PagingPanel,
+  ColumnChooser,
+  TableColumnVisibility,
+  Toolbar,
+  SearchPanel,
+} from '@devexpress/dx-react-grid-material-ui';
 
 const FAQS = gql`
   query FAQ{
@@ -120,7 +135,13 @@ class FAQ extends Component {
       answerErrorMsg: '',
       addedData: false,
       toggleDelete: false,
+      sorting: [{ columnName: 'id', direction: 'asc' }],
+      tableColumnExtensions: [
+        { columnName: 'id', width: 70 },
+      ],
     }
+
+    this.changeSorting = sorting => this.setState({ sorting });
   }
 
   getStepContent(stepIndex, state, handleChange) {
@@ -251,9 +272,18 @@ class FAQ extends Component {
       faqId: faqId,
       addedData: false,
     });
-
-
   };
+
+  TableRow = ({ row, ...restProps }) => (
+    <Table.Row
+      {...restProps}
+      // eslint-disable-next-line no-alert
+      onClick={() => this.handleClickOpenEdit(row.id)}
+      style={{
+        cursor: 'pointer'
+      }}
+    />
+  )
 
   // Handle next button for stepper and check if fields are empty before continuing
   handleNext = () => {
@@ -305,6 +335,9 @@ class FAQ extends Component {
   render() {
     const steps = getSteps();
     const { activeStep } = this.state;
+    const {
+      sorting, tableColumnExtensions
+    } = this.state;
 
     return (
       <section>
@@ -327,30 +360,42 @@ class FAQ extends Component {
             if (loading) return <p>Loading... :)</p>;
             if (error) return <p>Error :(</p>;
 
+            let columns = [
+              { name: 'id', title: 'ID' },
+              { name: 'title', title: 'Vraag' },
+              { name: 'body', title: 'Antwoord' }
+            ]
+
+            let rows = []
+
+            for (let i = 0; i < data.faq.length; i++) {
+              rows.push(
+                {
+                  id: data.faq[i].id,
+                  title: data.faq[i].title,
+                  body: data.faq[i].body,
+                }
+              )
+            }
+
             return (
               <Paper>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>ID</TableCell>
-                      <TableCell>Vraag</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {data.faq.map(row => {
-                      return (
-                        <TableRow hover onClick={() => this.handleClickOpenEdit(row.id)} key={row.id}>
-                          <TableCell component="th" scope="row">
-                            {row.id}
-                          </TableCell>
-                          <TableCell component="th" scope="row">
-                            {row.title}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
+                <GridR
+                  rows={rows}
+                  columns={columns}
+                >
+                  <SortingState
+                    sorting={sorting}
+                    onSortingChange={this.changeSorting}
+                  />
+                  <IntegratedSorting />
+                  <Table
+                    rowComponent={this.TableRow}
+                    columnExtensions={tableColumnExtensions}
+                  />
+                  <TableHeaderRow showSortingControls />
+                  <Toolbar />
+                </GridR>
               </Paper>
             )
           }}

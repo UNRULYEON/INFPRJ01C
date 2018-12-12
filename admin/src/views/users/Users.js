@@ -4,13 +4,6 @@ import './Users.css';
 // Material-UI
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TableFooter from '@material-ui/core/TableFooter';
-import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -39,6 +32,27 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import FormLabel from '@material-ui/core/FormLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+
+
+// React Grid
+import {
+  PagingState,
+  CustomPaging,
+  SortingState,
+  IntegratedSorting,
+  SearchState,
+  IntegratedFiltering,
+} from '@devexpress/dx-react-grid';
+import {
+  Grid as GridR,
+  Table,
+  TableHeaderRow,
+  PagingPanel,
+  ColumnChooser,
+  TableColumnVisibility,
+  Toolbar,
+  SearchPanel,
+} from '@devexpress/dx-react-grid-material-ui';
 
 // Apollo
 import { Query, Mutation } from "react-apollo";
@@ -453,7 +467,22 @@ class Users extends Component {
       rowsPerPage: 10,
       userID: 0,
       addedData: false,
+      rows: [],
+      totalCount: 0,
+      pageSize: 15,
+      currentPage: 0,
+      pageSizes: [15, 20, 25, 30],
+      sorting: [{ columnName: 'id', direction: 'asc' }],
+      tableColumnExtensions: [
+        { columnName: 'id', width: 70 },
+      ],
+      hiddenColumnNames: ['email',],
     }
+
+    this.changeCurrentPage = this.changeCurrentPage.bind(this);
+    this.changePageSize = pageSize => this.setState({ pageSize });
+    this.changeSorting = sorting => this.setState({ sorting });
+    this.hiddenColumnNamesChange = (hiddenColumnNames) => { this.setState({ hiddenColumnNames }); };
   }
 
   // Handle dialog whnen opening
@@ -464,6 +493,17 @@ class Users extends Component {
       addedData: false,
     });
   }
+
+  TableRow = ({ row, ...restProps }) => (
+    <Table.Row
+      {...restProps}
+      // eslint-disable-next-line no-alert
+      onClick={() => this.dialogEditUser(row.id)}
+      style={{
+        cursor: 'pointer'
+      }}
+    />
+  )
 
   getEditStepContent(stepIndex, state, handleChange) {
     switch (stepIndex) {
@@ -660,6 +700,13 @@ class Users extends Component {
     }
   }
 
+  changeCurrentPage(currentPage) {
+    this.setState({
+      loading: true,
+      currentPage,
+    });
+  }
+
   handleChangePage = (event, page) => {
     this.setState({ page });
   };
@@ -799,7 +846,9 @@ class Users extends Component {
   render() {
     const steps = getSteps();
     const { activeStep } = this.state;
-    const { rowsPerPage, page } = this.state;
+    const {
+      pageSize, currentPage, pageSizes, sorting, tableColumnExtensions, hiddenColumnNames
+    } = this.state;
 
     return (
       <section>
@@ -815,67 +864,70 @@ class Users extends Component {
         <Query
           query={ALL_USERS}
           variables={{
-            page: page,
-            amount: rowsPerPage
+            page: currentPage,
+            amount: pageSize
           }}
-        // pollInterval={1000}
+          // pollInterval={1000}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading... :)</p>;
             if (error) return <p>Error :(</p>;
 
+            let columns = [
+              { name: 'id', title: 'ID' },
+              { name: 'name', title: 'Naam' },
+              { name: 'surname', title: 'achternaam' },
+              { name: 'email', title: 'email' }
+            ]
+
+            let rows = []
+
+            for (let i = 0; i < data.selectAllUsers.totaluser.length; i++) {
+              rows.push(
+                {
+                  id: data.selectAllUsers.totaluser[i].id,
+                  name: data.selectAllUsers.totaluser[i].name,
+                  surname: data.selectAllUsers.totaluser[i].surname,
+                  email: data.selectAllUsers.totaluser[i].mail,
+                }
+              )
+            }
+
             return (
               <Paper>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>ID</TableCell>
-                      <TableCell>Voornaam</TableCell>
-                      <TableCell>Achternaam</TableCell>
-                      <TableCell>Email</TableCell>
-                      <TableCell>Adres</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {data.selectAllUsers.totaluser.map(row => {
-                      return (
-                        <TableRow key={row.id} hover onClick={() =>
-                          this.handleClickOpenEdit(row.id)}
-                        >
-                          <TableCell >
-                            {row.id}
-                          </TableCell>
-                          <TableCell>
-                            {row.name}
-                          </TableCell>
-                          <TableCell>
-                            {row.surname}
-                          </TableCell>
-                          <TableCell>
-                            {row.mail}
-                          </TableCell>
-                          <TableCell>
-                            {row.adres}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                  <TableFooter>
-                    <TableRow className='footer-row'>
-                      <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        colSpan={5}
-                        count={data.selectAllUsers.total}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onChangePage={this.handleChangePage}
-                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                        ActionsComponent={TablePaginationActions}
-                      />
-                    </TableRow>
-                  </TableFooter>
-                </Table>
+                <GridR
+                  rows={rows}
+                  columns={columns}
+                >
+                  <PagingState
+                    currentPage={currentPage}
+                    onCurrentPageChange={this.changeCurrentPage}
+                    pageSize={pageSize}
+                    onPageSizeChange={this.changePageSize}
+                  />
+                  <CustomPaging
+                    totalCount={data.selectAllUsers.total}
+                  />
+                  <SortingState
+                    sorting={sorting}
+                    onSortingChange={this.changeSorting}
+                  />
+                  <IntegratedSorting />
+                  <Table
+                    rowComponent={this.TableRow}
+                    columnExtensions={tableColumnExtensions}
+                  />
+                  <TableHeaderRow showSortingControls />
+                  <TableColumnVisibility
+                    hiddenColumnNames={hiddenColumnNames}
+                    onHiddenColumnNamesChange={this.hiddenColumnNamesChange}
+                  />
+                  <Toolbar />
+                  <ColumnChooser />
+                  <PagingPanel
+                    pageSizes={pageSizes}
+                  />
+                </GridR>
               </Paper>
             )
           }}
