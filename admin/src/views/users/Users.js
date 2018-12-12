@@ -74,6 +74,13 @@ const ALL_USERS = gql`
         surname
         mail
         adres
+        city
+        postalcode
+        password
+        aanhef
+        housenumber
+        admin
+        paymentmethod
       }
     }
   }
@@ -475,8 +482,12 @@ class Users extends Component {
       sorting: [{ columnName: 'id', direction: 'asc' }],
       tableColumnExtensions: [
         { columnName: 'id', width: 70 },
+        { columnName: 'aanhef', width: 80 },
+        { columnName: 'name', width: 200 },
+        { columnName: 'surname', width: 200 },
+        { columnName: 'admin', width: 100 },
       ],
-      hiddenColumnNames: ['email',],
+      hiddenColumnNames: ['adres', 'city', 'postalcode', 'password', 'housenumber', 'paymentmethod'],
     }
 
     this.changeCurrentPage = this.changeCurrentPage.bind(this);
@@ -498,7 +509,7 @@ class Users extends Component {
     <Table.Row
       {...restProps}
       // eslint-disable-next-line no-alert
-      onClick={() => this.dialogEditUser(row.id)}
+      onClick={() => this.handleClickOpenEdit(row.id)}
       style={{
         cursor: 'pointer'
       }}
@@ -875,9 +886,16 @@ class Users extends Component {
 
             let columns = [
               { name: 'id', title: 'ID' },
+              { name: 'aanhef', title: 'Aanhef' },
               { name: 'name', title: 'Naam' },
-              { name: 'surname', title: 'achternaam' },
-              { name: 'email', title: 'email' }
+              { name: 'surname', title: 'Achternaam' },
+              { name: 'mail', title: 'Mail' },
+              { name: 'adres', title: 'Adres' },
+              { name: 'housenumber', title: 'Huisnummer' },
+              { name: 'postalcode', title: 'Postcode' },
+              { name: 'city', title: 'Stad' },
+              { name: 'admin', title: 'Admin' },
+              { name: 'paymentmethod', title: 'Betaalwijze' },
             ]
 
             let rows = []
@@ -886,9 +904,16 @@ class Users extends Component {
               rows.push(
                 {
                   id: data.selectAllUsers.totaluser[i].id,
+                  aanhef: data.selectAllUsers.totaluser[i].aanhef,
                   name: data.selectAllUsers.totaluser[i].name,
                   surname: data.selectAllUsers.totaluser[i].surname,
-                  email: data.selectAllUsers.totaluser[i].mail,
+                  mail: data.selectAllUsers.totaluser[i].mail,
+                  adres: data.selectAllUsers.totaluser[i].adres,
+                  housenumber: data.selectAllUsers.totaluser[i].housenumber,
+                  postalcode: data.selectAllUsers.totaluser[i].postalcode,
+                  city: data.selectAllUsers.totaluser[i].city,
+                  admin: data.selectAllUsers.totaluser[i].admin.toString(),
+                  paymentmethod: data.selectAllUsers.totaluser[i].paymentmethod,
                 }
               )
             }

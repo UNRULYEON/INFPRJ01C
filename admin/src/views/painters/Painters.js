@@ -51,10 +51,12 @@ const PAINTERS = gql`
         id
         name
         nationality
+        occupation
         dateofdeath
         city
-        occupation
         dateofbirth
+        placeofbirth
+        description
       }
     }
   }
@@ -465,11 +467,13 @@ class Painters extends Component {
             let columns = [
               { name: 'id', title: 'ID' },
               { name: 'name', title: 'Naam' },
-              { name: 'city', title: 'Stad' },
-              { name: 'datebirth', title: 'Datum vab geboorte' },
-              { name: 'datedeath', title: 'Datum van overlijden' },
               { name: 'occupation', title: 'Beroep' },
-              { name: 'nationality', title: 'Nationaliteit' }
+              { name: 'nationality', title: 'Nationaliteit' },
+              { name: 'datebirth', title: 'Datum van geboorte' },
+              { name: 'city', title: 'Stad van geboorte' },
+              { name: 'datedeath', title: 'Datum van overlijden' },
+              { name: 'placeofbirth', title: 'Stad van overlijden' },
+              { name: 'description', title: 'Beschrijving' }
             ]
 
             let rows = []
@@ -479,11 +483,13 @@ class Painters extends Component {
                 {
                   id: data.paintersAdmin.painterpagination[i].id,
                   name: data.paintersAdmin.painterpagination[i].name,
-                  city: data.paintersAdmin.painterpagination[i].city,
-                  datebirth: data.paintersAdmin.painterpagination[i].dateofbirth,
-                  datedeath: data.paintersAdmin.painterpagination[i].dateofdeath,
                   occupation: data.paintersAdmin.painterpagination[i].occupation,
-                  nationality: data.paintersAdmin.painterpagination[i].nationality
+                  nationality: data.paintersAdmin.painterpagination[i].nationality,
+                  datebirth: data.paintersAdmin.painterpagination[i].dateofbirth,
+                  city: data.paintersAdmin.painterpagination[i].city,
+                  datedeath: data.paintersAdmin.painterpagination[i].dateofdeath,
+                  placeofdeath: data.paintersAdmin.painterpagination[i].placeofdeath,
+                  description: data.paintersAdmin.painterpagination[i].description,
                 }
               )
             }
