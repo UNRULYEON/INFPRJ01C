@@ -55,7 +55,7 @@ const PAINTERS = gql`
         dateofdeath
         city
         dateofbirth
-        placeofbirth
+        placeofdeath
         description
       }
     }
@@ -472,7 +472,7 @@ class Painters extends Component {
               { name: 'datebirth', title: 'Datum van geboorte' },
               { name: 'city', title: 'Stad van geboorte' },
               { name: 'datedeath', title: 'Datum van overlijden' },
-              { name: 'placeofbirth', title: 'Stad van overlijden' },
+              { name: 'placeofdeath', title: 'Stad van overlijden' },
               { name: 'description', title: 'Beschrijving' }
             ]
 
