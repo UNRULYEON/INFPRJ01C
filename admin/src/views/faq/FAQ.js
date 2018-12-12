@@ -321,7 +321,7 @@ class FAQ extends Component {
         {/* Query Show all FAQ's */}
         <Query
           query={FAQS}
-        // pollInterval={1000}
+        pollInterval={5000}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading... :)</p>;
@@ -410,8 +410,9 @@ class FAQ extends Component {
                   onCompleted={(data) => {
                     console.log(`Query complete: ${data.faqCreate}`)
                     this.handleClose()
-                    window.location.reload();
+                    // window.location.reload();
                     this.setState({
+                      activeStep: 0,
                     })
                     this.props.handleSnackbarOpen('ADD_FAQ_SUCCESS')
                   }}
@@ -494,7 +495,10 @@ class FAQ extends Component {
                       onCompleted={(data) => {
                         console.log(`Mutation complete: ${data.faqDelete}`)
                         this.handleClose()
-                        window.location.reload();
+                        this.setState({
+                          activeStep: 0,
+                        })
+                        // window.location.reload();
                         this.props.handleSnackbarOpen('DELETE_FAQ_SUCCESS')
                       }}
                       onError={(err) => {
@@ -550,7 +554,7 @@ class FAQ extends Component {
                       onCompleted={(data) => {
                         console.log(`Query complete: ${data.faqUpdate}`)
                         this.handleClose()
-                        window.location.reload();
+                        // window.location.reload();
                         this.props.handleSnackbarOpen('EDIT_FAQ_SUCCESS')
                       }}
                       onError={(err) => {
