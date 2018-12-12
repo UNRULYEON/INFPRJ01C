@@ -74,21 +74,18 @@ const GET_ART_DETAILS = gql`
 `;
 
 const PAINTINGS = gql`
-  query paintingsPAG($page: Int!, $amount: Int!){
-    paintingOrderedByPagination(page: $page, amount: $amount){
+  query Paintings_pagination($page: Int!){
+    paintingOrderedByPagination(page: $page){
       total
-      collection{
+      collection {
         id_number
         title
+        principalmaker
+        price
         releasedate
         period
-        description
         physicalmedium
         amountofpaintings
-        principalmaker
-        bigsrc
-        src
-        price
         principalmakersproductionplaces
       }
     }
@@ -494,7 +491,7 @@ class Paintings extends Component {
       tableColumnExtensions: [
         { columnName: 'id', width: 70 },
       ],
-      hiddenColumnNames: ['releasedate', 'description'],
+      hiddenColumnNames: [''],
       page: 0,
       rowsPerPage: 10,
       addedData: false,
@@ -1042,8 +1039,12 @@ class Paintings extends Component {
               { name: 'id', title: 'ID' },
               { name: 'title', title: 'Titel' },
               { name: 'principalmaker', title: 'Schilder' },
-              { name: 'releasedate', title: 'Jaar van uitgave' },
-              { name: 'description', title: 'Beschrijving' }
+              { name: 'price', title: 'Prijs' },
+              { name: 'releasedate', title: 'Datum van uitgave' },
+              { name: 'period', title: 'Eeuw van uitgave' },
+              { name: 'physicalmedium', title: 'Materiaal' },
+              { name: 'amountofpaintings', title: 'Voorraad' },
+              { name: 'principalmakersproductionplaces', title: 'Stad van productie' },
             ]
 
             let rows = []
@@ -1054,8 +1055,12 @@ class Paintings extends Component {
                   id: data.paintingOrderedByPagination.collection[i].id_number,
                   title: data.paintingOrderedByPagination.collection[i].title,
                   principalmaker: data.paintingOrderedByPagination.collection[i].principalmaker,
+                  price: data.paintingOrderedByPagination.collection[i].price,
                   releasedate: data.paintingOrderedByPagination.collection[i].releasedate,
-                  description: data.paintingOrderedByPagination.collection[i].description
+                  period: data.paintingOrderedByPagination.collection[i].period,
+                  physicalmedium: data.paintingOrderedByPagination.collection[i].physicalmedium,
+                  amountofpaintings: data.paintingOrderedByPagination.collection[i].amountofpaintings,
+                  principalmakersproductionplaces: data.paintingOrderedByPagination.collection[i].principalmakersproductionplaces,
                 }
               )
             }

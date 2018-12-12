@@ -208,7 +208,7 @@ var schema = buildSchema(`
     city: String,
     dateofbirth: String,
     dateofdeath: String,
-    placeofbirth: String,
+    placeofdeath: String,
     occupation: String,
     nationality: String,
     headerimage: String,
