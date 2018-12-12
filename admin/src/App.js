@@ -250,7 +250,7 @@ class App extends Component {
         this.setState({
           snackbarOpen: true,
           snackbarVariant: "success",
-          snackbarMessage: "De gebruiker is successvol aangemaakt"
+          snackbarMessage: "De gebruiker wordt over enkele ogenblikken toegevoegd"
         });
         break;
       case 'ADD_USER_ERROR':
@@ -264,7 +264,7 @@ class App extends Component {
         this.setState({
           snackbarOpen: true,
           snackbarVariant: "success",
-          snackbarMessage: "Het schilderij is successvol toegevoegd"
+          snackbarMessage: "Het schilderij wordt over enkele ogenblikken toegevoegd"
         });
         break;
       case 'ADD_PAINTING_ERROR':
@@ -278,7 +278,7 @@ class App extends Component {
         this.setState({
           snackbarOpen: true,
           snackbarVariant: "success",
-          snackbarMessage: "De schilder is successvol aangemaakt"
+          snackbarMessage: "De schilder wordt over enkele ogenblikken toegevoegd"
         });
         break;
       case 'ADD_PAINTER_ERROR':
@@ -292,7 +292,7 @@ class App extends Component {
         this.setState({
           snackbarOpen: true,
           snackbarVariant: "success",
-          snackbarMessage: "De FAQ is successvol aangemaakt"
+          snackbarMessage: "Het item verschijnt over enkele ogenblikken"
         });
         break;
       case 'ADD_FAQ_ERROR':
@@ -306,7 +306,7 @@ class App extends Component {
         this.setState({
           snackbarOpen: true,
           snackbarVariant: "success",
-          snackbarMessage: "Het schilderij is successvol aangepast"
+          snackbarMessage: "De aanpassinig is over enkele ogenblikken te zien"
         });
         break;
       case 'EDIT_PAINTING_ERROR':
@@ -320,7 +320,7 @@ class App extends Component {
         this.setState({
           snackbarOpen: true,
           snackbarVariant: "success",
-          snackbarMessage: "FAQ item is successvol aangepast"
+          snackbarMessage: "De aanpassing is over enkele ogenblikken te zien"
         });
         break;
       case 'EDIT_FAQ_ERROR':
@@ -334,7 +334,7 @@ class App extends Component {
         this.setState({
           snackbarOpen: true,
           snackbarVariant: "success",
-          snackbarMessage: "Gebruiker is successvol aangepast"
+          snackbarMessage: "De aanpassing is over enkele ogenblikken te zien"
         });
         break;
       case 'EDIT_USER_ERROR':
@@ -348,7 +348,7 @@ class App extends Component {
         this.setState({
           snackbarOpen: true,
           snackbarVariant: "success",
-          snackbarMessage: "Item is successvol verwijderd"
+          snackbarMessage: "Item verdwijnt over enkele ogenblikken"
         });
         break;
       case 'DELETE_FAQ_ERROR':
@@ -362,7 +362,7 @@ class App extends Component {
         this.setState({
           snackbarOpen: true,
           snackbarVariant: "success",
-          snackbarMessage: "Gebruiker is successvol verwijderd"
+          snackbarMessage: "Gebruiker verdwijnt over enkele ogenblikken"
         });
         break;
       case 'DELETE_USER_ERROR':
@@ -376,7 +376,7 @@ class App extends Component {
         this.setState({
           snackbarOpen: true,
           snackbarVariant: "success",
-          snackbarMessage: "Schilderij is successvol verwijderd"
+          snackbarMessage: "Schilderij verdwijnt over enkele ogenblikken"
         });
         break;
       case 'DELETE_PAINTING_ERROR':

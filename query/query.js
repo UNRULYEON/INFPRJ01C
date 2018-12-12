@@ -193,6 +193,13 @@ var root = {
   papatabel: () => {
     return db.manyOrNone(`SELECT * FROM papatabel`)
   },
+  async babyTabelSelect({tabelName}){
+    console.log(`\nBabyselect`)
+    let init = await db.manyOrNone(`SELECT * FROM papatabel where naam = ${tabelName}`)
+    console.log(init)
+    let query = await db.manyOrNone(`SELECT * FROM ${tabelName}`)
+    console.log(query)
+  },
   //Create tabel and insert data
   async createBabyTabel({ tabelnaam, foreignkey, type }) {
     if (tabelnaam == "") {
@@ -210,19 +217,17 @@ var root = {
 
     //Creating the table
     db.one(`CREATE TABLE ${tabelnaam} (id serial PRIMARY KEY, foreignKey int)`)
-      .then()
       .catch(err => { throw new Error(err)})
 
+    console.log(foreignkey)
     //Inserting all data into the table
     foreignkey.forEach(element => {
       db.one(`INSERT INTO ${tabelnaam}(foreignkey) VALUES($1)`, [element.foreignkey])
-        .then()
         .catch(err => { throw new Error(err)})
       })
 
     //Create ref to the newly created table in the papatabel
     db.one(`INSERT INTO papatabel(naam,type) VALUES($1, $2)`, [tabelnaam, type])
-      .then()
       .catch(err => { throw new Error(err)})
     return 200
     },
@@ -269,11 +274,9 @@ var root = {
       .then(data => { return data })
       .catch(err => { throw new Error(err)})
 
-
     let maxusers = await db.manyOrNone(`SELECT COUNT(*) FROM gebruiker`)
       .then(data => { return data })
       .catch(err => { throw new Error(err)})
-
 
     return {
       total: maxusers[0].count,
@@ -314,8 +317,8 @@ var root = {
   async deleteUser({ id }) {
     let user = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${id}`)
     if (user.length) {
-      let query = `DELETE from gebruiker WHERE id = ${id}`
-      return await db.one(query)
+      db.one(`DELETE from gebruiker WHERE id = ${id}`)
+      return 200
     } else {
       return 311
     }

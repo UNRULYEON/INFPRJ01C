@@ -874,6 +874,7 @@ class Users extends Component {
         </div>
         <Query
           query={ALL_USERS}
+          pollInterval={5000}
           variables={{
             page: currentPage,
             amount: pageSize
@@ -1013,40 +1014,6 @@ class Users extends Component {
                   onCompleted={(data) => {
                     console.log(`Query complete: ${data}`)
                     this.handleClose()
-                    this.setState({
-                      activeStep: 0,
-                      dialogAddUser: false,
-                      aanhef: 'Dhr.',
-                      name: '',
-                      nameError: false,
-                      nameErrorMsg: '',
-                      surname: '',
-                      surnameError: false,
-                      surnameErrorMsg: '',
-                      mail: '',
-                      mailError: false,
-                      mailErrorMsg: '',
-                      password: '',
-                      passwordError: false,
-                      passwordErrorMsg: '',
-                      adres: '',
-                      adresError: false,
-                      adresErrorMsg: '',
-                      housenumber: '',
-                      housenumberError: false,
-                      housenumberErrorMsg: '',
-                      postalcode: '',
-                      postalcodeError: false,
-                      postalcodeErrorMsg: '',
-                      city: '',
-                      cityError: '',
-                      cityErrorMsg: false,
-                      paymentmethod: '',
-                      paymentmethodError: false,
-                      paymentmethodErrorMsg: '',
-                      admin: false,
-                      ID: 404,
-                    })
                     this.props.handleSnackbarOpen('ADD_USER_SUCCESS')
                   }}
                   onError={(err) => {
@@ -1134,7 +1101,7 @@ class Users extends Component {
                       onCompleted={(data) => {
                         console.log(`Mutation complete: ${data.deleteUser}`)
                         this.handleClose()
-                        window.location.reload();
+                        // window.location.reload();
                         this.props.handleSnackbarOpen('DELETE_USER_SUCCESS')
                       }}
                       onError={(err) => {
@@ -1188,7 +1155,7 @@ class Users extends Component {
                   onCompleted={(data) => {
                     console.log(`Query complete: ${data}`)
                     this.handleClose()
-                    window.location.reload();
+                    // window.location.reload();
                     this.props.handleSnackbarOpen('EDIT_USER_SUCCESS')
                   }}
                   onError={(err) => {

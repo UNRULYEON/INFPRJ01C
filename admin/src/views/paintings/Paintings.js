@@ -320,7 +320,7 @@ function getStepContent(stepIndex, state, handleChange, handeImage, handleChoose
             <DialogTitle id="form-dialog-title">Kies een schilder</DialogTitle>
             <MuiThemeProvider theme={theme}>
               <DialogContent>
-                <Query query={PAINTERS}>
+                <Query query={PAINTERS} pollInterval={5000}>
                   {({ loading, error, data }) => {
                     if (loading) return "Loading...";
                     if (error) return `Error! ${error.message}`;
