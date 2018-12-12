@@ -25,6 +25,7 @@
     "merge": "^1.2.1",
     "moment": "^2.22.2",
     "rc-pagination": "^1.17.3",
+    "rc-select": "^8.6.4",
     "react": "^16.5.2",
     "react-adopt": "^0.6.0",
     "react-apollo": "^2.3.2",
