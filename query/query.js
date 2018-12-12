@@ -193,12 +193,15 @@ var root = {
   papatabel: () => {
     return db.manyOrNone(`SELECT * FROM papatabel`)
   },
-  async babyTabelSelect({tabelName}){
-    console.log(`\nBabyselect`)
-    let init = await db.manyOrNone(`SELECT * FROM papatabel where naam = ${tabelName}`)
-    console.log(init)
-    let query = await db.manyOrNone(`SELECT * FROM ${tabelName}`)
-    console.log(query)
+  async babyTabelSelect({id}){
+    console.log(`\nBabyselect\n`)
+    let BabyNaam = await db.manyOrNone(`SELECT * FROM papatabel where id = ${id}`)
+    let BabyContent = await db.manyOrNone(`SELECT * FROM ${BabyNaam[0].naam}`)
+
+    return {
+      type: BabyNaam[0].type,
+      allItems: BabyContent
+    }
   },
   //Create tabel and insert data
   async createBabyTabel({ tabelnaam, foreignkey, type }) {

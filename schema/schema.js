@@ -46,7 +46,7 @@ var schema = buildSchema(`
     """Test to see if the server is running"""
     status: Int 
     papatabel: [PapaGet]
-    babyTabelSelect(tabelName: String!): [BabyReturn]
+    babyTabelSelect(id: Int!): BabyType
     orderListSelect(buyerId: Int!): [Orders]
     selectShoppingCart(userId: Int!): [Cart]
     searchbar(query: String!, page: Int!, amount: Int): searchResult
@@ -89,27 +89,35 @@ var schema = buildSchema(`
     faqUpdate(question: String!, answer: String!, id: Int!): String
     faqDelete(id: Int!): String!
   },
-  input PaintRef{foreignkey: Int!,},
+  input PaintRef{
+    foreignkey: Int!
+  },
   input PaintRefRent{
     foreignkey: Int!, 
     startDate: String!, 
     stopDate: String!},
-  input RefBaby{foreignkey: Int!},
+  input RefBaby{
+    foreignkey: Int!
+  },
   type PapaGet{
     id: Int,
     naam: String,
     type: String
   },
+  type BabyType{
+    type: String!,
+    allItems: [BabyReturn]
+  },
   type BabyReturn{
-    id: Int!,
-    foreignKey: Int!
-  }
+    id: Int,
+    foreignkey: Int
+  },
   type Cart{
     id: Int,
     gebruikerid: Int,
     items: String,
     timestamp: String
-  }
+  },
   type Orders{
     id: Int,
     buyerid: Int,
