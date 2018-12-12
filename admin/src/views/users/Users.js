@@ -677,8 +677,7 @@ class Users extends Component {
                     this.props.handleSnackbarOpen('ADD_USER_SUCCESS')
                   }}
                   onError={(err) => {
-                    console.log(`Query failed: ${err}`)
-                    this.props.handleSnackbarOpen('ADD_USER_ERROR')
+                    console.log(`Query failed: ${err.addUser}`)
                   }}
                 >
                   {(addUser, { data }) => (

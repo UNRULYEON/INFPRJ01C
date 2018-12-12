@@ -287,7 +287,7 @@ var root = {
     const saltedPassword = await bcrypt.hash(password, 10)
     const user = await db.manyOrNone(`SELECT mail from gebruiker where mail = $1`, [mail])
     if (user.length) {
-      return 310
+      return 314
     }
     db.one(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin) 
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
