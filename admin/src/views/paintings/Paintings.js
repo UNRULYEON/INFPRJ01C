@@ -1029,7 +1029,7 @@ class Paintings extends Component {
             page: currentPage,
             amount: pageSize
           }}
-          // pollInterval={1000}
+          pollInterval={5000}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading... :)</p>;
@@ -1255,7 +1255,6 @@ class Paintings extends Component {
                     onCompleted={(data) => {
                       console.log(`Mutation complete: ${data.deleteProduct}`)
                       this.handleClose()
-                      window.location.reload();
                       this.props.handleSnackbarOpen('DELETE_PAINTING_SUCCESS')
                     }}
                     onError={(err) => {

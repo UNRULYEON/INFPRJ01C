@@ -392,12 +392,12 @@ var root = {
     db.one('UPDATE schilder SET document_vectors = (to_tsvector(coalesce(\'\'$1\'\'))) WHERE id = $2', [name, id] )
     return 200
     },
-  async deletePainter({ name }) {
-    let painter = await db.manyOrNone(`SELECT * from schilder WHERE name = ${name}`)
+  async deletePainter({ id }) {
+    let painter = await db.manyOrNone(`SELECT * from schilder WHERE id = ${id}`)
     if (!painter.length) {
       return 311
     }
-    db.one(`DELETE from schilder WHERE name = ${name}`)
+    db.one(`DELETE from schilder WHERE id = ${id}`)
     return 200
   },
   //#endregion

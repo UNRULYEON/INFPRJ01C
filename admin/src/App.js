@@ -419,6 +419,20 @@ class App extends Component {
           snackbarMessage: "Er is een fout opgetreden bij het verwijderen van een schilderij"
         });
         break;
+      case 'DELETE_PAINTER_SUCCESS':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "Schilder verdwijnt over enkele ogenblikken"
+        });
+        break;
+      case 'DELETE_PAINTER_ERROR':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "error",
+          snackbarMessage: "Er is een fout opgetreden bij het verwijderen van een schilder"
+        });
+        break;
       default:
         break;
     }

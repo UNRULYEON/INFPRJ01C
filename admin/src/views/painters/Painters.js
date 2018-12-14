@@ -131,10 +131,28 @@ const EDIT_PAINTER = gql`
   }
 `;
 
+const DELETE_PAINTER = gql `
+  mutation DELETE_PAINTER($id: String!){
+    deletePainter(id: $id)
+  }
+`;
+
 const theme = new createMuiTheme({
   palette: {
     primary: {
       main: '#FFFFFF'
+    },
+    type: 'dark'
+  },
+  typography: {
+    useNextVariants: true,
+  }
+});
+
+const themeDeleteButton = new createMuiTheme({
+  palette: {
+    primary: {
+      main: '#D32F2F'
     },
     type: 'dark'
   },
@@ -607,7 +625,7 @@ class Painters extends Component {
     this.emptyState()
   };
 
-  emptyState(){
+  emptyState() {
     this.setState({
       activeStep: 0,
       dialogAddPainter: false,
@@ -676,7 +694,7 @@ class Painters extends Component {
             page: currentPage,
             amount: pageSize
           }}
-        pollInterval={5000}
+          pollInterval={5000}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading... :)</p>;
@@ -787,7 +805,7 @@ class Painters extends Component {
                   )}
               </div>
             </DialogContent>
-            <DialogActions>
+            <DialogActions className="buttonsInDialog">
               <Button onClick={this.handleClose}>
                 Annuleren
               </Button>
@@ -889,7 +907,47 @@ class Painters extends Component {
                   )}
               </div>
             </DialogContent>
-            <DialogActions>
+            <DialogActions className="buttonsInDialog">
+            <MuiThemeProvider theme={themeDeleteButton}>
+                <div className="dialog-action-delete">
+                  {activeStep === 0 ? (
+                    <Mutation
+                      mutation={DELETE_PAINTER}
+                      onCompleted={(data) => {
+                        console.log(`Mutation complete: ${data.deletePainter}`)
+                        this.handleClose()
+                        this.props.handleSnackbarOpen('DELETE_PAINTER_SUCCESS')
+                      }}
+                      onError={(err) => {
+                        console.log(`Mutation failed: ${err}`)
+                        this.props.handleSnackbarOpen('DELETE_PAINTER_ERROR')
+                      }}
+                    >
+                      {(deletePainter) => (
+                        <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={e => {
+                          e.preventDefault()
+
+                          let vars = {
+                            id: this.state.painterID,
+                          }
+
+                          console.log(vars)
+
+                          deletePainter({ variables: vars })
+                        }}
+                      >
+                        DELETE
+                      </Button>
+                      )}
+
+                    </Mutation>
+                  ) : null}
+                </div>
+              </MuiThemeProvider>
+              
               <Button onClick={this.handleClose}>
                 Annuleren
               </Button>

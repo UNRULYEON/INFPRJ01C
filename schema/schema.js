@@ -76,7 +76,7 @@ var schema = buildSchema(`
     deleteProduct(id: Int!): String
     addPainter(name: String!, city: String!, dateBirth: String!, dateDeath: String!, placeDeath: String!, occupation: String!, nationality: String!, headerImage: String!, thumbnail: String!, description: String!): String
     alterPainter(id: Int!, name: String!, city: String!, dateBirth: String!, dateDeath: String!, placeDeath: String!, occupation: String!, nationality: String!, headerimage: String, thumbnail: String, description: String!): String
-    deltePainter(name: String!): String
+    deletePainter(id: String!): String
     createBabyTabel(tabelnaam: String!, foreignkey: [RefBaby!], type: String!): String
     addToBabyTabel(id: Int!, foreignkey: [RefBaby!]): String
     removeBabyTabel(id: Int!): String
