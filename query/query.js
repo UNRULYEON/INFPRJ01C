@@ -377,19 +377,19 @@ var root = {
         .catch(err => {throw new Error(err)})
     db.one('UPDATE schilder SET document_vectors = (to_tsvector(coalesce(\'\'$1\'\'))) WHERE id = $2', [name, id])
     return 200
-  },
-  async alterPainter({ name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched }) {
-    const painter = await db.manyOrNone(`SELECT * from schilder WHERE name = ${name}`)
+  }, 
+  async alterPainter({ id, name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched }) {
+    const painter = await db.manyOrNone(`SELECT * from schilder WHERE id = ${id}`)
       .then(data => { return data })
       .catch(err => { throw new Error(err)})
     if (!painter.length) {
       return 310
     }
-    let id = db.one(`UPDATE schilder set
-            name = $1, city = $2, dateofbirth = $3, dateofdeath = $4, placeofdeath = $5, occupation = $6, nationality = $7, headerimage = $8, thumbnail = $9, description = $10, amountwatched = $11 WHERE name = ${name} RETURNING id`, [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched])
+    let id2 = db.one(`UPDATE schilder set
+            name = $2, city = $3, dateofbirth = $4, dateofdeath = $5, placeofdeath = $6, occupation = $7, nationality = $8, headerimage = $9, thumbnail = $10, description = $11, amountwatched = $12 WHERE id = ${id} RETURNING id`, [id, name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched])
         .then(data => {return data})
         .catch(err => {throw new Error(err)})
-    db.one('UPDATE schilder SET document_vectors = (to_tsvector(coalesce(\'\'$1\'\'))) WHERE id = $2', [name, id])
+    db.one('UPDATE schilder SET document_vectors = (to_tsvector(coalesce(\'\'$1\'\'))) WHERE id = $2', [name, id] )
     return 200
     },
   async deletePainter({ name }) {
