@@ -178,6 +178,25 @@ function PrivateRoute({ component: Component, ...rest }) {
   );
 }
 
+function HomeRedirect({ component: Component, ...rest }) {
+  return (
+    <Route
+      {...rest}
+      render={props =>
+        true ? (
+          <Redirect
+            {...rest}
+            to={{
+              pathname: "/login",
+              state: { from: props.location }
+            }}
+          />
+        ) : null
+      }
+    />
+  );
+}
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -413,6 +432,10 @@ class App extends Component {
             <div className="sidebar-view-container">
               <Sidebar />
               <Switch>
+                <HomeRedirect
+                  exact
+                  path="/"
+                />
                 <PrivateRoute
                   exact
                   path="/dashboard"
