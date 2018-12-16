@@ -363,6 +363,20 @@ class App extends Component {
           snackbarMessage: "Er is een fout opgetreden bij het aanpassen van een gebruiker"
         });
         break;
+      case 'EDIT_PAINTER_SUCCESS':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "De aanpassing is over enkele ogenblikken te zien"
+        });
+        break;
+      case 'EDIT_PAINTER_ERROR':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "error",
+          snackbarMessage: "Er is een fout opgetreden bij het aanpassen van een schilder"
+        });
+        break;
       case 'DELETE_FAQ_SUCCESS':
         this.setState({
           snackbarOpen: true,
@@ -403,6 +417,20 @@ class App extends Component {
           snackbarOpen: true,
           snackbarVariant: "error",
           snackbarMessage: "Er is een fout opgetreden bij het verwijderen van een schilderij"
+        });
+        break;
+      case 'DELETE_PAINTER_SUCCESS':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "Schilder verdwijnt over enkele ogenblikken"
+        });
+        break;
+      case 'DELETE_PAINTER_ERROR':
+        this.setState({
+          snackbarOpen: true,
+          snackbarVariant: "error",
+          snackbarMessage: "Er is een fout opgetreden bij het verwijderen van een schilder"
         });
         break;
       default:

@@ -70,10 +70,9 @@ const GET_PAINTER_DETAILS = gql`
       city
       dateofbirth
       dateofdeath
+      placeofdeath
       occupation
       nationality
-      headerimage
-      thumbnail
       description
     }
   }
@@ -107,10 +106,53 @@ const ADD_PAINTER = gql`
   }
 `;
 
+const EDIT_PAINTER = gql`
+  mutation AlterPainter(
+    $id: Int!
+    $name: String!
+    $city: String!
+    $dateBirth: String!
+    $dateDeath: String!
+    $placeDeath: String!
+    $occupation: String!
+    $nationality: String!
+    $description: String!){
+      alterPainter(
+        id: $id
+        name: $name
+        city: $city
+        dateBirth: $dateBirth
+        dateDeath: $dateDeath
+        placeDeath: $placeDeath
+        occupation: $occupation
+        nationality: $nationality
+        description: $description
+      )
+  }
+`;
+
+const DELETE_PAINTER = gql `
+  mutation DELETE_PAINTER($id: String!){
+    deletePainter(id: $id)
+  }
+`;
+
 const theme = new createMuiTheme({
   palette: {
     primary: {
       main: '#FFFFFF'
+    },
+    type: 'dark'
+  },
+  typography: {
+    useNextVariants: true,
+  }
+});
+
+const themeDeleteButton = new createMuiTheme({
+  palette: {
+    primary: {
+      main: '#D32F2F'
     },
     type: 'dark'
   },
@@ -205,7 +247,7 @@ function getStepContent(stepIndex, state, handleChange) {
         <Grid>
           <Grid container spacing={24}>
             <Grid item xs={12} className="add-painter-review-img-preview-container">
-              <img src={state.headerimage} alt="Preview" className="add-painter-review-img-preview"/>
+              <img src={state.headerimage} alt="Preview" className="add-painter-review-img-preview" />
               {/* <ImageOnLoad
                 src={state.headerimage}
                 alt="Preview"
@@ -260,6 +302,12 @@ class Painters extends Component {
     this.state = {
       activeStep: 0,
       dialogAddPainter: false,
+      dialogEditPainter: false,
+      painterID: '',
+      dataHeaderImage: '',
+      dataThumbnail: '',
+      dataAmountWatched: '',
+      addedData: false,
       name: '',
       nameError: false,
       nameErrorMsg: false,
@@ -310,6 +358,140 @@ class Painters extends Component {
     this.hiddenColumnNamesChange = (hiddenColumnNames) => { this.setState({ hiddenColumnNames }); };
   }
 
+  getEditStepContent(stepIndex, state, handleChange) {
+    switch (stepIndex) {
+      case 0:
+        return (
+          <Query
+            query={GET_PAINTER_DETAILS}
+            variables={{ id: state.painterID }}
+            onCompleted={(data) => {
+              if (this.state.addedData === false) {
+                this.setState({
+                  name: data.painterByID[0].name,
+                  nationality: data.painterByID[0].nationality,
+                  datebirth: data.painterByID[0].dateofbirth,
+                  city: data.painterByID[0].city,
+                  datedeath: data.painterByID[0].dateofdeath,
+                  placedeath: data.painterByID[0].placeofdeath,
+                  description: data.painterByID[0].description,
+                  occupation: data.painterByID[0].occupation,
+                  addedData: true,
+                })
+              }
+            }}
+          >
+            {({ loading, error }) => {
+              if (loading) return <p>Loading...</p>;
+              if (error) return <p>Error</p>;
+              return (
+                <Grid container spacing={24}>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth error={state.nameError}>
+                      <InputLabel htmlFor="add-name">Naam</InputLabel>
+                      <Input id="add-name" value={state.name} onChange={handleChange('name')} />
+                      <FormHelperText id="add-name-error-text">{state.nameErrorMsg}</FormHelperText>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth error={state.nationalityErrorMsg}>
+                      <InputLabel htmlFor="add-nationality">Nationaliteit</InputLabel>
+                      <Input id="add-nationality" value={state.nationality} onChange={handleChange('nationality')} />
+                      <FormHelperText id="add-nationality-error-text">{state.nationalityErrorMsg}</FormHelperText>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth error={state.datebirthError}>
+                      <InputLabel htmlFor="add-datebirth">Jaar van geboorte</InputLabel>
+                      <Input id="add-datebirth" type="number" value={state.datebirth} onChange={handleChange('datebirth')} />
+                      <FormHelperText id="add-datebirth-error-text">{state.datebirthErrorMsg}</FormHelperText>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth error={state.cityError}>
+                      <InputLabel htmlFor="add-city">Stad van geboorte</InputLabel>
+                      <Input id="add-city" value={state.city} onChange={handleChange('city')} />
+                      <FormHelperText id="add-city-error-text">{state.cityErrorMsg}</FormHelperText>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth error={state.datedeathError}>
+                      <InputLabel htmlFor="add-datedeath">Jaar van overlijden</InputLabel>
+                      <Input id="add-datedeath" type="number" value={state.datedeath} onChange={handleChange('datedeath')} />
+                      <FormHelperText id="add-datedeath-error-text">{state.datedeathErrorMsg}</FormHelperText>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth error={state.placedeathError}>
+                      <InputLabel htmlFor="add-placedeath">Stad van overlijden</InputLabel>
+                      <Input id="add-placedeath" value={state.placedeath} onChange={handleChange('placedeath')} />
+                      <FormHelperText id="add-placedeath-error-text">{state.placedeathErrorMsg}</FormHelperText>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <FormControl fullWidth error={state.descriptionError}>
+                      <InputLabel htmlFor="add-description">Beschrijving</InputLabel>
+                      <Input id="add-description" multiline value={state.description} onChange={handleChange('description')} />
+                      <FormHelperText id="add-description-error-text">{state.descriptionErrorMsg}</FormHelperText>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth error={state.occupationError}>
+                      <InputLabel htmlFor="add-occupation">Beroep</InputLabel>
+                      <Input id="add-occupation" multiline value={state.occupation} onChange={handleChange('occupation')} />
+                      <FormHelperText id="add-occupation-error-text">{state.occupationErrorMsg}</FormHelperText>
+                    </FormControl>
+                  </Grid>
+                </Grid>
+              )
+            }}
+
+          </Query>
+        )
+      case 1:
+        return (
+          <Grid>
+            <Grid container spacing={24}>
+              <Grid item xs={12} sm={6} className="add-painting-review-container">
+                <span>Naam</span>
+                <span>{state.name}</span>
+              </Grid>
+              <Grid item xs={12} sm={6} className="add-painting-review-container">
+                <span>Nationaliteit</span>
+                <span>{state.nationality}</span>
+              </Grid>
+              <Grid item xs={12} sm={6} className="add-painting-review-container">
+                <span>Jaar van geboorte</span>
+                <span>{state.datebirth}</span>
+              </Grid>
+              <Grid item xs={12} sm={6} className="add-painting-review-container">
+                <span>Stad van geboorte</span>
+                <span>{state.city}</span>
+              </Grid>
+              <Grid item xs={12} sm={6} className="add-painting-review-container">
+                <span>Jaar van overlijden</span>
+                <span>{state.datedeath}</span>
+              </Grid>
+              <Grid item xs={12} sm={6} className="add-painting-review-container">
+                <span>Stad van overlijden</span>
+                <span>{state.placedeath}</span>
+              </Grid>
+              <Grid item xs={12} className="add-painting-review-container">
+                <span>Beschrijving</span>
+                <span>{state.description}</span>
+              </Grid>
+              <Grid item xs={12} sm={6} className="add-painting-review-container">
+                <span>Beroep</span>
+                <span>{state.occupation}</span>
+              </Grid>
+            </Grid>
+          </Grid>
+        )
+      default:
+        return 'Uknown stepIndex';
+    }
+  }
+
 
   changeCurrentPage(currentPage) {
     this.setState({
@@ -323,7 +505,7 @@ class Painters extends Component {
     <Table.Row
       {...restProps}
       // eslint-disable-next-line no-alert
-      onClick={() => this.handleAanpassenDialog(row.id)}
+      onClick={() => this.handleClickOpenEdit(row.id)}
       style={{
         cursor: 'pointer'
       }}
@@ -380,43 +562,56 @@ class Painters extends Component {
     });
   };
 
+  // Handle dialog whnen opening
+  handleClickOpenEdit = (id) => {
+    this.setState({
+      dialogEditPainter: true,
+      painterID: id.toString(),
+      addedData: false,
+    });
+  };
+
   // Handle next button for stepper and check if fields are empty before continuing
   handleNext = () => {
     if (this.state.activeStep === 0) {
       let next = true
-      let items = [ ['name', this.state.name],
-                    ['city', this.state.city],
-                    ['datebirth', this.state.datebirth],
-                    ['datedeath', this.state.datedeath],
-                    ['placedeath', this.state.placedeath],
-                    ['occupation', this.state.occupation],
-                    ['nationality', this.state.nationality],
-                    ['headerimage', this.state.headerimage],
-                    ['thumbnail', this.state.thumbnail],
-                    ['description', this.state.description]]
+      let items = [['name', this.state.name],
+      ['city', this.state.city],
+      ['datebirth', this.state.datebirth],
+      ['datedeath', this.state.datedeath],
+      ['placedeath', this.state.placedeath],
+      ['occupation', this.state.occupation],
+      ['nationality', this.state.nationality],
+      ['headerimage', this.state.headerimage],
+      ['thumbnail', this.state.thumbnail],
+      ['description', this.state.description]]
 
       console.log(items)
 
-      for (let i = 0; i < items.length; i++) {
-        console.log(`item: ${items[i][0]} - value: ${items[i][1]}`)
-        if (!items[i][1]) {
-          next = false
-          console.error(`item: ${items[i][0]} is empty`)
-          let err = items[i][0] + "Error"
-          let errMsg = err + "Msg"
-          this.setState(state => ({
-            [err]: true,
-            [errMsg]: 'Dit veld is verplicht'
-          }));
-        } else {
-          let err = items[i][0] + "Error"
-          let errMsg = err + "Msg"
-          this.setState(state => ({
-            [err]: false,
-            [errMsg]: ''
-          }));
+
+      if (this.state.dialogAddPainter) {
+        for (let i = 0; i < items.length; i++) {
+          console.log(`item: ${items[i][0]} - value: ${items[i][1]}`)
+          if (!items[i][1]) {
+            next = false
+            console.error(`item: ${items[i][0]} is empty`)
+            let err = items[i][0] + "Error"
+            let errMsg = err + "Msg"
+            this.setState(state => ({
+              [err]: true,
+              [errMsg]: 'Dit veld is verplicht'
+            }));
+          } else {
+            let err = items[i][0] + "Error"
+            let errMsg = err + "Msg"
+            this.setState(state => ({
+              [err]: false,
+              [errMsg]: ''
+            }));
+          }
         }
       }
+
 
       if (next) {
         this.setState(state => ({ activeStep: state.activeStep + 1, }));
@@ -426,8 +621,49 @@ class Painters extends Component {
 
   // Handle dialog when closing
   handleClose = () => {
-    this.setState({ dialogAddPainter: false });
+    this.setState({ dialogAddPainter: false, dialogEditPainter: false, addedData: false, });
+    this.emptyState()
   };
+
+  emptyState() {
+    this.setState({
+      activeStep: 0,
+      dialogAddPainter: false,
+      dialogEditPainter: false,
+      painterID: '',
+      addedData: false,
+      name: '',
+      nameError: false,
+      nameErrorMsg: false,
+      city: '',
+      cityError: false,
+      cityErrorMsg: false,
+      datebirth: '',
+      datebirthError: false,
+      datebirthErrorMsg: false,
+      datedeath: '',
+      datedeathError: false,
+      datedeathErrorMsg: false,
+      placedeath: '',
+      placedeathError: false,
+      placedeathErrorMsg: false,
+      occupation: '',
+      occupationError: false,
+      occupationErrorMsg: false,
+      nationality: '',
+      nationalityError: false,
+      nationalityErrorMsg: false,
+      headerimage: '',
+      headerimageError: false,
+      headerimageErrorMsg: false,
+      thumbnail: '',
+      thumbnailError: false,
+      thumbnailErrorMsg: false,
+      description: '',
+      descriptionError: false,
+      descriptionErrorMsg: false,
+    })
+  }
 
   // Handle back button for stepper
   handleBack = () => {
@@ -458,7 +694,7 @@ class Painters extends Component {
             page: currentPage,
             amount: pageSize
           }}
-          // pollInterval={1000}
+          pollInterval={5000}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading... :)</p>;
@@ -533,41 +769,43 @@ class Painters extends Component {
             )
           }}
         </Query>
+
+        {/* Dialog Add Painter */}
         <Dialog
           open={this.state.dialogAddPainter}
           onClose={this.handleClose}
           disableBackdropClick
           disableEscapeKeyDown
-          // scroll='scroll'
+        // scroll='scroll'
         >
           <DialogTitle id="form-dialog-title">Schilder toevoegen</DialogTitle>
           <MuiThemeProvider theme={theme}>
             <DialogContent
               className="dialog-add-painting"
             >
-                <Stepper activeStep={activeStep} alternativeLabel>
-                  {steps.map(label => {
-                    return (
-                      <Step key={label}>
-                        <StepLabel>{label}</StepLabel>
-                      </Step>
-                    );
-                  })}
-                </Stepper>
-                <div>
-                  {this.state.activeStep === steps.length ? (
-                    <div>
-                      <div>All steps completed</div>
-                      <Button onClick={this.handleReset}>Reset</Button>
-                    </div>
-                  ) : (
+              <Stepper activeStep={activeStep} alternativeLabel>
+                {steps.map(label => {
+                  return (
+                    <Step key={label}>
+                      <StepLabel>{label}</StepLabel>
+                    </Step>
+                  );
+                })}
+              </Stepper>
+              <div>
+                {this.state.activeStep === steps.length ? (
+                  <div>
+                    <div>All steps completed</div>
+                    <Button onClick={this.handleReset}>Reset</Button>
+                  </div>
+                ) : (
                     <div>
                       <div>{getStepContent(activeStep, this.state, this.handleChange, this.handeImage)}</div>
                     </div>
                   )}
-                </div>
+              </div>
             </DialogContent>
-            <DialogActions>
+            <DialogActions className="buttonsInDialog">
               <Button onClick={this.handleClose}>
                 Annuleren
               </Button>
@@ -582,57 +820,201 @@ class Painters extends Component {
                 </div>
               ) : null}
               {activeStep === 1 ? (
-              <Mutation
-                mutation={ADD_PAINTER}
-                onCompleted={(data) => {
-                  console.log(`Query complete: ${data.addProduct}`)
-                  this.handleClose()
-                  this.setState({
-                  })
-                  this.props.handleSnackbarOpen('ADD_PAINTER_SUCCESS')
-                }}
-                onError={(err) => {
-                  console.log(`Query failed: ${err}`)
-                  this.props.handleSnackbarOpen('ADD_PAINTER_ERROR')
-                }}
-              >
-                {(addPainting, { data }) => (
-                  <div>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={e => {
-                        e.preventDefault()
+                <Mutation
+                  mutation={ADD_PAINTER}
+                  onCompleted={(data) => {
+                    console.log(`Query complete: ${data.addProduct}`)
+                    this.handleClose()
+                    this.setState({
+                    })
+                    this.props.handleSnackbarOpen('ADD_PAINTER_SUCCESS')
+                  }}
+                  onError={(err) => {
+                    console.log(`Query failed: ${err}`)
+                    this.props.handleSnackbarOpen('ADD_PAINTER_ERROR')
+                  }}
+                >
+                  {(addPainting, { data }) => (
+                    <div>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={e => {
+                          e.preventDefault()
 
-                        let vars = {
-                          name: this.state.name,
-                          city: this.state.city,
-                          dateBirth: this.state.datebirth,
-                          dateDeath: this.state.datedeath,
-                          placeDeath: this.state.placedeath,
-                          occupation: this.state.occupation,
-                          nationality: this.state.nationality,
-                          headerImage: this.state.headerimage,
-                          thumbnail: this.state.thumbnail,
-                          description: this.state.description,
-                        }
+                          let vars = {
+                            name: this.state.name,
+                            city: this.state.city,
+                            dateBirth: this.state.datebirth,
+                            dateDeath: this.state.datedeath,
+                            placeDeath: this.state.placedeath,
+                            occupation: this.state.occupation,
+                            nationality: this.state.nationality,
+                            headerImage: this.state.headerimage,
+                            thumbnail: this.state.thumbnail,
+                            description: this.state.description,
+                          }
 
-                        console.log(vars)
+                          console.log(vars)
 
-                        addPainting({ variables: vars })
-                      }}>
-                      Opslaan
+                          addPainting({ variables: vars })
+                        }}>
+                        Opslaan
                     </Button>
-                  </div>
-                )}
-              </Mutation>
+                    </div>
+                  )}
+                </Mutation>
               ) : (
-              <Button variant="contained" color="primary" onClick={this.handleNext}>
-                Volgende
+                  <Button variant="contained" color="primary" onClick={this.handleNext}>
+                    Volgende
               </Button>)}
             </DialogActions>
           </MuiThemeProvider>
         </Dialog>
+
+        {/* Dialog Edit Painter */}
+        <Dialog
+          open={this.state.dialogEditPainter}
+          onClose={this.handleClose}
+          disableBackdropClick
+          disableEscapeKeyDown
+        // scroll='scroll'
+        >
+          <DialogTitle id="form-dialog-title">Schilder aanpassen</DialogTitle>
+          <MuiThemeProvider theme={theme}>
+            <DialogContent
+              className="dialog-add-painting"
+            >
+              <Stepper activeStep={activeStep} alternativeLabel>
+                {steps.map(label => {
+                  return (
+                    <Step key={label}>
+                      <StepLabel>{label}</StepLabel>
+                    </Step>
+                  );
+                })}
+              </Stepper>
+              <div>
+                {this.state.activeStep === steps.length ? (
+                  <div>
+                    <div>All steps completed</div>
+                    <Button onClick={this.handleReset}>Reset</Button>
+                  </div>
+                ) : (
+                    <div>
+                      <div>{this.getEditStepContent(activeStep, this.state, this.handleChange)}</div>
+                    </div>
+                  )}
+              </div>
+            </DialogContent>
+            <DialogActions className="buttonsInDialog">
+            <MuiThemeProvider theme={themeDeleteButton}>
+                <div className="dialog-action-delete">
+                  {activeStep === 0 ? (
+                    <Mutation
+                      mutation={DELETE_PAINTER}
+                      onCompleted={(data) => {
+                        console.log(`Mutation complete: ${data.deletePainter}`)
+                        this.handleClose()
+                        this.props.handleSnackbarOpen('DELETE_PAINTER_SUCCESS')
+                      }}
+                      onError={(err) => {
+                        console.log(`Mutation failed: ${err}`)
+                        this.props.handleSnackbarOpen('DELETE_PAINTER_ERROR')
+                      }}
+                    >
+                      {(deletePainter) => (
+                        <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={e => {
+                          e.preventDefault()
+
+                          let vars = {
+                            id: this.state.painterID,
+                          }
+
+                          console.log(vars)
+
+                          deletePainter({ variables: vars })
+                        }}
+                      >
+                        DELETE
+                      </Button>
+                      )}
+
+                    </Mutation>
+                  ) : null}
+                </div>
+              </MuiThemeProvider>
+              
+              <Button onClick={this.handleClose}>
+                Annuleren
+              </Button>
+              {activeStep === 1 ? (
+                <div>
+                  <Button
+                    disabled={activeStep === 0}
+                    onClick={this.handleBack}
+                  >
+                    Terug
+                  </Button>
+                </div>
+              ) : null}
+              {activeStep === 1 ? (
+                <Mutation
+                  mutation={EDIT_PAINTER}
+                  onCompleted={(data) => {
+                    console.log(`Query complete: ${data.alterPainter}`)
+                    this.handleClose()
+                    this.setState({
+                    })
+                    this.props.handleSnackbarOpen('EDIT_PAINTER_SUCCESS')
+                  }}
+                  onError={(err) => {
+                    console.log(`Query failed: ${err}`)
+                    this.props.handleSnackbarOpen('EDIT_PAINTER_ERROR')
+                  }}
+                >
+                  {(editPainter, { data }) => (
+                    <div>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={e => {
+                          e.preventDefault()
+
+                          let vars = {
+                            id: parseInt(this.state.painterID),
+                            name: this.state.name,
+                            city: this.state.city,
+                            dateBirth: this.state.datebirth,
+                            dateDeath: this.state.datedeath,
+                            placeDeath: this.state.placedeath,
+                            occupation: this.state.occupation,
+                            nationality: this.state.nationality,
+                            description: this.state.description,
+                          }
+
+                          console.log(vars)
+
+                          editPainter({ variables: vars })
+                        }}>
+                        Opslaan
+                    </Button>
+                    </div>
+                  )}
+                </Mutation>
+              ) : (
+                  <Button variant="contained" color="primary" onClick={this.handleNext}>
+                    Volgende
+              </Button>)}
+            </DialogActions>
+          </MuiThemeProvider>
+        </Dialog>
+
+
+
       </section>
     );
   }
