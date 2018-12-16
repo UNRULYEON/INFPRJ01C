@@ -173,7 +173,7 @@ class AccountMenu extends Component {
           <p className="menu-title-greeting">{this.getTime()}</p>
           <p className="menu-title-account">{this.props.user.name}</p>
           <Link to={`/user/${this.props.user.name}/gegevens`} onClick={this.props.closeModal} className="menu-account-link">Mijn gegevens</Link>
-          <Link to={`/user/${this.props.user.name}/bestellijst`} onClick={this.props.closeModal} className="menu-account-link">Mijn bestellijst</Link>
+          <Link to={`/user/${this.props.user.name}/kooplijst`} onClick={this.props.closeModal} className="menu-account-link">Mijn kooplijst</Link>
           <Link to={`/user/${this.props.user.name}/huurlijst`} onClick={this.props.closeModal} className="menu-account-link">Mijn huurlijst</Link>
 
           <Button

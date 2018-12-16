@@ -40,6 +40,7 @@ import Contact from './views/contact/Contact';
 import FAQ from './views/faq/FAQ';
 import Login from './views/login/Login';
 import LoginRedirect from './views/loginRedirect/LoginRedirect';
+import Favorite from './views/favorite/Favorite';
 import Cart from './views/cart/Cart';
 import Order from './views/order/Order';
 import Registreren from './views/registreren/Registreren';
@@ -58,7 +59,7 @@ const link = ApolloLink.from([
     if (graphQLErrors)
       graphQLErrors.map(({ message, locations, path }) =>
         console.log(
-          `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
+          `[GraphQL error]: Message: ${message}, Location: ${JSON.stringify(locations)}, Path: ${path}`,
         ),
       );
 
@@ -192,9 +193,13 @@ class App extends Component {
         cellphone: ''
       },
       loggedIn: false,
-      cart: {
+      favorite: {
         items: [],
         total: 0,
+        timestamp: ''
+      },
+      cart: {
+        items: [],
         timestamp: ''
       },
       order: {
@@ -236,6 +241,15 @@ class App extends Component {
           cellphone: localUser.cellphone
         },
         loggedIn: true
+      })
+    }
+
+    // Check if favorite data is present as a cookie
+    if (localStorage.getItem('FAVORITE')) {
+      const localCart = JSON.parse(localStorage.getItem('FAVORITE'));
+
+      this.setState({
+        favorite: localCart.favorite
       })
     }
 
@@ -410,6 +424,147 @@ class App extends Component {
     }
   }
 
+  updateFavorite = (item, type) => {
+    let favorite
+    let currFav = this.state.favorite.items
+    let currCart = this.state.cart.items
+    let total = 0
+
+    switch (type) {
+      case 'ADD_TO_FAV':
+        let alreadyInFav = false
+        let alreadyInCart = false
+
+        if (currFav.length > 0) {
+          for (let i = 0; i < currFav.length; i++){
+            console.log(`Running fav loop`)
+            if (item.id === currFav[i].id) {
+              alreadyInFav = true
+            }
+          }
+        }
+
+        if (currCart.length > 0) {
+          for (let i = 0; i < currCart.length; i++){
+            console.log(`Running fav loop`)
+            if (item.id === currCart[i].id) {
+              alreadyInCart = true
+            }
+          }
+        }
+
+        if (alreadyInCart) {
+          this.setState({
+            snackbarOpen: true,
+            snackbarVariant: "error",
+            snackbarMessage: "Het item zit al in je lijst. Ga naar je lijst om hem te verplaatsen naar je favorietenlijst"
+          });
+        } else if (!alreadyInFav) {
+          console.log(`Item pushed to fav`)
+          currFav.push(item)
+          this.setState({
+            snackbarOpen: true,
+            snackbarVariant: "success",
+            snackbarMessage: "Het item is toegevoegd aan je favorietenlijst"
+          });
+        }
+
+        for (let i = 0; i < currFav.length; i++) {
+          total = (currFav[i].price * currFav[i].amount) + total
+        }
+
+        favorite = {
+          items: currFav,
+          total: total,
+          timestamp: String(new Date())
+        }
+
+        this.setState(({
+          favorite: favorite
+        }))
+
+        localStorage.setItem('FAVORITE', JSON.stringify({
+          favorite
+        }))
+
+        if (alreadyInFav) {
+          this.setState({
+            snackbarOpen: true,
+            snackbarVariant: "error",
+            snackbarMessage: "Het item zit al in je favorietenlijst"
+          });
+        }
+        break;
+      case 'REMOVE_FROM_FAV':
+        console.log(`Removing from favorite...`)
+        console.log(`Title: ${item.title}`)
+        console.log(`ID: ${item.id}`)
+
+        let newFav = []
+
+        for (let i = 0; i < currFav.length; i++) {
+          if (currFav[i].id !== item.id) {
+            newFav.push(currFav[i])
+          }
+        }
+
+        console.log(`New favorites list:`)
+        console.log(newFav)
+
+        for (let i = 0; i < currFav.length; i++) {
+          total = (currFav[i].price * currFav[i].amount) + total
+        }
+
+
+        favorite = {
+          items: newFav,
+          total: total,
+          timestamp: String(new Date())
+        }
+
+        this.setState(({
+          favorite: favorite,
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "Het item is uit je favorietenlijst verwijderd"
+        }))
+
+        localStorage.setItem('FAVORITE', JSON.stringify({
+          favorite
+        }))
+
+        break;
+      case 'ADD_TO_FAV_FROM_LIST':
+
+        for (let i = 0; i < currFav.length; i++) {
+          total = (currFav[i].price * currFav[i].amount) + total
+        }
+
+        currFav.push(item)
+
+        favorite = {
+          items: currFav,
+          total: total,
+          timestamp: String(new Date())
+        }
+
+        this.setState(({
+          favorite: favorite,
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "Het item is verplaatst naar je favorietenlijst"
+        }))
+
+        localStorage.setItem('FAVORITE', JSON.stringify({
+          favorite
+        }))
+
+        break;
+      default:
+        break;
+    }
+  }
+
   updateCart = (items) => {
     let total = 0
 
@@ -528,6 +683,7 @@ class App extends Component {
                   path="/schilderij/:id"
                   render={(props) => <SchilderijDetails
                     {...props}
+                    updateFavorite={this.updateFavorite}
                     setCart={this.setCart}
                     currentItem={this.state.current_item}
                     setCurrentItem={this.setCurrentItem}
@@ -561,20 +717,37 @@ class App extends Component {
                       loggedIn={this.state.loggedIn}
                       setUser={this.setUser}
                     />} />
-                <Route
-                  path="/mijnlijst"
-                  render={(props) => <Cart
-                    {...props}
-                    user={this.state.user}
-                    cart={this.state.cart}
-                    order={this.state.order}
-                    rental={this.state.rental}
-                    setUser={this.setUser}
-                    updateCart={this.updateCart}
-                    updateOrder={this.updateOrder}
-                    updateRental={this.updateRental}
-                    loggedIn={this.state.loggedIn}
-                />} />
+                  <Route
+                    path="/mijnlijst"
+                    render={(props) => <Cart
+                      {...props}
+                      user={this.state.user}
+                      cart={this.state.cart}
+                      order={this.state.order}
+                      rental={this.state.rental}
+                      setUser={this.setUser}
+                      updateFavorite={this.updateFavorite}
+                      updateCart={this.updateCart}
+                      updateOrder={this.updateOrder}
+                      updateRental={this.updateRental}
+                      loggedIn={this.state.loggedIn}
+                  />} />
+                  <Route
+                    path="/favorieten"
+                    render={(props) => <Favorite
+                      {...props}
+                      user={this.state.user}
+                      favorite={this.state.favorite}
+                      cart={this.state.cart}
+                      order={this.state.order}
+                      rental={this.state.rental}
+                      setCart={this.setCart}
+                      updateFavorite={this.updateFavorite}
+                      updateCart={this.updateCart}
+                      updateOrder={this.updateOrder}
+                      updateRental={this.updateRental}
+                      loggedIn={this.state.loggedIn}
+                  />} />
                 <Route
                   path="/order"
                   render={(props) => <Order
@@ -611,7 +784,7 @@ class App extends Component {
                 <Route
                   exact
                   strict
-                  path="/user/:user/bestellijst"
+                  path="/user/:user/kooplijst"
                   render={(props) => <Orders
                     {...props}
                     user={this.state.user}

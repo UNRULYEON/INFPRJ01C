@@ -356,3 +356,24 @@ a {
 button{
   cursor: pointer;
 }
+
+.details-container-list{
+  display: flex;
+  flex-flow: row nowrap;
+  margin: 0 !important;
+}
+
+.details-container-aside{
+  display: flex;
+  flex-flow: column nowrap;
+  margin: 40px 20px 0 0;
+  border: 1px solid #bdbdbd;
+  border-radius: 2px;
+  padding: 20px 10px 10px;
+  min-width: 150px;
+  max-height: min-content;
+}
+
+.details-aside-link{
+  margin-bottom: 10px;
+}

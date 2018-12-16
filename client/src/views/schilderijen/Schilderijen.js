@@ -7,7 +7,6 @@ import nl_NL from 'rc-pagination/lib/locale/nl_NL';
 import gql from "graphql-tag";
 import './Schilderijen.css'
 
-
 // Components
 import PageTitle from '../../components/pageLink/PageLink'
 import Gallery from '../../components/gallery/Gallery'

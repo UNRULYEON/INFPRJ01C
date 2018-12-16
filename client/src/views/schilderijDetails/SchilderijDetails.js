@@ -15,6 +15,9 @@ import Img from 'react-image'
 import Loading from '../../components/loading/Loading'
 import Tabs from '../../components/tabs/Tabs';
 
+// Icons
+import favorite from '../../icons/favorite.svg';
+
 const GET_ART_DETAILS = gql`
 	query Painting($id: String!){
 		paintingByID(id: $id){
@@ -45,6 +48,10 @@ class SchilderijDetails extends Component {
 
 	setCart = (data) => {
 		this.props.setCart(data, 'ADD_TO_CART')
+	}
+
+	updateFavorite = (data) => {
+		this.props.updateFavorite(data, 'ADD_TO_FAV')
 	}
 
 	setID(id) {
@@ -149,6 +156,43 @@ class SchilderijDetails extends Component {
 											>
 											<Icon>
 												playlist_add
+											</Icon>
+										</IconButton>
+									</Tooltip>
+									<Tooltip title="Voeg toe aan je favorietenlijst" enterDelay={500} leaveDelay={200}>
+										<IconButton
+											color="primary"
+											aria-label="Voeg toe aan je favorietenlijst"
+											onClick={() => {
+												const id = this.props.match.params.id
+												const title = data.paintingByID[0].title
+												const principalmaker = data.paintingByID[0].principalmaker
+												const src = data.paintingByID[0].src
+												const width = data.paintingByID[0].width
+												const height = data.paintingByID[0].height
+												const price = data.paintingByID[0].price
+												const amount = 1
+												const startDate = new Date()
+												let endDate = new Date()
+												endDate.setDate(endDate.getDate() + 1)
+
+												const item = {
+													id,
+													title,
+													principalmaker,
+													src,
+													width,
+													height,
+													price,
+													amount,
+													startDate,
+													endDate
+												}
+												this.updateFavorite(item)
+											}}
+											>
+											<Icon>
+												favorite
 											</Icon>
 										</IconButton>
 									</Tooltip>

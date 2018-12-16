@@ -27,6 +27,7 @@ import logo from '../../icons/logo.svg';
 import search from '../../icons/search.svg';
 import close from '../../icons/close.svg';
 import list from '../../icons/list.svg';
+import favorite from '../../icons/favorite.svg';
 
 const SearchbarContainer = posed.div({
   open: {
@@ -50,47 +51,6 @@ const SearchbarContainer = posed.div({
     }
   }
 });
-
-// const SearchbarResultContainer = posed.div({
-//   open: {
-//     y: '0%',
-//     transition: {
-//       y: {
-//         type: 'tween',
-//         ease: 'easeOut',
-//         duration: '250'
-//       }
-//     }
-//   },
-//   closed: {
-//     y: '-100%',
-//     transition: {
-//       y: {
-//         type: 'tween',
-//         ease: 'easeIn',
-//         duration: '200'
-//       }
-//     }
-//   }
-// });
-
-
-// const SEARCH = gql`
-// 	query Searchbar($query: String!, $page: Int!) {
-// 		searchbar(query: $query, page: $page) {
-// 			total
-// 			paintings{
-// 				id_number
-// 				title
-// 				src
-// 				width
-// 				height
-// 				price
-// 			}
-// 		}
-// 	}
-// `;
-
 
 class Header extends Component {
 	constructor(props){
@@ -202,43 +162,6 @@ class Header extends Component {
 						<button id="searchbar-close" onClick={this.toggleSearchBar} className="pointer header-button ml-3"><img src={close} alt="Close" width="32" /></button>
 					</div>
 				</SearchbarContainer>
-				{/* <SearchbarResultContainer
-					className="searchbar-results-container"
-					pose={this.state.searchBar ? 'open' : 'closed'}
-				>
-
-        <Query
-          query={SEARCH}
-          variables={{ query: this.state.query, page: this.state.page }}>
-            {({ loading, error, data }) => {
-              if (loading) return <p>Loading... :)</p>;
-              if (error) return <p>Error :(</p>;
-
-              return (
-                <div className="searchbar-results-wrapper">
-									<Pagination
-										showTotal={(total, range) => `${range[0]} - ${range[1]} van ${total} items`}
-										pageSize={12}
-										total={data.searchbar.total}
-										onChange={this.onChange}
-										current={this.state.page}
-										locale={nl_NL}
-									/>
-                  <Gallery images={data.searchbar.paintings}/>
-                  <Pagination
-                    showTotal={(total, range) => `${range[0]} - ${range[1]} van ${total} items`}
-                    pageSize={12}
-                    total={data.searchbar.total}
-                    onChange={this.onChange}
-                    current={this.state.page}
-                    locale={nl_NL}
-                  />
-                </div>
-              )
-            }}
-          </Query>
-
-				</SearchbarResultContainer> */}
 				<div id="header-container-primary">
 					<div id="header-name">
 						<Link to="/"><img src={logo} alt="Logo" height="32" /></Link>
@@ -255,6 +178,11 @@ class Header extends Component {
 									<svg id="account-icon-svg" className={this.props.loggedIn ? "account-icon-svg-loggedIn" : "account-icon-svg-loggedOut"} width="32" height="32" viewBox="0 0 24 24"><path fill="transparent" d="M0 0h24v24H0V0z"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM7.07 18.28c.43-.9 3.05-1.78 4.93-1.78s4.51.88 4.93 1.78C15.57 19.36 13.86 20 12 20s-3.57-.64-4.93-1.72zm11.29-1.45c-1.43-1.74-4.9-2.33-6.36-2.33s-4.93.59-6.36 2.33C4.62 15.49 4 13.82 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8c0 1.82-.62 3.49-1.64 4.83zM12 6c-1.94 0-3.5 1.56-3.5 3.5S10.06 13 12 13s3.5-1.56 3.5-3.5S13.94 6 12 6zm0 5c-.83 0-1.5-.67-1.5-1.5S11.17 8 12 8s1.5.67 1.5 1.5S12.83 11 12 11z"/></svg>
 								</button>
 							</Tooltip>
+							<Route render={({ history }) => (
+								<Tooltip title="Favorietenlijst" enterDelay={500} leaveDelay={200}>
+									<button onClick={() => history.push(`/favorieten`)} className="pointer header-button mr-2" id="search-icon"><img src={favorite} alt="Favorietenlijst" width="32" /></button>
+								</Tooltip>
+							)} />
 							<Route render={({ history }) => (
 								<button onClick={() => this.props.loggedIn ? history.push(`/user/${this.props.user.name}`) : history.push('/login')} className="pointer header-button mr-2" id="account-icon-mobile">
 									<svg id="account-icon-svg" className={this.props.loggedIn ? "account-icon-svg-loggedIn" : "account-icon-svg-loggedOut"} width="32" height="32" viewBox="0 0 24 24"><path fill="transparent" d="M0 0h24v24H0V0z"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM7.07 18.28c.43-.9 3.05-1.78 4.93-1.78s4.51.88 4.93 1.78C15.57 19.36 13.86 20 12 20s-3.57-.64-4.93-1.72zm11.29-1.45c-1.43-1.74-4.9-2.33-6.36-2.33s-4.93.59-6.36 2.33C4.62 15.49 4 13.82 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8c0 1.82-.62 3.49-1.64 4.83zM12 6c-1.94 0-3.5 1.56-3.5 3.5S10.06 13 12 13s3.5-1.56 3.5-3.5S13.94 6 12 6zm0 5c-.83 0-1.5-.67-1.5-1.5S11.17 8 12 8s1.5.67 1.5 1.5S12.83 11 12 11z"/></svg>

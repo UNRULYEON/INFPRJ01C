@@ -4,6 +4,9 @@ import gql from "graphql-tag";
 
 import './SchilderijDetails.css';
 
+//Icons
+import favorite from '../../icons/favorite.svg';
+
 const GET_ART_DETAILS = gql`
 	query Painting($id: String!){
 		paintingByID(id: $id){
@@ -24,16 +27,6 @@ const GET_ART_DETAILS = gql`
 		}
 	}
 `;
-
-// const PAINTINGS = gql`
-//   query Collection{
-//     collection{
-//       id_number
-//       title
-//       principalmaker
-//     }
-//   }
-// `;
 
 
 class SchilderijDetails extends Component {

@@ -12,6 +12,7 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Tooltip from '@material-ui/core/Tooltip';
+import Icon from '@material-ui/core/Icon';
 
 //Date picker
 import DateFnsUtils from '@date-io/date-fns';
@@ -40,6 +41,22 @@ const theme = new createMuiTheme({
 			},
 		},
 	},
+});
+
+const themeRed = new createMuiTheme({
+  palette: {
+    primary: {
+      main: '#FF3D00'
+    }
+  }
+});
+
+const themePink = new createMuiTheme({
+  palette: {
+    primary: {
+      main: '#F06292'
+    }
+  }
 });
 
 // a little function to help us with reordering the result
@@ -197,13 +214,17 @@ class Cart extends Component {
 		}
 	};
 
-	removeFromList(list, id, type) {
+	removeFromList(list, id, type, ADD_TO_FAV) {
 		switch (type) {
 			case 'CART':
 				let newArrCart = []
 				for (let i = 0; i < this.state.cart.length; i++) {
 					if (this.state.cart[i].id === id) {
 						console.log(`Item to remove: ${this.state.cart[i]}`)
+						if (ADD_TO_FAV) {
+							console.log(`Item is being removed to it can be added to the favorites list`)
+							this.props.updateFavorite(this.state.cart[i], 'ADD_TO_FAV_FROM_LIST')
+						}
 					} else {
 						console.log(`pushing to cart: ${this.state.cart[i]}`)
 						newArrCart.push(this.state.cart[i])
@@ -220,6 +241,10 @@ class Cart extends Component {
 				for (let i = 0; i < this.state.order.length; i++) {
 					if (this.state.order[i].id === id) {
 						console.log(`Item to remove: ${this.state.order[i]}`)
+						if (ADD_TO_FAV) {
+							console.log(`Item is being removed to it can be added to the favorites list`)
+							this.props.updateFavorite(this.state.order[i], 'ADD_TO_FAV_FROM_LIST')
+						}
 					} else {
 						console.log(`pushing to cart: ${this.state.order[i]}`)
 						newArrOrder.push(this.state.order[i])
@@ -236,6 +261,10 @@ class Cart extends Component {
 				for (let i = 0; i < this.state.rental.length; i++) {
 					if (this.state.rental[i].id === id) {
 						console.log(`Item to remove: ${this.state.rental[i]}`)
+						if (ADD_TO_FAV) {
+							console.log(`Item is being removed to it can be added to the favorites list`)
+							this.props.updateFavorite(this.state.rental[i], 'ADD_TO_FAV_FROM_LIST')
+						}
 					} else {
 						console.log(`pushing to cart: ${this.state.rental[i]}`)
 						newArrRental.push(this.state.rental[i])
@@ -330,15 +359,40 @@ class Cart extends Component {
 														<span className="draggable-details-maker">{item.principalmaker}</span>
 													</div>
 													<div className="draggable-action">
-														<IconButton
-															color="primary"
-															aria-label="Delete"
-															onClick={() => {
-																this.removeFromList(this.state.cart, item.id, 'CART')
-															}}
-														>
-															<DeleteIcon />
-														</IconButton>
+														<MuiThemeProvider theme={themePink}>
+															<Tooltip title="Verplaats naar je favorietenlijst" enterDelay={500} leaveDelay={200}>
+																<IconButton
+																	color="primary"
+																	aria-label="Verplaats naar je favorietenlijst"
+																	onClick={(e) => {
+																		e.preventDefault()
+																		this.removeFromList(this.state.cart, item.id, 'CART', true)
+																	}}
+																	style={{ marginRight: '10px' }}
+																	>
+																	<Icon>
+																		favorite
+																	</Icon>
+																</IconButton>
+															</Tooltip>
+														</MuiThemeProvider>
+														<MuiThemeProvider theme={themeRed}>
+															<Tooltip title="Verwijder het item uit je lijst" enterDelay={500} leaveDelay={200}>
+																<IconButton
+																	color="primary"
+																	aria-label="Verwijder het item uit je lijst"
+																	onClick={(e) => {
+																		e.preventDefault()
+																		this.removeFromList(this.state.cart, item.id, 'CART')
+																	}}
+																	style={{ marginRight: '10px' }}
+																	>
+																	<Icon>
+																		delete
+																	</Icon>
+																</IconButton>
+															</Tooltip>
+														</MuiThemeProvider>
 													</div>
 													<div className="draggable-price">
 														<Currency
@@ -353,7 +407,6 @@ class Cart extends Component {
 										)}
 									</Draggable>
 								))}
-								{this.state.showPlaceholder ? 'Test hier' : null}
 								{provided.placeholder}
 							</div>
 						)}
@@ -390,15 +443,40 @@ class Cart extends Component {
 														<span className="draggable-details-maker">{item.principalmaker}</span>
 													</div>
 													<div className="draggable-action">
-														<IconButton
-															color="primary"
-															aria-label="Delete"
-															onClick={() => {
-																this.removeFromList(this.state.order, item.id, 'ORDER')
-															}}
-														>
-															<DeleteIcon />
-														</IconButton>
+														<MuiThemeProvider theme={themePink}>
+															<Tooltip title="Verplaats naar je favorietenlijst" enterDelay={500} leaveDelay={200}>
+																<IconButton
+																	color="primary"
+																	aria-label="Verplaats naar je favorietenlijst"
+																	onClick={(e) => {
+																		e.preventDefault()
+																		this.removeFromList(this.state.cart, item.id, 'ORDER', true)
+																	}}
+																	style={{ marginRight: '10px' }}
+																	>
+																	<Icon>
+																		favorite
+																	</Icon>
+																</IconButton>
+															</Tooltip>
+														</MuiThemeProvider>
+														<MuiThemeProvider theme={themeRed}>
+															<Tooltip title="Verwijder het item uit je kooplijst" enterDelay={500} leaveDelay={200}>
+																<IconButton
+																	color="primary"
+																	aria-label="Verwijder het item uit je kooplijst"
+																	onClick={(e) => {
+																		e.preventDefault()
+																		this.removeFromList(this.state.cart, item.id, 'ORDER')
+																	}}
+																	style={{ marginRight: '10px' }}
+																	>
+																	<Icon>
+																		delete
+																	</Icon>
+																</IconButton>
+															</Tooltip>
+														</MuiThemeProvider>
 													</div>
 													<div className="draggable-price">
 														<Currency
@@ -534,16 +612,40 @@ class Cart extends Component {
 																</div>
 															</MuiPickersUtilsProvider>
 														</div>
-														<IconButton
-															className="draggable-action-delete"
-															color="primary"
-															aria-label="Delete"
-															onClick={() => {
-																this.removeFromList(this.state.rental, item.id, 'RENTAL')
-															}}
-														>
-															<DeleteIcon />
-														</IconButton>
+														<MuiThemeProvider theme={themePink}>
+															<Tooltip title="Verplaats naar je favorietenlijst" enterDelay={500} leaveDelay={200}>
+																<IconButton
+																	color="primary"
+																	aria-label="Verplaats naar je favorietenlijst"
+																	onClick={(e) => {
+																		e.preventDefault()
+																		this.removeFromList(this.state.cart, item.id, 'RENTAL', true)
+																	}}
+																	style={{ marginRight: '10px' }}
+																	>
+																	<Icon>
+																		favorite
+																	</Icon>
+																</IconButton>
+															</Tooltip>
+														</MuiThemeProvider>
+														<MuiThemeProvider theme={themeRed}>
+															<Tooltip title="Verwijder het item uit je huurlijst" enterDelay={500} leaveDelay={200}>
+																<IconButton
+																	color="primary"
+																	aria-label="Verwijder het item uit je huurlijst"
+																	onClick={(e) => {
+																		e.preventDefault()
+																		this.removeFromList(this.state.cart, item.id, 'RENTAL')
+																	}}
+																	style={{ marginRight: '10px' }}
+																	>
+																	<Icon>
+																		delete
+																	</Icon>
+																</IconButton>
+															</Tooltip>
+														</MuiThemeProvider>
 													</div>
 													<div className="draggable-price">
 														<Currency
