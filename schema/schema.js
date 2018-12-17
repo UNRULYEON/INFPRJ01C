@@ -45,10 +45,12 @@ var schema = buildSchema(`
     faqId(id: Int!): FAQ
     """Test to see if the server is running"""
     status: Int 
+    """Use to retrieve all of the content"""
     papatabel: [PapaGet]
+    """Provide an ID and retrieve all associated content"""
     babyTabelSelect(id: Int!): BabyType
-    orderListSelect(buyerId: Int!): [Orders]
-    OdLIS(buyerId: Int!): [Ordered]
+    """Provide the KEY of the user, and recieve all purchases, grouped by the purchase date"""
+    orderListSelect(buyerId: Int!): [Ordered]
     rentalListSelect(buyerId: Int!): [Rentals]
     selectShoppingCart(userId: Int!): [Cart]
     searchbar(query: String!, page: Int!, amount: Int): searchResult
@@ -83,7 +85,7 @@ var schema = buildSchema(`
     addToBabyTabel(id: Int!, foreignkey: [RefBaby!]): String
     removeBabyTabel(id: Int!): String
     shoppingCartInsert(gebruikerId: Int!, items: String!, time: String!): String
-    
+    """Provide the id of the buyer and the date at which the items are bought, and provide an array of paintings KEY's"""
     orderListInsert(buyerId: Int, items: [PaintRef!], date: String!): String
     rentalListInsert(gebruikerId: Int!, items : [PaintRefRent!], purchaseDate: String!): String
     orderListUpdate(id: Int!, buyerId: Int!, newStatus: String!): String

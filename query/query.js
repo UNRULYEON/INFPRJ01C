@@ -577,71 +577,45 @@ var root = {
       return 200
     }
   },
-  async orderListSelect({ buyerId }) {
-    let Lijst = await db.manyOrNone(`SELECT * FROM orderlist WHERE buyerid = ${buyerId}`)
-      .then(data => { return data })
-      .catch(err => { throw new Error(err) })
-    Lijst.forEach(element => {
-      element.purchasedate = this.dateToString(element.purchasedate)
-    });
-    return Lijst
-  },
-  async OdLIS({buyerId}){
-    console.log("\nOdLIS")
+  async orderListSelect({buyerId}){
+    // Get all dates at which a buyer has bought a painting
     let Lijst = await db.manyOrNone(`SELECT * FROM ordered WHERE buyerid = ${buyerId}`)
       .then(data => {return data})
       .catch(err => {throw new Error(err)})
     let items = []
+    // Get all paintings bought by the buyer
     for (let index = 0; index < Lijst.length; index++) {
       const element = Lijst[index];
       element.purchasedate = this.dateToString(element.purchasedate)
       let l = await db.manyOrNone(`SELECT * FROM orders WHERE refto_ordered = ${element.id}`)
       items.push(l)
     }
-    // todo:
-    // door het aantal gebruikers heen loopen
-    // bij elke gebruiker door een lijst met schilderijen loopen
-    // controleren of de schilderij refto overeenkomt met de gebruiker ID
-    // zo ja, toevoegen aan k
-    let k = []
+    // Creating the return type
+    let OrdersByDate = []
+    // Loop for the total amount of dates at which a purchase has been made
     for (let i = 0; i < Lijst.length; i++) {
-      console.log(Lijst.length)
-      const koper = Lijst[i];
-      console.log("Koper: ")
-      console.log(koper)
+      const koper = Lijst[i]
+      // Add buyer info to the return type
+      OrdersByDate.push({
+        id: koper.id,
+        buyerid: koper.buyerid,
+        purchasedate: koper.purchasedate,
+        items: []
+      })
+      // Loop for the total amount of painting bought on a given date 
       for (let j = 0; j < items[i].length; j++) {
-        // console.log(items[i])
-        // console.log(items[i].length)
-        const element = items[j]
-        console.log(element)
-        console.log("next")
-        // let t = {
-        //   id: koper.id,
-        //   buyerid: koper.buyerid,
-        //   purchasedate: koper.purchasedate,
-        //   items: {
-        //     id: element.id,
-        //     refto_ordered: element.refto_ordered,
-        //     items: element.items,
-        //     status: element.status
-        //   }
-        // }
-        // k.push(t)
-        // k.push(element)
-        // console.log(koper.id)
-        // console.log("Item: ")
-        // console.log(element)
-        // if(koper.id == element[j].refto_ordered){
-        //   console.log("Item: ")
-        //   console.log(element)
-        //   k.push(element)
-        // }
+        const OrderInfo = items[i][j]
+        // Add order info to the return type
+        OrdersByDate[i].items.push({
+          id: OrderInfo.id,
+          refto_ordered: OrderInfo.refto_ordered,
+          items: OrderInfo.items,
+          status: OrderInfo.status
+        })
       }
     }
-    
-    // console.log(k)
-
-    return k
+    // Return the return type
+    return OrdersByDate
   },
   async orderListInsert({buyerId = 183, items, date}){
     let existing = await db.manyOrNone(`SELECT * FROM ordered WHERE buyerid = ${buyerId}`)
