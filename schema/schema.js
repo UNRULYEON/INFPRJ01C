@@ -48,6 +48,8 @@ var schema = buildSchema(`
     papatabel: [PapaGet]
     babyTabelSelect(id: Int!): BabyType
     orderListSelect(buyerId: Int!): [Orders]
+    OdLIS(buyerId: Int!): [Ordered]
+    rentalListSelect(buyerId: Int!): [Rentals]
     selectShoppingCart(userId: Int!): [Cart]
     searchbar(query: String!, page: Int!, amount: Int): searchResult
     searchpainter(query: String!, page: Int!, amount: Int): Paintersearch
@@ -81,9 +83,11 @@ var schema = buildSchema(`
     addToBabyTabel(id: Int!, foreignkey: [RefBaby!]): String
     removeBabyTabel(id: Int!): String
     shoppingCartInsert(gebruikerId: Int!, items: String!, time: String!): String
-    orderListInsert(gebruikerId: Int, items: [PaintRef!], purchaseDate: String!): String
+    
+    orderListInsert(buyerId: Int, items: [PaintRef!], date: String!): String
     rentalListInsert(gebruikerId: Int!, items : [PaintRefRent!], purchaseDate: String!): String
     orderListUpdate(id: Int!, buyerId: Int!, newStatus: String!): String
+    
     WishlistInsert(gebruikerId: Int!, items: String!, time: String!): String
     faqCreate(question: String!, answer: String!): String
     faqUpdate(question: String!, answer: String!, id: Int!): String
@@ -118,13 +122,26 @@ var schema = buildSchema(`
     items: String,
     timestamp: String
   },
+  type Ordered{
+    id: Int,
+    buyerid: Int,
+    purchasedate: String
+    items: [Orders]
+  },
   type Orders{
+    id: Int,
+    refto_ordered: Int,
+    items: Int,
+    status: String
+  },
+  type Rentals{
     id: Int,
     buyerid: Int,
     items: Int,
     purchasedate: String,
-    status: String
-  },
+    rentstart: String,
+    rentstop: String
+  }
   type ret{
     id_number: Int,
     title: String,

@@ -578,8 +578,7 @@ var root = {
     }
   },
   async orderListSelect({ buyerId }) {
-    let Lijst = await db.manyOrNone(`SELECT * FROM orderlist
-              WHERE buyerid = ${buyerId}`)
+    let Lijst = await db.manyOrNone(`SELECT * FROM orderlist WHERE buyerid = ${buyerId}`)
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
     Lijst.forEach(element => {
@@ -587,22 +586,112 @@ var root = {
     });
     return Lijst
   },
-  async orderListUpdate({ id, buyerId, newStatus }) {
-    let selection = await db.manyOrNone(`SELECT * from orderlist WHERE id = ${id} AND buyerid = ${buyerId}`)
+  async OdLIS({buyerId}){
+    console.log("\nOdLIS")
+    let Lijst = await db.manyOrNone(`SELECT * FROM ordered WHERE buyerid = ${buyerId}`)
+      .then(data => {return data})
+      .catch(err => {throw new Error(err)})
+    let items = []
+    for (let index = 0; index < Lijst.length; index++) {
+      const element = Lijst[index];
+      element.purchasedate = this.dateToString(element.purchasedate)
+      let l = await db.manyOrNone(`SELECT * FROM orders WHERE refto_ordered = ${element.id}`)
+      items.push(l)
+    }
+    // todo:
+    // door het aantal gebruikers heen loopen
+    // bij elke gebruiker door een lijst met schilderijen loopen
+    // controleren of de schilderij refto overeenkomt met de gebruiker ID
+    // zo ja, toevoegen aan k
+    let k = []
+    for (let i = 0; i < Lijst.length; i++) {
+      console.log(Lijst.length)
+      const koper = Lijst[i];
+      console.log("Koper: ")
+      console.log(koper)
+      for (let j = 0; j < items[i].length; j++) {
+        // console.log(items[i])
+        // console.log(items[i].length)
+        const element = items[j]
+        console.log(element)
+        console.log("next")
+        // let t = {
+        //   id: koper.id,
+        //   buyerid: koper.buyerid,
+        //   purchasedate: koper.purchasedate,
+        //   items: {
+        //     id: element.id,
+        //     refto_ordered: element.refto_ordered,
+        //     items: element.items,
+        //     status: element.status
+        //   }
+        // }
+        // k.push(t)
+        // k.push(element)
+        // console.log(koper.id)
+        // console.log("Item: ")
+        // console.log(element)
+        // if(koper.id == element[j].refto_ordered){
+        //   console.log("Item: ")
+        //   console.log(element)
+        //   k.push(element)
+        // }
+      }
+    }
+    
+    // console.log(k)
+
+    return k
+  },
+  async orderListInsert({buyerId = 183, items, date}){
+    let existing = await db.manyOrNone(`SELECT * FROM ordered WHERE buyerid = ${buyerId}`)
+      .then(data => {return data})
+      .catch(err => {throw new Error(err)})
+    if(!existing.length){
+      // If the user hasn't made any orders yet
+      let place = await db.one(`INSERT INTO ordered(buyerid, purchasedate) VALUES($1,$2) RETURNING ID`,[buyerId, date])
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
+      items.forEach(element => {
+        db.one(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`,[place.id, element.foreignkey])
+      })
+    }else{
+      // If the user has previously made a order
+      let row = 0
+      existing.forEach(element => {
+        element.purchasedate = this.dateToString(element.purchasedate)
+        if(element.purchasedate == date){
+          // The date is equal, meaning the buyer has already made a purchase on this day
+          row = element.id
+          return
+        }
+      })
+      if(row != 0){
+        // If the user has already made a purchase on this day
+        items.forEach(element => {
+          db.one(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`,[row, element.foreignkey])
+        })
+      }else{
+        // If the user hasn't yet made a purchas eon this day
+        let place = await db.one(`INSERT INTO ordered(buyerid, purchasedate) VALUES($1,$2) RETURNING ID`,[buyerId, date])
+          .then(data => {return data})
+          .catch(err => {throw new Error(err)})
+        items.forEach(element => {
+          db.one(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`,[place.id, element.foreignkey])
+        })
+      }
+    }
+    return 200
+  },
+  async orderListUpdate({ id, newStatus }) {
+    let selection = await db.manyOrNone(`SELECT * from orders WHERE id = ${id}`)
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
     if (!selection.length) {
       return 313
     }
-    db.one(`UPDATE orderlist SET status = $1 WHERE id = $2 AND buyerid = $3`, [newStatus, id, buyerId])
+    db.one(`UPDATE orders SET status = $1 WHERE id = $2 `, [newStatus, id])
       .catch(err => { throw new Error(err) })
-    return 200
-  },
-  async orderListInsert({ gebruikerId = 183, items, purchaseDate }) {
-    items.forEach(element => {
-      db.one(`INSERT INTO orderlist(buyerid, items, purchasedate) VALUES($1,$2,$3)`, [gebruikerId, element.foreignkey, purchaseDate])
-        .catch(err => {throw new Error(err)})
-    })
     return 200
   },
   async rentalListInsert({ gebruikerId, items, purchaseDate }) {
@@ -611,6 +700,17 @@ var root = {
         .catch(err => {throw new Error(err)})
     })
     return 200
+  },
+  async rentalListSelect({ buyerId }){
+    let Lijst = await db.manyOrNone(`SELECT * FROM rentallist WHERE buyerid =${buyerId}`)
+      .then(data => {return data})
+      .catch(err => {throw new Error(err)})
+    Lijst.forEach(element => {
+      element.purchasedate = this.dateToString(element.purchasedate)
+      element.rentstart = this.dateToString(element.rentstart)
+      element.rentstop = this.dateToString(element.rentstop)
+    })
+    return Lijst
   },
   async me(req, res, next) {
     if (!res.headers.authorization) {

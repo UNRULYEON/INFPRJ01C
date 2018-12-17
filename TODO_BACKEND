@@ -2,3 +2,7 @@ status van Huren visualiseren
 
 Tijdens de 5e sprint moet in de Admin pannel een optie komen om groepen van schilderijen aan te maken, aan te passen of te verwijderen
 (Papatabel en Babytabel) BACKEND werkt al
+
+bij het terugsturen van koop-data
+een array maken waarin alle schilderijen die een klant heeft gekocht gesorteerd staan bij datum
+Meerdere schilderijen op 1 datum gekocht, dan die datum als hoofd, met daarin de schilderijen
