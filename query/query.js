@@ -587,8 +587,8 @@ var root = {
     for (let index = 0; index < Lijst.length; index++) {
       const element = Lijst[index];
       element.purchasedate = this.dateToString(element.purchasedate)
-      let l = await db.manyOrNone(`SELECT * FROM orders WHERE refto_ordered = ${element.id}`)
-      items.push(l)
+      let painting = await db.manyOrNone(`SELECT * FROM orders WHERE refto_ordered = ${element.id}`)
+      items.push(painting)
     }
     // Creating the return type
     let OrdersByDate = []
@@ -668,11 +668,45 @@ var root = {
       .catch(err => { throw new Error(err) })
     return 200
   },
-  async rentalListInsert({ gebruikerId, items, purchaseDate }) {
-    items.forEach(element => {
-      db.one(`INSERT INTO rentallist(buyerid,items,purchasedate,rentstart,rentstop) VALUES($1,$2,$3,$4,$5) RETURNING ID`, [gebruikerId, element.foreignkey, purchaseDate, element.startDate, element.stopDate])
+  async rentalListInsert({buyerId, items, date}){
+    console.log("\nRLI")
+    let existing = await db.manyOrNone(`SELECT * FROM rented WHERE buyerid = ${buyerId}`)
+      .then(data => {return data})
+      .catch(err => {throw new Error(err)})
+    if(!existing.length){
+      // If the user hasn't made any rentals yet
+      let place = await db.one(`INSERT INTO rented(buyerid, purchasedate) VALUES($1,$2) RETURNING ID`,[buyerId,date])
+        .then(data => {return data})
         .catch(err => {throw new Error(err)})
-    })
+      items.forEach(element => {
+        db.one(`INSERT INTO rentals(rentstart, rentstop, items, refto_rented) VALUES($1,$2,$3,$4)`,[element.startDate, element.stopDate, element.foreignkey, place.id])
+      })
+    }else{
+      // If the user has previously made a order
+      let row = 0
+      existing.forEach(element => {
+        element.purchasedate = this.dateToString(element.purchasedate)
+        if(element.purchasedate == date){
+          // The date is equal, meaning the buyer has already made a purchase on this day
+          row = element.id
+          return
+        }
+      })
+      if(row != 0){
+        // If the user has already made a purchase on this day
+        items.forEach(element => {
+          db.one(`INSERT INTO rentals(rentstart, rentstop, items, refto_rented) VALUES($1,$2,$3,$4)`,[element.startDate, element.stopDate, element.foreignkey, row])
+        })
+      }else{
+        // If the user hasn't yet made a purchas eon this day
+        let place = await db.one(`INSERT INTO rented(buyerid, purchasedate) VALUES($1,$2) RETURNING ID`,[buyerId,date])
+          .then(data => {return data})
+          .catch(err => {throw new Error(err)})
+        items.forEach(element => {
+          db.one(`INSERT INTO rentals(rentstart, rentstop, items, refto_rented) VALUES($1,$2,$3,$4)`,[element.startDate, element.stopDate, element.foreignkey, place.id])
+        })
+      }
+    }
     return 200
   },
   async rentalListSelect({ buyerId }){
@@ -685,6 +719,54 @@ var root = {
       element.rentstop = this.dateToString(element.rentstop)
     })
     return Lijst
+  },
+  async RLS({buyerId}){
+    console.log("\nRLS")
+    // Get all dates at which a buyer has rented a painting
+    let Lijst = await db.manyOrNone(`SELECT * FROM rented WHERE buyerid = ${buyerId}`)
+      .then(data => {return data})
+      .catch(err => {throw new Error(err)})
+    let items = []
+    // Get all paintings rented by the buyer
+    for (let j = 0; j < Lijst.length; j++) {
+      const element1 = Lijst[j];
+      element1.purchasedate = this.dateToString(element1.purchasedate)
+      let painting = await db.manyOrNone(`SELECT * FROM rentals WHERE refto_rented = ${element1.id}`)
+      for (let i = 0; i < painting.length; i++) {
+        const element2 = painting[i];
+        element2.rentstart = this.dateToString(element2.rentstart)
+        element2.rentstop = this.dateToString(element2.rentstop)
+      }
+      items.push(painting)
+    }
+    // Creating the return type
+    let RentalssByDate = []
+    // Loop for the total amount of dates at which a rental has been made
+    for (let i = 0; i < Lijst.length; i++) {
+      const koper = Lijst[i];
+      // Add buyer info to the return type
+      RentalssByDate.push({
+        id:koper.id,
+        buyerid: koper.buyerid,
+        purchasedate: koper.purchasedate,
+        items: []
+      })
+      // Loop for the total amount of painting bought on a given date 
+      for (let j = 0; j < items[i].length; j++) {
+        const RentalInfo = items[i][j];
+        // Add order info to the return type
+        RentalssByDate[i].items.push({
+          id: RentalInfo.id,
+          rentstart: RentalInfo.rentstart,
+          rentstop: RentalInfo.rentstop,
+          refto_rented: RentalInfo.refto_rented,
+          items: RentalInfo.items,
+          status: RentalInfo.status
+        })
+      }
+    }
+    // Return the return type
+    return RentalssByDate
   },
   async me(req, res, next) {
     if (!res.headers.authorization) {

@@ -52,6 +52,7 @@ var schema = buildSchema(`
     """Provide the KEY of the user, and recieve all purchases, grouped by the purchase date"""
     orderListSelect(buyerId: Int!): [Ordered]
     rentalListSelect(buyerId: Int!): [Rentals]
+    RLS(buyerId: Int!): [Rented]
     selectShoppingCart(userId: Int!): [Cart]
     searchbar(query: String!, page: Int!, amount: Int): searchResult
     searchpainter(query: String!, page: Int!, amount: Int): Paintersearch
@@ -87,7 +88,9 @@ var schema = buildSchema(`
     shoppingCartInsert(gebruikerId: Int!, items: String!, time: String!): String
     """Provide the id of the buyer and the date at which the items are bought, and provide an array of paintings KEY's"""
     orderListInsert(buyerId: Int, items: [PaintRef!], date: String!): String
-    rentalListInsert(gebruikerId: Int!, items : [PaintRefRent!], purchaseDate: String!): String
+    """Provide the id of the buyer and the date at which the items are bought, and provide an array of paintings KEY's"""
+    rentalListInsert(buyerId: Int!, items: [PaintRefRent!], date: String!): String
+    
     orderListUpdate(id: Int!, buyerId: Int!, newStatus: String!): String
     
     WishlistInsert(gebruikerId: Int!, items: String!, time: String!): String
@@ -136,13 +139,19 @@ var schema = buildSchema(`
     items: Int,
     status: String
   },
-  type Rentals{
+  type Rented{
     id: Int,
     buyerid: Int,
-    items: Int,
-    purchasedate: String,
+    purchasedate: String,    
+    items: [Rentals]
+  },
+  type Rentals{
+    id: Int,
     rentstart: String,
-    rentstop: String
+    rentstop: String,
+    items: Int,
+    refto_rented: Int,
+    status: String
   }
   type ret{
     id_number: Int,
