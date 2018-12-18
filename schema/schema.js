@@ -92,9 +92,10 @@ var schema = buildSchema(`
     orderListInsert(buyerId: Int, items: [PaintRef!], date: String!): String
     """Provide the id of the buyer and the date at which the items are bought, and provide an array of paintings KEY's"""
     rentalListInsert(buyerId: Int!, items: [PaintRefRent!], date: String!): String
-    
-    orderListUpdate(id: Int!, buyerId: Int!, newStatus: String!): String
-    
+    """Provide the new status of the order associated to the, also given, id"""
+    orderListUpdate(id: Int!, newStatus: String!): String
+    """Provide the new status of the rental associated to the, also given, id"""
+    rentalListUpdate(id: Int!, newStatus: String!): String
     WishlistInsert(gebruikerId: Int!, items: String!, time: String!): String
     faqCreate(question: String!, answer: String!): String
     faqUpdate(question: String!, answer: String!, id: Int!): String

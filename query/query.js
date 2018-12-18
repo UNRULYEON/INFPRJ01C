@@ -22,11 +22,11 @@ var root = {
 
     const total = await db.manyOrNone('SELECT COUNT(*) from schilderijen')
       .then(data => { return data })
-      .catch(err => { throw new Error(err)})
+      .catch(err => { throw new Error(err) })
 
     const preQuery = await db.manyOrNone(`SELECT * FROM schilderijen ORDER BY id_number ASC LIMIT ${amount} OFFSET ${offset}`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err)})
+      .catch(err => { throw new Error(err) })
     return {
       total: total[0].count,
       collection: preQuery
@@ -77,11 +77,11 @@ var root = {
 
     let painter = await db.manyOrNone(`SELECT * from schilder ORDER BY ID ASC LIMIT ${amount} OFFSET ${offset}`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err)})
+      .catch(err => { throw new Error(err) })
 
     let totalPainters = await db.manyOrNone(`SELECT COUNT(*) from schilder`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err)})
+      .catch(err => { throw new Error(err) })
     return {
       total: totalPainters[0].count,
       painterpagination: painter
@@ -124,7 +124,7 @@ var root = {
     order = `'${order}'`
     var query = await db.manyOrNone(`SELECT * FROM schilderijen WHERE period ${period} AND principalmakersproductionplaces ${prod} AND physicalmedium ${medium} AND price BETWEEN ${pricemin} AND ${pricemax} ORDER BY ${order}`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err)})
+      .catch(err => { throw new Error(err) })
     return query
   },
 
@@ -155,11 +155,11 @@ var root = {
 
     let search = await db.manyOrNone(` SELECT * FROM schilderijen WHERE document_vectors @@ plainto_tsquery('${query}:*') LIMIT ${amount} OFFSET ${offset}`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err)})
+      .catch(err => { throw new Error(err) })
 
     let total_search = await db.manyOrNone(`SELECT COUNT(*) FROM schilderijen WHERE document_vectors @@ plainto_tsquery('${query}:*')`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err)})
+      .catch(err => { throw new Error(err) })
 
     return {
       total: total_search[0].count,
@@ -174,11 +174,11 @@ var root = {
 
     let search = await db.manyOrNone(` SELECT * FROM schilder WHERE document_vectors @@ plainto_tsquery('${query}:*') LIMIT ${amount} OFFSET ${offset}`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err)})
+      .catch(err => { throw new Error(err) })
 
     let total_search = await db.manyOrNone(`SELECT COUNT(*) FROM schilder WHERE document_vectors @@ plainto_tsquery('${query}:*')`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err)})
+      .catch(err => { throw new Error(err) })
 
     return {
       total: total_search[0].count,
@@ -193,7 +193,7 @@ var root = {
   papatabel: () => {
     return db.manyOrNone(`SELECT * FROM papatabel`)
   },
-  async babyTabelSelect({id}){
+  async babyTabelSelect({ id }) {
     console.log(`\nBabyselect\n`)
     let BabyNaam = await db.manyOrNone(`SELECT * FROM papatabel where id = ${id}`)
     let BabyContent = await db.manyOrNone(`SELECT * FROM ${BabyNaam[0].naam}`)
@@ -211,7 +211,7 @@ var root = {
     //In order to check if the table already exists
     let tableNameCheck = await db.manyOrNone(`SELECT relname as table from pg_stat_user_tables where schemaname = 'public'`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err)})
+      .catch(err => { throw new Error(err) })
     tableNameCheck.forEach(element => {
       if (element.table == tabelnaam) {
         return 310
@@ -220,20 +220,20 @@ var root = {
 
     //Creating the table
     db.one(`CREATE TABLE ${tabelnaam} (id serial PRIMARY KEY, foreignKey int)`)
-      .catch(err => { throw new Error(err)})
+      .catch(err => { throw new Error(err) })
 
     console.log(foreignkey)
     //Inserting all data into the table
     foreignkey.forEach(element => {
       db.one(`INSERT INTO ${tabelnaam}(foreignkey) VALUES($1)`, [element.foreignkey])
-        .catch(err => { throw new Error(err)})
-      })
+        .catch(err => { throw new Error(err) })
+    })
 
     //Create ref to the newly created table in the papatabel
     db.one(`INSERT INTO papatabel(naam,type) VALUES($1, $2)`, [tabelnaam, type])
-      .catch(err => { throw new Error(err)})
+      .catch(err => { throw new Error(err) })
     return 200
-    },
+  },
   //Add content to babytabel
   async addToBabyTabel({ id, foreignkey }) {
     let table = await db.manyOrNone(`SELECT * from papatabel WHERE id = ${id}`)
@@ -258,7 +258,7 @@ var root = {
     //In order to check if the table actually dropped
     let tableNameCheck = await db.manyOrNone(`SELECT relname as table from pg_stat_user_tables where schemaname = 'public'`)
       .then(data => { return data })
-      .catch(err => {throw new Error(err)})
+      .catch(err => { throw new Error(err) })
     tableNameCheck.forEach(element => {
       if (element.table == tablename) {
         return 510
@@ -275,11 +275,11 @@ var root = {
 
     let users = await db.manyOrNone(`SELECT * FROM gebruiker ORDER BY ID ASC LIMIT ${amount} OFFSET ${offset}`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err)})
+      .catch(err => { throw new Error(err) })
 
     let maxusers = await db.manyOrNone(`SELECT COUNT(*) FROM gebruiker`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err)})
+      .catch(err => { throw new Error(err) })
 
     return {
       total: maxusers[0].count,
@@ -298,13 +298,13 @@ var root = {
     db.one(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin) 
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
       [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin])
-      // .catch(err => {throw new Error(err)})
+    // .catch(err => {throw new Error(err)})
     return 200
   },
-  async alterUser({ id, name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin}) {
+  async alterUser({ id, name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin }) {
     const user = await db.manyOrNone(`SELECT * from gebruiker where id = ${[id]}`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err)})
+      .catch(err => { throw new Error(err) })
     if (!user.length) {
       return 311
     }
@@ -313,9 +313,9 @@ var root = {
             name = $1, surname = $2, mail = $3, password = $4,
             aanhef = $5, adres = $6, city = $7, postalcode = $8,
             housenumber = $9, paymentmethod = $10, admin = $11 WHERE id = ${id}`,
-            [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin])
-        .catch(err => {throw new Error(510)})
-      return 200
+      [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin])
+      .catch(err => { throw new Error(510) })
+    return 200
   },
   async deleteUser({ id }) {
     let user = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${id}`)
@@ -345,15 +345,15 @@ var root = {
   async alterProduct({ id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings = 1, src, bigsrc, prodplace, width, height, principalmaker, price, rented = false, amountwatched }) {
     const prod = await db.manyOrNone(`SELECT * from schilderijen where id_number = ${id_number}`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err)})
+      .catch(err => { throw new Error(err) })
     if (!prod.length) {
       return 311
     }
     db.one(`UPDATE schilderijen set 
             id_number = $1, id = $2, title = $3, releasedate = $4, period = $5, description = $6, physicalmedium = $7, amountofpaintings = $8, src = $9, bigsrc = $10, principalmakersproductionplaces = $11, width = $12, height = $13, principalmaker = $14, price = $15, rented = $16, amountwatched = $17 WHERE id_number = ${id_number}`,
-            [id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker, price, rented, amountwatched])
+      [id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker, price, rented, amountwatched])
     db.manyOrNone(`UPDATE schilderijen SET document_vectors = (to_tsvector(coalesce())) || (to_tsvector(coalesce(\'\'${principalmaker}\'\'))) WHERE id_number = ${id_number}`)
-      return 200
+    return 200
   },
   //Delete products
   async deleteProduct({ id }) {
@@ -373,25 +373,25 @@ var root = {
       return 310
     }
     let id = await db.one(`INSERT INTO schilder(name, city, dateofbirth, dateofdeath, placeofdeath, occupation, nationality, headerimage, thumbnail, description) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`, [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description])
-        .then(data => {return data})
-        .catch(err => {throw new Error(err)})
+      .then(data => { return data })
+      .catch(err => { throw new Error(err) })
     db.one('UPDATE schilder SET document_vectors = (to_tsvector(coalesce(\'\'$1\'\'))) WHERE id = $2', [name, id])
     return 200
-  }, 
+  },
   async alterPainter({ id, name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched }) {
     const painter = await db.manyOrNone(`SELECT * from schilder WHERE id = ${id}`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err)})
+      .catch(err => { throw new Error(err) })
     if (!painter.length) {
       return 310
     }
     let id2 = db.one(`UPDATE schilder set
             name = $2, city = $3, dateofbirth = $4, dateofdeath = $5, placeofdeath = $6, occupation = $7, nationality = $8, headerimage = $9, thumbnail = $10, description = $11, amountwatched = $12 WHERE id = ${id} RETURNING id`, [id, name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched])
-        .then(data => {return data})
-        .catch(err => {throw new Error(err)})
-    db.one('UPDATE schilder SET document_vectors = (to_tsvector(coalesce(\'\'$1\'\'))) WHERE id = $2', [name, id] )
+      .then(data => { return data })
+      .catch(err => { throw new Error(err) })
+    db.one('UPDATE schilder SET document_vectors = (to_tsvector(coalesce(\'\'$1\'\'))) WHERE id = $2', [name, id])
     return 200
-    },
+  },
   async deletePainter({ id }) {
     let painter = await db.manyOrNone(`SELECT * from schilder WHERE id = ${id}`)
     if (!painter.length) {
@@ -415,15 +415,15 @@ var root = {
     }
     db.one(`UPDATE faq set title = $1, body = $2 
               WHERE id = ${id}`, [question, answer])
-      return 200
+    return 200
   },
   async faqDelete({ id }) {
     let faq = await db.manyOrNone(`SELECT * from faq WHERE id = ${id}`)
     if (!faq.length) {
       return 311
     }
-  db.one(`DELETE FROM faq WHERE id = ${id}`)
-  return 200
+    db.one(`DELETE FROM faq WHERE id = ${id}`)
+    return 200
   },
   //#endregion
   //#endregion  
@@ -433,7 +433,7 @@ var root = {
     let query = ('SELECT * from faq ORDER BY id')
     return db.manyOrNone(query)
   },
-  faqId: ( {id} ) => {
+  faqId: ({ id }) => {
     return db.oneOrNone(`SELECT * from faq where id = ${id}`)
   },
   //#endregion
@@ -531,7 +531,7 @@ var root = {
   async WishlistInsert({ gebruikerId, items, time }) {
     let check = await db.manyOrNone(`SELECT id FROM gebruiker WHERE id= ${gebruikerId}`)
       .then(data => { return data })
-      .catch(err => { throw new Error(err)})
+      .catch(err => { throw new Error(err) })
     if (!check.length) {
       return 311
     }
@@ -577,17 +577,17 @@ var root = {
       return 200
     }
   },
-  async orderListSelect({buyerId}){
+  async orderListSelect({ buyerId }) {
     // Get all dates at which a buyer has bought a painting
-    let Lijst = await db.manyOrNone(`SELECT * FROM ordered WHERE buyerid = ${buyerId}`)
-      .then(data => {return data})
-      .catch(err => {throw new Error(err)})
+    let Lijst = await db.manyOrNone(`SELECT * FROM ordered WHERE buyerid = ${buyerId} ORDER BY id`)
+      .then(data => { return data })
+      .catch(err => { throw new Error(err) })
     let items = []
     // Get all paintings bought by the buyer
     for (let index = 0; index < Lijst.length; index++) {
       const element = Lijst[index];
       element.purchasedate = this.dateToString(element.purchasedate)
-      let painting = await db.manyOrNone(`SELECT * FROM orders WHERE refto_ordered = ${element.id}`)
+      let painting = await db.manyOrNone(`SELECT * FROM orders WHERE refto_ordered = ${element.id} ORDER BY id`)
       items.push(painting)
     }
     // Creating the return type
@@ -617,48 +617,48 @@ var root = {
     // Return the return type
     return OrdersByDate
   },
-  async orderListInsert({buyerId = 183, items, date}){
+  async orderListInsert({ buyerId = 183, items, date }) {
     let existing = await db.manyOrNone(`SELECT * FROM ordered WHERE buyerid = ${buyerId}`)
-      .then(data => {return data})
-      .catch(err => {throw new Error(err)})
-    if(!existing.length){
+      .then(data => { return data })
+      .catch(err => { throw new Error(err) })
+    if (!existing.length) {
       // If the user hasn't made any orders yet
-      let place = await db.one(`INSERT INTO ordered(buyerid, purchasedate) VALUES($1,$2) RETURNING ID`,[buyerId, date])
-        .then(data => {return data})
-        .catch(err => {throw new Error(err)})
+      let place = await db.one(`INSERT INTO ordered(buyerid, purchasedate) VALUES($1,$2) RETURNING ID`, [buyerId, date])
+        .then(data => { return data })
+        .catch(err => { throw new Error(err) })
       items.forEach(element => {
-        db.one(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`,[place.id, element.foreignkey])
+        db.one(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`, [place.id, element.foreignkey])
       })
-    }else{
+    } else {
       // If the user has previously made a order
       let row = 0
       existing.forEach(element => {
         element.purchasedate = this.dateToString(element.purchasedate)
-        if(element.purchasedate == date){
+        if (element.purchasedate == date) {
           // The date is equal, meaning the buyer has already made a purchase on this day
           row = element.id
           return
         }
       })
-      if(row != 0){
+      if (row != 0) {
         // If the user has already made a purchase on this day
         items.forEach(element => {
-          db.one(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`,[row, element.foreignkey])
+          db.one(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`, [row, element.foreignkey])
         })
-      }else{
+      } else {
         // If the user hasn't yet made a purchas eon this day
-        let place = await db.one(`INSERT INTO ordered(buyerid, purchasedate) VALUES($1,$2) RETURNING ID`,[buyerId, date])
-          .then(data => {return data})
-          .catch(err => {throw new Error(err)})
+        let place = await db.one(`INSERT INTO ordered(buyerid, purchasedate) VALUES($1,$2) RETURNING ID`, [buyerId, date])
+          .then(data => { return data })
+          .catch(err => { throw new Error(err) })
         items.forEach(element => {
-          db.one(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`,[place.id, element.foreignkey])
+          db.one(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`, [place.id, element.foreignkey])
         })
       }
     }
     return 200
   },
   async orderListUpdate({ id, newStatus }) {
-    let selection = await db.manyOrNone(`SELECT * from orders WHERE id = ${id}`)
+    let selection = await db.manyOrNone(`SELECT * FROM orders WHERE id = ${id}`)
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
     if (!selection.length) {
@@ -668,58 +668,17 @@ var root = {
       .catch(err => { throw new Error(err) })
     return 200
   },
-  async rentalListInsert({buyerId, items, date}){
-    console.log("\nRLI")
-    let existing = await db.manyOrNone(`SELECT * FROM rented WHERE buyerid = ${buyerId}`)
-      .then(data => {return data})
-      .catch(err => {throw new Error(err)})
-    if(!existing.length){
-      // If the user hasn't made any rentals yet
-      let place = await db.one(`INSERT INTO rented(buyerid, purchasedate) VALUES($1,$2) RETURNING ID`,[buyerId,date])
-        .then(data => {return data})
-        .catch(err => {throw new Error(err)})
-      items.forEach(element => {
-        db.one(`INSERT INTO rentals(rentstart, rentstop, items, refto_rented) VALUES($1,$2,$3,$4)`,[element.startDate, element.stopDate, element.foreignkey, place.id])
-      })
-    }else{
-      // If the user has previously made a order
-      let row = 0
-      existing.forEach(element => {
-        element.purchasedate = this.dateToString(element.purchasedate)
-        if(element.purchasedate == date){
-          // The date is equal, meaning the buyer has already made a purchase on this day
-          row = element.id
-          return
-        }
-      })
-      if(row != 0){
-        // If the user has already made a purchase on this day
-        items.forEach(element => {
-          db.one(`INSERT INTO rentals(rentstart, rentstop, items, refto_rented) VALUES($1,$2,$3,$4)`,[element.startDate, element.stopDate, element.foreignkey, row])
-        })
-      }else{
-        // If the user hasn't yet made a purchas eon this day
-        let place = await db.one(`INSERT INTO rented(buyerid, purchasedate) VALUES($1,$2) RETURNING ID`,[buyerId,date])
-          .then(data => {return data})
-          .catch(err => {throw new Error(err)})
-        items.forEach(element => {
-          db.one(`INSERT INTO rentals(rentstart, rentstop, items, refto_rented) VALUES($1,$2,$3,$4)`,[element.startDate, element.stopDate, element.foreignkey, place.id])
-        })
-      }
-    }
-    return 200
-  },
-  async rentalListSelect({buyerId}){
+  async rentalListSelect({ buyerId }) {
     // Get all dates at which a buyer has rented a painting
-    let Lijst = await db.manyOrNone(`SELECT * FROM rented WHERE buyerid = ${buyerId}`)
-      .then(data => {return data})
-      .catch(err => {throw new Error(err)})
+    let Lijst = await db.manyOrNone(`SELECT * FROM rented WHERE buyerid = ${buyerId} ORDER BY id`)
+      .then(data => { return data })
+      .catch(err => { throw new Error(err) })
     let items = []
     // Get all paintings rented by the buyer
     for (let j = 0; j < Lijst.length; j++) {
       const element1 = Lijst[j];
       element1.purchasedate = this.dateToString(element1.purchasedate)
-      let painting = await db.manyOrNone(`SELECT * FROM rentals WHERE refto_rented = ${element1.id}`)
+      let painting = await db.manyOrNone(`SELECT * FROM rentals WHERE refto_rented = ${element1.id} ORDER BY id`)
       for (let i = 0; i < painting.length; i++) {
         const element2 = painting[i];
         element2.rentstart = this.dateToString(element2.rentstart)
@@ -734,7 +693,7 @@ var root = {
       const koper = Lijst[i];
       // Add buyer info to the return type
       RentalssByDate.push({
-        id:koper.id,
+        id: koper.id,
         buyerid: koper.buyerid,
         purchasedate: koper.purchasedate,
         items: []
@@ -756,6 +715,59 @@ var root = {
     // Return the return type
     return RentalssByDate
   },
+  async rentalListInsert({ buyerId, items, date }) {
+    console.log("\nRLI")
+    let existing = await db.manyOrNone(`SELECT * FROM rented WHERE buyerid = ${buyerId}`)
+      .then(data => { return data })
+      .catch(err => { throw new Error(err) })
+    if (!existing.length) {
+      // If the user hasn't made any rentals yet
+      let place = await db.one(`INSERT INTO rented(buyerid, purchasedate) VALUES($1,$2) RETURNING ID`, [buyerId, date])
+        .then(data => { return data })
+        .catch(err => { throw new Error(err) })
+      items.forEach(element => {
+        db.one(`INSERT INTO rentals(rentstart, rentstop, items, refto_rented) VALUES($1,$2,$3,$4)`, [element.startDate, element.stopDate, element.foreignkey, place.id])
+      })
+    } else {
+      // If the user has previously made a order
+      let row = 0
+      existing.forEach(element => {
+        element.purchasedate = this.dateToString(element.purchasedate)
+        if (element.purchasedate == date) {
+          // The date is equal, meaning the buyer has already made a purchase on this day
+          row = element.id
+          return
+        }
+      })
+      if (row != 0) {
+        // If the user has already made a purchase on this day
+        items.forEach(element => {
+          db.one(`INSERT INTO rentals(rentstart, rentstop, items, refto_rented) VALUES($1,$2,$3,$4)`, [element.startDate, element.stopDate, element.foreignkey, row])
+        })
+      } else {
+        // If the user hasn't yet made a purchas eon this day
+        let place = await db.one(`INSERT INTO rented(buyerid, purchasedate) VALUES($1,$2) RETURNING ID`, [buyerId, date])
+          .then(data => { return data })
+          .catch(err => { throw new Error(err) })
+        items.forEach(element => {
+          db.one(`INSERT INTO rentals(rentstart, rentstop, items, refto_rented) VALUES($1,$2,$3,$4)`, [element.startDate, element.stopDate, element.foreignkey, place.id])
+        })
+      }
+    }
+    return 200
+  },
+  async rentalListUpdate({ id, newStatus }) {
+    let selection = await db.manyOrNone(`SELECT * FROM rentals WHERE id = ${id}`)
+      .then(data => { return data })
+      .catch(err => { throw new Error(err) })
+    if (!selection.length) {
+      return 313
+    }
+    db.one(`UPDATE rentals SET status = $1 WHERE id = $2`, [newStatus, id])
+      .catch(err => { throw new Error(err) })
+    return 200
+  },
+
   async me(req, res, next) {
     if (!res.headers.authorization) {
       return 411
@@ -814,13 +826,13 @@ var root = {
           token: tokens
         }
       })
-      .catch(err => {throw new Error(err)})
+      .catch(err => { throw new Error(err) })
   },
   //user login
   async login({ email, password }) {
     const user = await db.manyOrNone('SELECT * from gebruiker where mail = $1', [email])
-      .then(data => {return data})
-      .catch(err => { throw new Error(err)})
+      .then(data => { return data })
+      .catch(err => { throw new Error(err) })
     if (!user) {
       return 315
     }
