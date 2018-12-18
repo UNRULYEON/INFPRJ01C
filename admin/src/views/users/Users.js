@@ -139,7 +139,6 @@ const EDIT_USER = gql`
     $name: String!
     $surname: String!
     $mail: String!
-    $password: String!
     $aanhef: String!
     $adres: String!
     $city: String!
@@ -152,7 +151,6 @@ const EDIT_USER = gql`
       name: $name
       surname: $surname
       mail: $mail
-      password: $password
       aanhef: $aanhef
       adres: $adres
       city: $city
@@ -679,12 +677,7 @@ class Users extends Component {
                 <span className="add-user-column-right">{state.mail}</span>
               </Grid>
               <Grid item xs={12} className="add-user-review-container-divider" />
-              <Grid item xs={3} className="add-user-review-container">
-                <span className="add-user-column-left">Wachtwoord</span>
-              </Grid>
-              <Grid item xs={7} className="add-user-review-container">
-                <span className="add-user-column-right">{state.password}</span>
-              </Grid>
+
               <Grid item xs={12} className="add-user-review-container-divider" />
               <Grid item xs={3} className="add-user-review-container">
                 <span className="add-user-column-left">Adres</span>
@@ -1177,7 +1170,6 @@ class Users extends Component {
                             surname: this.state.surname,
                             aanhef: this.state.aanhef,
                             mail: this.state.mail,
-                            password: this.state.password,
                             adres: this.state.adres,
                             housenumber: this.state.housenumber,
                             postalcode: this.state.postalcode,
