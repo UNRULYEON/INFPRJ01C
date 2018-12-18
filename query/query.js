@@ -687,12 +687,12 @@ var root = {
       items.push(painting)
     }
     // Creating the return type
-    let RentalssByDate = []
+    let RentalsByDate = []
     // Loop for the total amount of dates at which a rental has been made
     for (let i = 0; i < Lijst.length; i++) {
       const koper = Lijst[i];
       // Add buyer info to the return type
-      RentalssByDate.push({
+      RentalsByDate.push({
         id: koper.id,
         buyerid: koper.buyerid,
         purchasedate: koper.purchasedate,
@@ -702,7 +702,7 @@ var root = {
       for (let j = 0; j < items[i].length; j++) {
         const RentalInfo = items[i][j];
         // Add order info to the return type
-        RentalssByDate[i].items.push({
+        RentalsByDate[i].items.push({
           id: RentalInfo.id,
           rentstart: RentalInfo.rentstart,
           rentstop: RentalInfo.rentstop,
@@ -713,7 +713,7 @@ var root = {
       }
     }
     // Return the return type
-    return RentalssByDate
+    return RentalsByDate
   },
   async rentalListInsert({ buyerId, items, date }) {
     console.log("\nRLI")
