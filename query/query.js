@@ -529,11 +529,18 @@ var root = {
     return wishlist
   },
   async WishlistInsert({ gebruikerId, items, time }) {
+    console.log(time)
     let check = await db.manyOrNone(`SELECT id FROM gebruiker WHERE id= ${gebruikerId}`)
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
     if (!check.length) {
+      // Provided user doesn't exist
       return 311
+    }
+    console.log(new Date(time))
+    if(new Date(time).toString() == "Invalid Date"){
+      console.log("invalid date")
+      return 317
     }
     let current = await db.manyOrNone(`SELECT * FROM wishlist WHERE gebruikerid = ${gebruikerId}`)
     if (current.length) {

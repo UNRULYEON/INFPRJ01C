@@ -11,6 +11,7 @@ Error 313 = the given combination of ID's doesn't exist
 Error 314 = the given MAIL already exists
 Error 315 = the given MAIL doesn't exist
 Error 316 = the given PASSWORD is incorrect
+Error 317 = the given date is not an actual date
 
 400 range errors
 Error 410 = not all required elements contain something

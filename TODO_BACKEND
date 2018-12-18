@@ -1,1 +1,3 @@
 De tabellen 'orderlist' & 'rentallist' in de db moeten nog verwijderd worden, worden niet meer gebruikt in de code
+
+een wishlist per gebruiker, met meerdere items in de list
