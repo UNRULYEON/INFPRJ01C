@@ -53,9 +53,11 @@ var schema = buildSchema(`
     orderListSelect(buyerId: Int!): [Ordered]
     """Provide the KEY of the user, and recieve all rentals grouped by the purchase date"""
     rentalListSelect(buyerId: Int!): [Rented]
+    """Provide the KEY of the user, and recieve all items that are in the associated shopping cart"""
     selectShoppingCart(userId: Int!): [Cart]
     searchbar(query: String!, page: Int!, amount: Int): searchResult
     searchpainter(query: String!, page: Int!, amount: Int): Paintersearch
+    """Provide the KEY of the user, and recieve all items that are in the associated wishlist"""
     wishlistSelect(userId: Int!): [wishlist]
     filterPaintings(num: Int, prodplace: String, physical: String, pricemin: Int, pricemax: Int, order: String): [Painting]
   },
