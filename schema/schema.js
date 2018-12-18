@@ -51,8 +51,8 @@ var schema = buildSchema(`
     babyTabelSelect(id: Int!): BabyType
     """Provide the KEY of the user, and recieve all purchases, grouped by the purchase date"""
     orderListSelect(buyerId: Int!): [Ordered]
-    rentalListSelect(buyerId: Int!): [Rentals]
-    RLS(buyerId: Int!): [Rented]
+    """Provide the KEY of the user, and recieve all rentals grouped by the purchase date"""
+    rentalListSelect(buyerId: Int!): [Rented]
     selectShoppingCart(userId: Int!): [Cart]
     searchbar(query: String!, page: Int!, amount: Int): searchResult
     searchpainter(query: String!, page: Int!, amount: Int): Paintersearch

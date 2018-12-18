@@ -709,19 +709,7 @@ var root = {
     }
     return 200
   },
-  async rentalListSelect({ buyerId }){
-    let Lijst = await db.manyOrNone(`SELECT * FROM rentallist WHERE buyerid =${buyerId}`)
-      .then(data => {return data})
-      .catch(err => {throw new Error(err)})
-    Lijst.forEach(element => {
-      element.purchasedate = this.dateToString(element.purchasedate)
-      element.rentstart = this.dateToString(element.rentstart)
-      element.rentstop = this.dateToString(element.rentstop)
-    })
-    return Lijst
-  },
-  async RLS({buyerId}){
-    console.log("\nRLS")
+  async rentalListSelect({buyerId}){
     // Get all dates at which a buyer has rented a painting
     let Lijst = await db.manyOrNone(`SELECT * FROM rented WHERE buyerid = ${buyerId}`)
       .then(data => {return data})
