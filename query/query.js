@@ -301,19 +301,17 @@ var root = {
     // .catch(err => {throw new Error(err)})
     return 200
   },
-  async alterUser({ id, name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin }) {
+  async alterUser({ id, name, surname, mail, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin }) {
     const user = await db.manyOrNone(`SELECT * from gebruiker where id = ${[id]}`)
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
     if (!user.length) {
       return 311
     }
-    const saltedPassword = await bcrypt.hash(password, 10)
     db.one(`UPDATE gebruiker set 
-            name = $1, surname = $2, mail = $3, password = $4,
-            aanhef = $5, adres = $6, city = $7, postalcode = $8,
-            housenumber = $9, paymentmethod = $10, admin = $11 WHERE id = ${id}`,
-      [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin])
+            name = $1, surname = $2, mail = $3, aanhef = $4, adres = $5, city = $6, postalcode = $7,
+            housenumber = $8, paymentmethod = $9, admin = $10 WHERE id = ${id}`,
+      [name, surname, mail, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin])
       .catch(err => { throw new Error(510) })
     return 200
   },
@@ -529,11 +527,18 @@ var root = {
     return wishlist
   },
   async WishlistInsert({ gebruikerId, items, time }) {
+    console.log(time)
     let check = await db.manyOrNone(`SELECT id FROM gebruiker WHERE id= ${gebruikerId}`)
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
     if (!check.length) {
+      // Provided user doesn't exist
       return 311
+    }
+    console.log(new Date(time))
+    if(new Date(time).toString() == "Invalid Date"){
+      console.log("invalid date")
+      return 317
     }
     let current = await db.manyOrNone(`SELECT * FROM wishlist WHERE gebruikerid = ${gebruikerId}`)
     if (current.length) {

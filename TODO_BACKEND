@@ -1,1 +1,5 @@
 De tabellen 'orderlist' & 'rentallist' in de db moeten nog verwijderd worden, worden niet meer gebruikt in de code
+
+een wishlist per gebruiker, met meerdere items in de list
+
+Bij de schopping-cart: controleren welke versie recenter is, degene die in de cookies staat of degene die in de DB staat.
