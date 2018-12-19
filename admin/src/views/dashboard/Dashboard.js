@@ -9,11 +9,16 @@ class Dashboard extends Component {
     this.state = {
       chartData: {},
       showBar: false,
+      showLine: false,
     } 
   }
 
   toggleBar(){
     this.state.showBar ? this.setState({showBar: false}) : this.setState({showBar: true})
+  }
+
+  toggleLine(){
+    this.state.showLine ? this.setState({showLine: false}) : this.setState({showLine: true})
   }
 
   componentWillMount() {
@@ -23,7 +28,7 @@ class Dashboard extends Component {
   getChartData() {
     this.setState({
       chartData: {
-        labels: ['Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag'],
+        labels: ['Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag', 'Zondag'],
 
         datasets: [
           {
@@ -31,12 +36,13 @@ class Dashboard extends Component {
             fill: false,
             pointHighlightFill: '#fff',
             data: [
-              617594,
-              181045,
-              153060,
-              106519,
-              105162,
-              95072
+              0,
+              1,
+              2,
+              10,
+              4,
+              6,
+              10
             ],
           }
         ],
@@ -49,6 +55,9 @@ class Dashboard extends Component {
       <section>
         <Button onClick={this.toggleBar.bind(this)}>show the bar</Button>
         <div id="chart"><Charts chartData={this.state.chartData} showBar={this.state.showBar} about="Aantal bezoekers per dag" legendPosition="top" /></div>
+
+        <Button onClick={this.toggleLine.bind(this)}>show the line</Button>
+        <div id="chart"><Charts chartData={this.state.chartData} showLine={this.state.showLine} about="Aantal bezoekers per dag" legendPosition="top" /></div>
       </section>
     );
   }

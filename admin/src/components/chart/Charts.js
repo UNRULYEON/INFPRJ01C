@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Bar } from 'react-chartjs-2';
+import { Bar, Line } from 'react-chartjs-2';
 
 class Chart extends Component {
   constructor(props) {
@@ -16,10 +16,11 @@ class Chart extends Component {
     about: 'about?'
   }
 
-  // When calling the Charts component give the following tags: chartData, showBar(true or false to show the bar), about and legendPosition
+  // When calling the Charts component provide the following tags: chartData, showBar(true or false to show the bar), about and legendPosition
   render() {
     return (
       <div>
+        {/* Bar */}
         {this.props.showBar ? (<Bar
           data={this.state.chartData}
           options={{
@@ -35,6 +36,22 @@ class Chart extends Component {
           }}
         />) : console.log('( ͡° ͜ʖ ͡°)')}
 
+
+        {/* Line */}
+        {this.props.showLine ? (<Line
+          data={this.state.chartData}
+          options={{
+            title: {
+              display: this.props.displayTitle,
+              text: this.props.about,
+              fontSize: 25
+            },
+            legend: {
+              display: this.props.displayLegend,
+              position: this.props.legendPosition
+            }
+          }}
+        />) : console.log('( ͡° ͜ʖ ͡°)')}
       </div>
     )
   }
