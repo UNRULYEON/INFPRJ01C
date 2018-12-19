@@ -76,7 +76,7 @@ var schema = buildSchema(`
     merge(id_number: Int!, id: Int!): String
     merging: String
     addUser(name: String!, surname: String!, mail: String!, password: String!, aanhef: String!, adres: String, city: String, postalcode: String, housenumber: String, paymentmethod: String, admin: Boolean!): String!
-    alterUser(id: Int!, name: String!, surname: String!, aanhef: String!, mail: String!, password: String!, adres: String!, city: String!, postalcode: String!, housenumber: String!, paymentmethod: String!, admin: Boolean!): String!
+    alterUser(id: Int!, name: String!, surname: String!, aanhef: String!, mail: String!, adres: String!, city: String!, postalcode: String!, housenumber: String!, paymentmethod: String!, admin: Boolean!): String!
     deleteUser(id: Int!): String
     addProduct(id: String!, title: String!, releasedate: Int!, period: Int!, description: String!, physicalmedium: String!, amountofpaintings: Int, src: String!, bigsrc: String!,prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!, rented: Boolean,painterId: Int!, amountwatched: Int): String!
     alterProduct(id_number: Int!, id: String!, title: String!, releasedate: Int!, period: Int!, description: String!, physicalmedium: String!, amountofpaintings: Int, src: String!, bigsrc: String!, prodplace: String!, width: Int!, height: Int!, principalmaker: String!, price: Int!, rented: Boolean, amountwatched: Int!): String
