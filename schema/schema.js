@@ -60,6 +60,7 @@ var schema = buildSchema(`
     """Provide the KEY of the user, and recieve all items that are in the associated wishlist"""
     wishlistSelect(userId: Int!): [wishlist]
     filterPaintings(num: Int, prodplace: String, physical: String, pricemin: Int, pricemax: Int, order: String, page: Int!, amount: Int): CollectionWithTotal
+    totalVisitors: [VisitDate]
   },
   """ 
   Mutation is a Put/Post statement, and can create or alter data in the DataBase.
@@ -114,6 +115,11 @@ var schema = buildSchema(`
   input RefBaby{
     foreignkey: Int!
   },
+  type VisitDate{
+    id: Int,
+    date: String,
+    amount: Int
+  }
   type PapaGet{
     id: Int,
     naam: String,

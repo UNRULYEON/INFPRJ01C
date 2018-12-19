@@ -24,7 +24,11 @@ var root = {
     return 200
   },
   async totalVisitors() {
-
+    let query = await db.manyOrNone(`SELECT * FROM sitevisitdate ORDER BY date`)
+    query.forEach(element => {
+      element.date = this.dateToString(element.date)
+    });
+    return query
   },
   //#region Painting
   collection: () => {
