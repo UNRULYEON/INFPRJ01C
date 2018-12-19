@@ -93,7 +93,8 @@ var schema = buildSchema(`
     orderListInsert(buyerId: Int, items: [PaintRef!], date: String!): String
     """Provide the id of the buyer and the date at which the items are bought, and provide an array of paintings KEY's"""
     rentalListInsert(buyerId: Int!, items: [PaintRefRent!], date: String!): String
-    Tracking(schilderijid: Int!, date: String!): String
+    Trackpainting(schilderijid: Int!, date: String!): String
+    Trackpainter(schilderid: Int!, date: String!): String
     """Provide the new status of the order associated to the, also given, id"""
     orderListUpdate(id: Int!, newStatus: String!): String
     """Provide the new status of the rental associated to the, also given, id"""

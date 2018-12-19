@@ -690,37 +690,71 @@ var root = {
     return 200
   },
 
-  async Tracking({ schilderijid, date }) {
+  async Trackpainting({ schilderijid, date }) {
     let exist = await db.manyOrNone(`SELECT * from schilderijdate where schilderijid = ${schilderijid}`)
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
     if (!exist.length) {
-      // If the user hasn't made any orders yet
+      // If the user hasn't checked any paintings yet
       let place = await db.one(`INSERT INTO schilderijdate(schilderijid, date) VALUES($1,$2) RETURNING ID`, [schilderijid, date])
         .then(data => { return data })
         .catch(err => { throw new Error(err) })
-      //=================================aanpassen ========================================
       db.oneOrNone(`INSERT INTO schilderijamount(refto_schilderijdate, amountwatched) VALUES($1,$2)`, [place.id, 1])
     } else {
-      // If the user has previously made a order
+      // If the user has previously checked a painting
       let row = -1
       exist.forEach(element => {
         element.date = this.dateToString(element.date)
         if (element.date == date) {
-          // The date is equal, meaning the buyer has already made a purchase on this day
+          // The date is equal, meaning the user has already checked the painting on the same day
           row = element.id
           return
         }
       })
       if (row != -1) {
-        // If the user has already made a purchase on this day
+        // If the user has already checked a painting on the same day
         db.oneOrNone(`UPDATE schilderijamount SET amountwatched = amountwatched + 1 where id = ${row}`)
       } else {
-        // If the user hasn't yet made a purchase on this day
+        // If the user hasn't yet checked the painting yet
         let place = await db.one(`INSERT INTO schilderijdate(schilderijid, date) VALUES($1,$2) RETURNING ID`, [schilderijid, date])
           .then(data => { return data })
           .catch(err => { throw new Error(err) })
         db.oneOrNone(`INSERT INTO schilderijamount(refto_schilderijdate, amountwatched) VALUES($1,$2)`, [place.id, 1])
+      }
+    }
+    return 200
+  },
+
+  async Trackpainter({ schilderid, date }) {
+    let exist = await db.manyOrNone(`SELECT * from schilderdate where schilderid = ${schilderid}`)
+      .then(data => { return data })
+      .catch(err => { throw new Error(err) })
+    if (!exist.length) {
+      // If the user hasn't checked any painters yet
+      let place = await db.one(`INSERT INTO schilderdate(schilderid, date) VALUES($1,$2) RETURNING ID`, [schilderid, date])
+        .then(data => { return data })
+        .catch(err => { throw new Error(err) })
+      db.oneOrNone(`INSERT INTO schilderamount(refto_schilderdate, amountwatched) VALUES($1,$2)`, [place.id, 1])
+    } else {
+      // If the user has previously checked a painter
+      let row = -1
+      exist.forEach(element => {
+        element.date = this.dateToString(element.date)
+        if (element.date == date) {
+          // The date is equal, meaning the user has already checked the painter on the same day
+          row = element.id
+          return
+        }
+      })
+      if (row != -1) {
+        // If the user has already checked a painter on the same day
+        db.oneOrNone(`UPDATE schilderamount SET amountwatched = amountwatched + 1 where id = ${row}`)
+      } else {
+        // If the user hasn't yet checked the painter yet
+        let place = await db.one(`INSERT INTO schilderdate(schilderid, date) VALUES($1,$2) RETURNING ID`, [schilderid, date])
+          .then(data => { return data })
+          .catch(err => { throw new Error(err) })
+        db.oneOrNone(`INSERT INTO schilderamount(refto_schilderdate, amountwatched) VALUES($1,$2)`, [place.id, 1])
       }
     }
     return 200
