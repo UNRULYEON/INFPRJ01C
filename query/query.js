@@ -662,6 +662,43 @@ var root = {
     }
     return 200
   },
+
+  async Tracking({ schilderijid, date }) {
+    let exist = await db.manyOrNone(`SELECT * from schilderijdate where schilderijid = ${schilderijid}`)
+      .then(data => { return data })
+      .catch(err => { throw new Error(err) })
+    if (!exist.length) {
+      // If the user hasn't made any orders yet
+      let place = await db.one(`INSERT INTO schilderijdate(schilderijid, date) VALUES($1,$2) RETURNING ID`, [schilderijid, date])
+        .then(data => { return data })
+        .catch(err => { throw new Error(err) })
+        //=================================aanpassen ========================================
+        db.one(`INSERT INTO schilderijamount(refto_schilderijdate, amountwatched) VALUES($1,$2)`, [place.id, 1])
+    } else {
+      // If the user has previously made a order
+      let row = -1
+      exist.forEach(element => {
+        element.date = this.dateToString(element.date)
+        if (element.date == date) {
+          // The date is equal, meaning the buyer has already made a purchase on this day
+          row = element.id
+          return
+        }
+      })
+      if (row != -1) {
+        // If the user has already made a purchase on this day
+        db.one(`UPDATE schilderijamount SET amountwatched = amountwatched + 1 where id = ${row}`)
+      } else {
+        // If the user hasn't yet made a purchase on this day
+        let place = await db.one(`INSERT INTO schilderijdate(schilderijid, date) VALUES($1,$2) RETURNING ID`, [schilderijid, date])
+          .then(data => { return data })
+          .catch(err => { throw new Error(err) })
+        db.one(`INSERT INTO schilderijamount(refto_schilderijdate, amountwatched) VALUES($1,$2)`, [place.id, 1])
+      }
+    }
+    return 200
+  },
+
   async orderListUpdate({ id, newStatus }) {
     let selection = await db.manyOrNone(`SELECT * FROM orders WHERE id = ${id}`)
       .then(data => { return data })
