@@ -8,22 +8,34 @@ var root = {
   status: () => {
     return 200
   },
-  async homeVisit(){
+  async homeVisit() {
     // add 1 to the homevisit
-    let date = this.dateToString(new Date()).toString()
-    console.log(date)
-    let existing = await db.manyOrNone(`SELECT * FROM sitevisitdate WHERE date = ${date}`)
-    console.log(existing)
-    if(!existing.length){
+    let date = this.dateToString(new Date())
+    let existing = await db.manyOrNone(`SELECT * FROM sitevisitdate WHERE date = $1`, [date])
+    if (!existing.length) {
       // There have been no visits yet on this day
-      let place = await db.one(`INSERT INTO sitevisitdate(date) VALUES(${date}) RETURNING ID`)
-        .then(data => {return data})
-        .catch(err => {throw new Error(err)})
-      db.one(`INSERT INTO sitevisitamount(amount,refto_sitevisitdate) VALUES($1,$2)`,[1,place.id])
-    }else{
+      let place = await db.one(`INSERT INTO sitevisitdate(date) VALUES($1) RETURNING ID`, [date])
+        .then(data => { return data })
+        .catch(err => { throw new Error(err) })
+      db.one(`INSERT INTO sitevisitamount(amount,refto_sitevisitdate) VALUES($1,$2)`, [1, place.id])
+    } else {
       // If there has been a previous visit on the current day
-      console.log(existing)
+      let row = -1
+      existing.forEach(element => {
+        element.date = this.dateToString(element.date)
+        if (element.date == date) {
+          row = element.id
+          return
+        }
+      })
+      if (row != -1) {
+        db.one(`UPDATE sitevisitamount SET amount = amount + 1 WHERE id= ${row}`)
+      } else {
+
+        console.log(existing)
+      }
     }
+    return 200
   },
   //#region Painting
   collection: () => {
@@ -122,7 +134,7 @@ var root = {
   //#endregion
 
   //#region filters
-  async filterPaintings({ num = "is not null", prodplace = "is not null", physical = "is not null", pricemin = 0, pricemax = 1000000, order = "id_number", page, amount = 12}) {
+  async filterPaintings({ num = "is not null", prodplace = "is not null", physical = "is not null", pricemin = 0, pricemax = 1000000, order = "id_number", page, amount = 12 }) {
     let offset = (page) * amount
     var period = ""
     if (isNaN(num)) {
@@ -131,21 +143,21 @@ var root = {
     var prod = ""
     if (prodplace != "is not null") {
       prod = `= '${prodplace}'`
-    } else {prod = prodplace}
+    } else { prod = prodplace }
     var medium = ""
     if (physical != "is not null") {
       medium = `= '${physical}'`
-    } else {medium = physical}
+    } else { medium = physical }
     ordered = ""
-    if(order != "id_number"){
+    if (order != "id_number") {
       ordered = `'${order}'`
-    }else{ordered = order}
+    } else { ordered = order }
     const total = await db.manyOrNone(`SELECT COUNT(*) FROM schilderijen WHERE period ${period} AND principalmakersproductionplaces ${prod} AND physicalmedium ${medium} AND price BETWEEN ${pricemin} AND ${pricemax} GROUP BY ${ordered} ORDER BY ${ordered}`)
 
     var preQuery = await db.manyOrNone(`SELECT * FROM schilderijen WHERE period ${period} AND principalmakersproductionplaces ${prod} AND physicalmedium ${medium} AND price BETWEEN ${pricemin} AND ${pricemax} ORDER BY ${ordered} LIMIT ${amount} OFFSET ${offset}`)
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
-    
+
     return {
       total: total.length,
       collection: preQuery
@@ -695,8 +707,8 @@ var root = {
       let place = await db.one(`INSERT INTO schilderijdate(schilderijid, date) VALUES($1,$2) RETURNING ID`, [schilderijid, date])
         .then(data => { return data })
         .catch(err => { throw new Error(err) })
-        //=================================aanpassen ========================================
-        db.one(`INSERT INTO schilderijamount(refto_schilderijdate, amountwatched) VALUES($1,$2)`, [place.id, 1])
+      //=================================aanpassen ========================================
+      db.one(`INSERT INTO schilderijamount(refto_schilderijdate, amountwatched) VALUES($1,$2)`, [place.id, 1])
     } else {
       // If the user has previously made a order
       let row = -1
