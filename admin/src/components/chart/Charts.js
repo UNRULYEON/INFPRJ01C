@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Bar, Line } from 'react-chartjs-2';
+import { Bar, Line, Radar, Doughnut, Pie, Polar, Bubble, Scatter } from 'react-chartjs-2';
 
 class Chart extends Component {
   constructor(props) {
