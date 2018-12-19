@@ -59,7 +59,7 @@ var schema = buildSchema(`
     searchpainter(query: String!, page: Int!, amount: Int): Paintersearch
     """Provide the KEY of the user, and recieve all items that are in the associated wishlist"""
     wishlistSelect(userId: Int!): [wishlist]
-    filterPaintings(num: Int, prodplace: String, physical: String, pricemin: Int, pricemax: Int, order: String): [Painting]
+    filterPaintings(num: Int, prodplace: String, physical: String, pricemin: Int, pricemax: Int, order: String, page: Int!, amount: Int): CollectionWithTotal
   },
   """ 
   Mutation is a Put/Post statement, and can create or alter data in the DataBase.
@@ -100,6 +100,8 @@ var schema = buildSchema(`
     faqCreate(question: String!, answer: String!): String
     faqUpdate(question: String!, answer: String!, id: Int!): String
     faqDelete(id: Int!): String!
+    """Gets triggered when someone visits the homepage and adds 1 to the amount of visitors"""
+    homeVisit: String
   },
   input PaintRef{
     foreignkey: Int!

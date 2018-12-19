@@ -8,6 +8,23 @@ var root = {
   status: () => {
     return 200
   },
+  async homeVisit(){
+    // add 1 to the homevisit
+    let date = this.dateToString(new Date()).toString()
+    console.log(date)
+    let existing = await db.manyOrNone(`SELECT * FROM sitevisitdate WHERE date = ${date}`)
+    console.log(existing)
+    if(!existing.length){
+      // There have been no visits yet on this day
+      let place = await db.one(`INSERT INTO sitevisitdate(date) VALUES(${date}) RETURNING ID`)
+        .then(data => {return data})
+        .catch(err => {throw new Error(err)})
+      db.one(`INSERT INTO sitevisitamount(amount,refto_sitevisitdate) VALUES($1,$2)`,[1,place.id])
+    }else{
+      // If there has been a previous visit on the current day
+      console.log(existing)
+    }
+  },
   //#region Painting
   collection: () => {
     let query = 'SELECT * from schilderijen ORDER BY id_number ASC limit 15'
@@ -33,7 +50,8 @@ var root = {
     }
   },
   async paintingByID({ id }) {
-    db.one(`UPDATE schilderijen SET amountwatched = amountwatched + 1 where id_number = ${id}`)
+    // db.one(`UPDATE schilderijen SET amountwatched = amountwatched + 1 where id_number = ${id}`)
+    db.one(`UPDATE schilderijstatistieken SET amountwatched = amountwatched +1 where schilderijid = ${id}`)
     let queryPainting = await db.manyOrNone(`SELECT * from schilderijen where id_number = ${id}`)
     let painting = queryPainting[0]
     let queryPainter = await db.manyOrNone(`SELECT schilder from schilderschilderij where schilderij = ${id}`)
@@ -104,7 +122,8 @@ var root = {
   //#endregion
 
   //#region filters
-  async filterPaintings({ num = "is not null", prodplace = "is not null", physical = "is not null", pricemin = 0, pricemax = 1000000, order = 'price' }) {
+  async filterPaintings({ num = "is not null", prodplace = "is not null", physical = "is not null", pricemin = 0, pricemax = 1000000, order = "id_number", page, amount = 12}) {
+    let offset = (page) * amount
     var period = ""
     if (isNaN(num)) {
       period = num
@@ -112,20 +131,25 @@ var root = {
     var prod = ""
     if (prodplace != "is not null") {
       prod = `= '${prodplace}'`
-    } else {
-      prod = prodplace
-    }
+    } else {prod = prodplace}
     var medium = ""
     if (physical != "is not null") {
       medium = `= '${physical}'`
-    } else {
-      medium = physical
-    }
-    order = `'${order}'`
-    var query = await db.manyOrNone(`SELECT * FROM schilderijen WHERE period ${period} AND principalmakersproductionplaces ${prod} AND physicalmedium ${medium} AND price BETWEEN ${pricemin} AND ${pricemax} ORDER BY ${order}`)
+    } else {medium = physical}
+    ordered = ""
+    if(order != "id_number"){
+      ordered = `'${order}'`
+    }else{ordered = order}
+    const total = await db.manyOrNone(`SELECT COUNT(*) FROM schilderijen WHERE period ${period} AND principalmakersproductionplaces ${prod} AND physicalmedium ${medium} AND price BETWEEN ${pricemin} AND ${pricemax} GROUP BY ${ordered} ORDER BY ${ordered}`)
+
+    var preQuery = await db.manyOrNone(`SELECT * FROM schilderijen WHERE period ${period} AND principalmakersproductionplaces ${prod} AND physicalmedium ${medium} AND price BETWEEN ${pricemin} AND ${pricemax} ORDER BY ${ordered} LIMIT ${amount} OFFSET ${offset}`)
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
-    return query
+    
+    return {
+      total: total.length,
+      collection: preQuery
+    }
   },
 
   filterbyperiod: ({ period }) => {
@@ -222,7 +246,6 @@ var root = {
     db.one(`CREATE TABLE ${tabelnaam} (id serial PRIMARY KEY, foreignKey int)`)
       .catch(err => { throw new Error(err) })
 
-    console.log(foreignkey)
     //Inserting all data into the table
     foreignkey.forEach(element => {
       db.one(`INSERT INTO ${tabelnaam}(foreignkey) VALUES($1)`, [element.foreignkey])
@@ -536,7 +559,7 @@ var root = {
       return 311
     }
     console.log(new Date(time))
-    if(new Date(time).toString() == "Invalid Date"){
+    if (new Date(time).toString() == "Invalid Date") {
       console.log("invalid date")
       return 317
     }
@@ -636,7 +659,7 @@ var root = {
       })
     } else {
       // If the user has previously made a order
-      let row = 0
+      let row = -1
       existing.forEach(element => {
         element.purchasedate = this.dateToString(element.purchasedate)
         if (element.purchasedate == date) {
@@ -645,13 +668,13 @@ var root = {
           return
         }
       })
-      if (row != 0) {
+      if (row != -1) {
         // If the user has already made a purchase on this day
         items.forEach(element => {
           db.one(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`, [row, element.foreignkey])
         })
       } else {
-        // If the user hasn't yet made a purchas eon this day
+        // If the user hasn't yet made a purchase on this day
         let place = await db.one(`INSERT INTO ordered(buyerid, purchasedate) VALUES($1,$2) RETURNING ID`, [buyerId, date])
           .then(data => { return data })
           .catch(err => { throw new Error(err) })
@@ -735,7 +758,7 @@ var root = {
       })
     } else {
       // If the user has previously made a order
-      let row = 0
+      let row = -1
       existing.forEach(element => {
         element.purchasedate = this.dateToString(element.purchasedate)
         if (element.purchasedate == date) {
@@ -744,7 +767,7 @@ var root = {
           return
         }
       })
-      if (row != 0) {
+      if (row != -1) {
         // If the user has already made a purchase on this day
         items.forEach(element => {
           db.one(`INSERT INTO rentals(rentstart, rentstop, items, refto_rented) VALUES($1,$2,$3,$4)`, [element.startDate, element.stopDate, element.foreignkey, row])
