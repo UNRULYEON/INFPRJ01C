@@ -408,7 +408,7 @@ class FAQ extends Component {
           disableEscapeKeyDown
         // scroll='scroll'
         >
-          <DialogTitle id="form-dialog-title">Schilderij toevoegen</DialogTitle>
+          <DialogTitle id="form-dialog-title">FAQ toevoegen</DialogTitle>
           <MuiThemeProvider theme={theme}>
             <DialogContent
               className="dialog-add-painting"
@@ -601,6 +601,9 @@ class FAQ extends Component {
                         this.handleClose()
                         // window.location.reload();
                         this.props.handleSnackbarOpen('EDIT_FAQ_SUCCESS')
+                        this.setState({
+                          activeStep: 0
+                        })
                       }}
                       onError={(err) => {
                         console.log(`Query failed: ${err}`)
