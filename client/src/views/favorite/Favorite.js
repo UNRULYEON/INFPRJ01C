@@ -13,6 +13,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Hidden from '@material-ui/core/Hidden';
 
 // GraphQL
+import { ApolloConsumer } from 'react-apollo';
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
 
@@ -21,6 +22,17 @@ import PageTitle from '../../components/pageLink/PageLink'
 
 // Icons
 import logo from '../../icons/logo.svg';
+
+const GET_FAVORITES = gql`
+query WishlistSelect($userId: Int!) {
+  wishlistSelect(userId: $userId){
+    id
+    gebruikerid
+    timestamp
+    items
+  }
+}
+`
 
 const themeRed = new createMuiTheme({
   palette: {
@@ -44,6 +56,10 @@ const themeGreen = new createMuiTheme({
 class Favorite extends Component {
   constructor(props){
     super(props);
+    this.state = {
+      isFetching: false,
+      syncButtonText: 'Synchroniseer'
+    }
   }
 
   componentDidMount = () => {
@@ -62,6 +78,28 @@ class Favorite extends Component {
         this.props.updateFavorite(item, 'REMOVE_FROM_FAV')
         break;
     }
+  }
+
+  onFavoritesFetched = (data) => {
+    console.log(data)
+    if (data.wishlistSelect.length > 0) {
+      if (new Date(this.props.favorite.timestamp) > new Date(data.wishlistSelect[0].timestamp)) {
+        console.log(new Date(this.props.favorite.timestamp))
+        console.log(new Date(data.wishlistSelect[0].timestamp))
+        console.log(`Local data is newer than db`)
+      } else {
+        console.log(new Date(this.props.favorite.timestamp))
+        console.log(new Date(data.wishlistSelect[0].timestamp))
+        console.log(`Local data is older than db`)
+        this.props.updateFavorite(data.wishlistSelect[0].items)
+      }
+    } else {
+      console.log(`db has no data, pushing local fav`)
+    }
+    this.setState({
+      isFetching: false,
+      syncButtonText: 'Synchroniseer'
+    })
   }
 
   render() {
@@ -92,6 +130,34 @@ class Favorite extends Component {
             </div>
           </div>
         )}
+        {this.props.loggedIn ? (
+        <div className="fav-sync-container">
+          <ApolloConsumer>
+            {client => (
+              <div>
+                <Button
+                  disabled={this.state.isFetching}
+                  variant="outlined"
+                  color="primary"
+                  onClick={async () => {
+                    this.setState({
+                      isFetching: true,
+                      syncButtonText: 'Synchroniseren...'
+                    })
+                    const { data } = await client.query({
+                      query: GET_FAVORITES,
+                      variables: { userId: this.props.user.id }
+                    });
+                    this.onFavoritesFetched(data);
+                  }}
+                >
+                  <Icon style={{ marginRight: '5px' }}>sync</Icon> {this.state.syncButtonText}
+                </Button>
+              </div>
+            )}
+          </ApolloConsumer>
+        </div>
+        ) : null}
           {this.props.favorite.items.length > 0 ? (
             <div className="fav-item-container">
               {this.props.favorite.items.map((item) =>

@@ -38,8 +38,6 @@ import Sidebar from './components/sidebar/Sidebar'
 import Dashboard from './views/dashboard/Dashboard';
 import Login from './views/login/Login';
 import Users from './views/users/Users';
-import GebruikerDetails from './views/gebruikerDetails/GebruikerDetails';
-import SchilderijDetails from './views/schilderijDetails/SchilderijDetails';
 import Paintings from './views/paintings/Paintings';
 import Painters from './views/painters/Painters';
 import FAQ from './views/faq/FAQ';
@@ -497,12 +495,6 @@ class App extends Component {
                     setUser={this.setUser}
                   />}
                 />
-                <Route
-                  path="/gebruiker/:id"
-                  component={GebruikerDetails} />
-                <Route
-                  path="/schilderij/:id"
-                  component={SchilderijDetails} />
                 <Route component={NoMatch} />
               </Switch>
             </div>

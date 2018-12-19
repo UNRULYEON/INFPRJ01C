@@ -4,6 +4,14 @@
   min-width: 100%;
 }
 
+.fav-sync-container{
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 33.2px;
+}
+
 .fav-item-container{
 }
 
