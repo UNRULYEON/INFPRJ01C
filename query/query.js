@@ -14,28 +14,17 @@ var root = {
     let existing = await db.manyOrNone(`SELECT * FROM sitevisitdate WHERE date = $1`, [date])
     if (!existing.length) {
       // There have been no visits yet on this day
-      let place = await db.one(`INSERT INTO sitevisitdate(date) VALUES($1) RETURNING ID`, [date])
-        .then(data => { return data })
+      db.oneOrNone(`INSERT INTO sitevisitdate(date,amount) VALUES($1,$2)`, [date, 1])
         .catch(err => { throw new Error(err) })
-      db.one(`INSERT INTO sitevisitamount(amount,refto_sitevisitdate) VALUES($1,$2)`, [1, place.id])
     } else {
-      // If there has been a previous visit on the current day
-      let row = -1
-      existing.forEach(element => {
-        element.date = this.dateToString(element.date)
-        if (element.date == date) {
-          row = element.id
-          return
-        }
-      })
-      if (row != -1) {
-        db.one(`UPDATE sitevisitamount SET amount = amount + 1 WHERE id= ${row}`)
-      } else {
-
-        console.log(existing)
-      }
+      db.oneOrNone(`UPDATE sitevisitdate SET amount = amount + 1 WHERE id = ${existing[0].id}`)
+        .catch(err => {throw new Error(err)})
+      
     }
     return 200
+  },
+  async totalVisitors() {
+
   },
   //#region Painting
   collection: () => {
@@ -62,8 +51,7 @@ var root = {
     }
   },
   async paintingByID({ id }) {
-    // db.one(`UPDATE schilderijen SET amountwatched = amountwatched + 1 where id_number = ${id}`)
-    db.one(`UPDATE schilderijstatistieken SET amountwatched = amountwatched +1 where schilderijid = ${id}`)
+    db.oneOrNone(`UPDATE schilderijstatistieken SET amountwatched = amountwatched +1 where schilderijid = ${id}`)
     let queryPainting = await db.manyOrNone(`SELECT * from schilderijen where id_number = ${id}`)
     let painting = queryPainting[0]
     let queryPainter = await db.manyOrNone(`SELECT schilder from schilderschilderij where schilderij = ${id}`)
@@ -122,12 +110,12 @@ var root = {
     return db.manyOrNone(query)
   },
   painterByID: ({ id }) => {
-    db.one(`UPDATE schilder SET amountwatched = amountwatched + 1 where id = ${id}`)
+    db.oneOrNone(`UPDATE schilder SET amountwatched = amountwatched + 1 where id = ${id}`)
     let query = (`SELECT * from schilder where id = ${id}`)
     return db.manyOrNone(query)
   },
   workByPainter: ({ id }) => {
-    db.one(`UPDATE schilder SET amountwatched = amountwatched + 1 where id = ${id}`)
+    db.oneOrNone(`UPDATE schilder SET amountwatched = amountwatched + 1 where id = ${id}`)
     let query = (`SELECT * from schilderijen where principalmaker = ${id}`)
     return db.manyOrNone(query)
   },
@@ -255,17 +243,17 @@ var root = {
     })
 
     //Creating the table
-    db.one(`CREATE TABLE ${tabelnaam} (id serial PRIMARY KEY, foreignKey int)`)
+    db.oneOrNone(`CREATE TABLE ${tabelnaam} (id serial PRIMARY KEY, foreignKey int)`)
       .catch(err => { throw new Error(err) })
 
     //Inserting all data into the table
     foreignkey.forEach(element => {
-      db.one(`INSERT INTO ${tabelnaam}(foreignkey) VALUES($1)`, [element.foreignkey])
+      db.oneOrNone(`INSERT INTO ${tabelnaam}(foreignkey) VALUES($1)`, [element.foreignkey])
         .catch(err => { throw new Error(err) })
     })
 
     //Create ref to the newly created table in the papatabel
-    db.one(`INSERT INTO papatabel(naam,type) VALUES($1, $2)`, [tabelnaam, type])
+    db.oneOrNone(`INSERT INTO papatabel(naam,type) VALUES($1, $2)`, [tabelnaam, type])
       .catch(err => { throw new Error(err) })
     return 200
   },
@@ -277,7 +265,7 @@ var root = {
     }
     let tabelnaam = table[0].naam
     foreignkey.forEach(element => {
-      db.one(`INSERT INTO ${tabelnaam}(foreignkey) VALUES($1)`, [element.foreignkey])
+      db.oneOrNone(`INSERT INTO ${tabelnaam}(foreignkey) VALUES($1)`, [element.foreignkey])
     })
     return 200
   },
@@ -288,7 +276,7 @@ var root = {
       return 311
     }
 
-    db.one(`DROP TABLE IF EXISTS ${tablename}`)
+    db.oneOrNone(`DROP TABLE IF EXISTS ${tablename}`)
 
     //In order to check if the table actually dropped
     let tableNameCheck = await db.manyOrNone(`SELECT relname as table from pg_stat_user_tables where schemaname = 'public'`)
@@ -299,7 +287,7 @@ var root = {
         return 510
       }
     })
-    db.one(`DELETE FROM papatabel WHERE id = ${id}`)
+    db.oneOrNone(`DELETE FROM papatabel WHERE id = ${id}`)
     return 200
   },
   //#endregion
@@ -330,7 +318,7 @@ var root = {
     if (user.length) {
       return 314
     }
-    db.one(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin) 
+    db.oneOrNone(`INSERT INTO gebruiker(name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin) 
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
       [name, surname, mail, saltedPassword, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin])
     // .catch(err => {throw new Error(err)})
@@ -343,7 +331,7 @@ var root = {
     if (!user.length) {
       return 311
     }
-    db.one(`UPDATE gebruiker set 
+    db.oneOrNone(`UPDATE gebruiker set 
             name = $1, surname = $2, mail = $3, aanhef = $4, adres = $5, city = $6, postalcode = $7,
             housenumber = $8, paymentmethod = $9, admin = $10 WHERE id = ${id}`,
       [name, surname, mail, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin])
@@ -353,7 +341,7 @@ var root = {
   async deleteUser({ id }) {
     let user = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${id}`)
     if (user.length) {
-      db.one(`DELETE from gebruiker WHERE id = ${id}`)
+      db.oneOrNone(`DELETE from gebruiker WHERE id = ${id}`)
       return 200
     } else {
       return 311
@@ -363,15 +351,15 @@ var root = {
 
   //#region alter products
   async addProduct({ id, title, releasedate, period, description, physicalmedium, amountofpaintings = 1, src, bigsrc, prodplace, principalmaker, width, height, price, rented = false, painterId, amountwatched = 0 }) {
-    let painting = await db.one(`INSERT INTO schilderijen(id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, principalmakersproductionplaces, principalmaker, width, height, price, rented, amountwatched) 
+    let painting = await db.oneOrNone(`INSERT INTO schilderijen(id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, principalmakersproductionplaces, principalmaker, width, height, price, rented, amountwatched) 
     VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING id_number`,
       [id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, principalmaker, width, height, price, rented, amountwatched])
       .then(data => { return data.id_number })
       .catch(err => { throw new Error(err) })
 
-    db.one(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${painterId}, ${painting})`)
+    db.oneOrNone(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${painterId}, ${painting})`)
 
-    db.one(`UPDATE schilderijen SET document_vectors = (to_tsvector(coalesce('${title}'))) || (to_tsvector(coalesce('${principalmaker}'))) WHERE id_number = ${painting}`)
+    db.oneOrNone(`UPDATE schilderijen SET document_vectors = (to_tsvector(coalesce('${title}'))) || (to_tsvector(coalesce('${principalmaker}'))) WHERE id_number = ${painting}`)
     return 200
   },
   //Alter products
@@ -382,7 +370,7 @@ var root = {
     if (!prod.length) {
       return 311
     }
-    db.one(`UPDATE schilderijen set 
+    db.oneOrNone(`UPDATE schilderijen set 
             id_number = $1, id = $2, title = $3, releasedate = $4, period = $5, description = $6, physicalmedium = $7, amountofpaintings = $8, src = $9, bigsrc = $10, principalmakersproductionplaces = $11, width = $12, height = $13, principalmaker = $14, price = $15, rented = $16, amountwatched = $17 WHERE id_number = ${id_number}`,
       [id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, width, height, principalmaker, price, rented, amountwatched])
     db.manyOrNone(`UPDATE schilderijen SET document_vectors = (to_tsvector(coalesce())) || (to_tsvector(coalesce(\'\'${principalmaker}\'\'))) WHERE id_number = ${id_number}`)
@@ -394,7 +382,7 @@ var root = {
     if (!prod.length) {
       return 311
     }
-    db.one(`DELETE FROM schilderijen WHERE id_number = ${id}`)
+    db.oneOrNone(`DELETE FROM schilderijen WHERE id_number = ${id}`)
     return 200
   },
   //#endregion
@@ -408,7 +396,7 @@ var root = {
     let id = await db.one(`INSERT INTO schilder(name, city, dateofbirth, dateofdeath, placeofdeath, occupation, nationality, headerimage, thumbnail, description) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`, [name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description])
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
-    db.one('UPDATE schilder SET document_vectors = (to_tsvector(coalesce(\'\'$1\'\'))) WHERE id = $2', [name, id])
+    db.oneOrNone('UPDATE schilder SET document_vectors = (to_tsvector(coalesce(\'\'$1\'\'))) WHERE id = $2', [name, id])
     return 200
   },
   async alterPainter({ id, name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched }) {
@@ -418,11 +406,11 @@ var root = {
     if (!painter.length) {
       return 310
     }
-    let id2 = db.one(`UPDATE schilder set
-            name = $2, city = $3, dateofbirth = $4, dateofdeath = $5, placeofdeath = $6, occupation = $7, nationality = $8, headerimage = $9, thumbnail = $10, description = $11, amountwatched = $12 WHERE id = ${id} RETURNING id`, [id, name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched])
+    db.oneOrNone(`UPDATE schilder set
+            name = $2, city = $3, dateofbirth = $4, dateofdeath = $5, placeofdeath = $6, occupation = $7, nationality = $8, headerimage = $9, thumbnail = $10, description = $11, amountwatched = $12 WHERE id = ${id}`, [id, name, city, dateBirth, dateDeath, placeDeath, occupation, nationality, headerImage, thumbnail, description, amountwatched])
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
-    db.one('UPDATE schilder SET document_vectors = (to_tsvector(coalesce(\'\'$1\'\'))) WHERE id = $2', [name, id])
+    db.oneOrNone('UPDATE schilder SET document_vectors = (to_tsvector(coalesce(\'\'$1\'\'))) WHERE id = $2', [name, id])
     return 200
   },
   async deletePainter({ id }) {
@@ -430,14 +418,14 @@ var root = {
     if (!painter.length) {
       return 311
     }
-    db.one(`DELETE from schilder WHERE id = ${id}`)
+    db.oneOrNone(`DELETE from schilder WHERE id = ${id}`)
     return 200
   },
   //#endregion
 
   //#region FAQ  
   async faqCreate({ question, answer }) {
-    db.one(`INSERT INTO faq(title, body) VALUES($1,$2)`, [question, answer])
+    db.oneOrNone(`INSERT INTO faq(title, body) VALUES($1,$2)`, [question, answer])
       .catch(err => { throw new Error(510) })
     return 200
   },
@@ -446,7 +434,7 @@ var root = {
     if (!faq.length) {
       return 311
     }
-    db.one(`UPDATE faq set title = $1, body = $2 
+    db.oneOrNone(`UPDATE faq set title = $1, body = $2 
               WHERE id = ${id}`, [question, answer])
     return 200
   },
@@ -455,7 +443,7 @@ var root = {
     if (!faq.length) {
       return 311
     }
-    db.one(`DELETE FROM faq WHERE id = ${id}`)
+    db.oneOrNone(`DELETE FROM faq WHERE id = ${id}`)
     return 200
   },
   //#endregion
@@ -523,7 +511,7 @@ var root = {
   //Merge schilder met schilderij 1 at a time
   async merge({ id_number, id }) {
     if (id_number != null != id || id_number != 0 != id) {
-      db.one(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${id}, ${id_number})`)
+      db.oneOrNone(`INSERT INTO schilderschilderij (schilder, schilderij) VALUES (${id}, ${id_number})`)
       return 200
     }
   },
@@ -537,7 +525,7 @@ var root = {
     //  .then( data => {return data})
     //   // console.log(schilderNum[0].id)
     //   // Commented for safety reasons, only uncomment when the entire collection of painters is to be inserted
-    //   await db.one(`INSERT INTO schilderschilderij (schilder, schilderij) values(${schilderNum[0].id}, ${i}) RETURNING id`).then(data => {return data})  
+    //   await db.oneOrNone(`INSERT INTO schilderschilderij (schilder, schilderij) values(${schilderNum[0].id}, ${i}) RETURNING id`).then(data => {return data})  
     //   console.log(`Insert executed`)  
     // }
     console.log("Commented for safety reasons, only uncomment when the entire collection of painters is to be inserted")
@@ -577,10 +565,10 @@ var root = {
     }
     let current = await db.manyOrNone(`SELECT * FROM wishlist WHERE gebruikerid = ${gebruikerId}`)
     if (current.length) {
-      db.one(`UPDATE wishlist set items = $1, timestamp = $2 WHERE gebruikerid = ${gebruikerId}`, [items, time])
+      db.oneOrNone(`UPDATE wishlist set items = $1, timestamp = $2 WHERE gebruikerid = ${gebruikerId}`, [items, time])
       return 200
     } else {
-      db.one(`INSERT INTO wishlist(gebruikerid, items, timestamp) VALUES ($1,$2,$3)`, [gebruikerId, items, time])
+      db.oneOrNone(`INSERT INTO wishlist(gebruikerid, items, timestamp) VALUES ($1,$2,$3)`, [gebruikerId, items, time])
       return 200
     }
   },
@@ -608,11 +596,11 @@ var root = {
     }
     let current = await db.manyOrNone(`SELECT * from shoppingcart WHERE gebruikerid = ${gebruikerId}`)
     if (current.length) {
-      db.one(`UPDATE shoppingcart set items = $1, timestamp = $2 WHERE gebruikerid = ${gebruikerId}`, [items, time])
+      db.oneOrNone(`UPDATE shoppingcart set items = $1, timestamp = $2 WHERE gebruikerid = ${gebruikerId}`, [items, time])
         .catch(err => { throw new Error(err) })
       return 200
     } else {
-      db.one(`INSERT INTO shoppingcart(gebruikerid, items, timestamp) VALUES($1,$2,$3) `, [gebruikerId, items, time])
+      db.oneOrNone(`INSERT INTO shoppingcart(gebruikerid, items, timestamp) VALUES($1,$2,$3) `, [gebruikerId, items, time])
         .catch(err => { throw new Error(err) })
       return 200
     }
@@ -667,7 +655,7 @@ var root = {
         .then(data => { return data })
         .catch(err => { throw new Error(err) })
       items.forEach(element => {
-        db.one(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`, [place.id, element.foreignkey])
+        db.oneOrNone(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`, [place.id, element.foreignkey])
       })
     } else {
       // If the user has previously made a order
@@ -683,7 +671,7 @@ var root = {
       if (row != -1) {
         // If the user has already made a purchase on this day
         items.forEach(element => {
-          db.one(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`, [row, element.foreignkey])
+          db.oneOrNone(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`, [row, element.foreignkey])
         })
       } else {
         // If the user hasn't yet made a purchase on this day
@@ -691,7 +679,7 @@ var root = {
           .then(data => { return data })
           .catch(err => { throw new Error(err) })
         items.forEach(element => {
-          db.one(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`, [place.id, element.foreignkey])
+          db.oneOrNone(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`, [place.id, element.foreignkey])
         })
       }
     }
@@ -708,7 +696,7 @@ var root = {
         .then(data => { return data })
         .catch(err => { throw new Error(err) })
       //=================================aanpassen ========================================
-      db.one(`INSERT INTO schilderijamount(refto_schilderijdate, amountwatched) VALUES($1,$2)`, [place.id, 1])
+      db.oneOrNone(`INSERT INTO schilderijamount(refto_schilderijdate, amountwatched) VALUES($1,$2)`, [place.id, 1])
     } else {
       // If the user has previously made a order
       let row = -1
@@ -722,13 +710,13 @@ var root = {
       })
       if (row != -1) {
         // If the user has already made a purchase on this day
-        db.one(`UPDATE schilderijamount SET amountwatched = amountwatched + 1 where id = ${row}`)
+        db.oneOrNone(`UPDATE schilderijamount SET amountwatched = amountwatched + 1 where id = ${row}`)
       } else {
         // If the user hasn't yet made a purchase on this day
         let place = await db.one(`INSERT INTO schilderijdate(schilderijid, date) VALUES($1,$2) RETURNING ID`, [schilderijid, date])
           .then(data => { return data })
           .catch(err => { throw new Error(err) })
-        db.one(`INSERT INTO schilderijamount(refto_schilderijdate, amountwatched) VALUES($1,$2)`, [place.id, 1])
+        db.oneOrNone(`INSERT INTO schilderijamount(refto_schilderijdate, amountwatched) VALUES($1,$2)`, [place.id, 1])
       }
     }
     return 200
@@ -741,7 +729,7 @@ var root = {
     if (!selection.length) {
       return 313
     }
-    db.one(`UPDATE orders SET status = $1 WHERE id = $2 `, [newStatus, id])
+    db.oneOrNone(`UPDATE orders SET status = $1 WHERE id = $2 `, [newStatus, id])
       .catch(err => { throw new Error(err) })
     return 200
   },
@@ -803,7 +791,7 @@ var root = {
         .then(data => { return data })
         .catch(err => { throw new Error(err) })
       items.forEach(element => {
-        db.one(`INSERT INTO rentals(rentstart, rentstop, items, refto_rented) VALUES($1,$2,$3,$4)`, [element.startDate, element.stopDate, element.foreignkey, place.id])
+        db.oneOrNone(`INSERT INTO rentals(rentstart, rentstop, items, refto_rented) VALUES($1,$2,$3,$4)`, [element.startDate, element.stopDate, element.foreignkey, place.id])
       })
     } else {
       // If the user has previously made a order
@@ -819,7 +807,7 @@ var root = {
       if (row != -1) {
         // If the user has already made a purchase on this day
         items.forEach(element => {
-          db.one(`INSERT INTO rentals(rentstart, rentstop, items, refto_rented) VALUES($1,$2,$3,$4)`, [element.startDate, element.stopDate, element.foreignkey, row])
+          db.oneOrNone(`INSERT INTO rentals(rentstart, rentstop, items, refto_rented) VALUES($1,$2,$3,$4)`, [element.startDate, element.stopDate, element.foreignkey, row])
         })
       } else {
         // If the user hasn't yet made a purchas eon this day
@@ -827,7 +815,7 @@ var root = {
           .then(data => { return data })
           .catch(err => { throw new Error(err) })
         items.forEach(element => {
-          db.one(`INSERT INTO rentals(rentstart, rentstop, items, refto_rented) VALUES($1,$2,$3,$4)`, [element.startDate, element.stopDate, element.foreignkey, place.id])
+          db.oneOrNone(`INSERT INTO rentals(rentstart, rentstop, items, refto_rented) VALUES($1,$2,$3,$4)`, [element.startDate, element.stopDate, element.foreignkey, place.id])
         })
       }
     }
@@ -840,7 +828,7 @@ var root = {
     if (!selection.length) {
       return 313
     }
-    db.one(`UPDATE rentals SET status = $1 WHERE id = $2`, [newStatus, id])
+    db.oneOrNone(`UPDATE rentals SET status = $1 WHERE id = $2`, [newStatus, id])
       .catch(err => { throw new Error(err) })
     return 200
   },
