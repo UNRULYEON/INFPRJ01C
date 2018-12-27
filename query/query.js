@@ -18,8 +18,7 @@ var root = {
         .catch(err => { throw new Error(err) })
     } else {
       db.oneOrNone(`UPDATE sitevisitdate SET amount = amount + 1 WHERE id = ${existing[0].id}`)
-        .catch(err => {throw new Error(err)})
-      
+        .catch(err => {throw new Error(err)})      
     }
     return 200
   },
