@@ -92,7 +92,7 @@ var schema = buildSchema(`
     """Provide the id of the buyer and the date at which the items are bought, and provide an array of paintings KEY's"""
     orderListInsert(buyerId: Int, items: [PaintRef!], date: String!, total: Int!): String
     """Provide the id of the buyer and the date at which the items are bought, and provide an array of paintings KEY's"""
-    rentalListInsert(buyerId: Int!, items: [PaintRefRent!], date: String!): String
+    rentalListInsert(buyerId: Int!, items: [PaintRefRent!], date: String!, total: Int!): String
     Trackpainting(schilderijid: Int!, date: String!): String
     Trackpainter(schilderid: Int!, date: String!): String
     """Provide the new status of the order associated to the, also given, id"""
@@ -157,7 +157,8 @@ var schema = buildSchema(`
     id: Int,
     buyerid: Int,
     purchasedate: String,    
-    items: [Rentals]
+    items: [Rentals],
+    total: Int
   },
   type Rentals{
     id: Int,

@@ -800,6 +800,7 @@ var root = {
         id: koper.id,
         buyerid: koper.buyerid,
         purchasedate: koper.purchasedate,
+        total: koper.totalcost,
         items: []
       })
       // Loop for the total amount of painting bought on a given date 
@@ -819,14 +820,13 @@ var root = {
     // Return the return type
     return RentalsByDate
   },
-  async rentalListInsert({ buyerId, items, date }) {
-    console.log("\nRLI")
+  async rentalListInsert({ buyerId, items, date, total }) {
     let existing = await db.manyOrNone(`SELECT * FROM rented WHERE buyerid = ${buyerId}`)
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
     if (!existing.length) {
       // If the user hasn't made any rentals yet
-      let place = await db.one(`INSERT INTO rented(buyerid, purchasedate) VALUES($1,$2) RETURNING ID`, [buyerId, date])
+      let place = await db.one(`INSERT INTO rented(buyerid, purchasedate, totalcost) VALUES($1,$2,$3) RETURNING ID`, [buyerId, date, total])
         .then(data => { return data })
         .catch(err => { throw new Error(err) })
       items.forEach(element => {
@@ -844,13 +844,14 @@ var root = {
         }
       })
       if (row != -1) {
+        db.one(`ALTER rented SET totalcost = totalcost + ${total}`)
         // If the user has already made a purchase on this day
         items.forEach(element => {
           db.oneOrNone(`INSERT INTO rentals(rentstart, rentstop, items, refto_rented) VALUES($1,$2,$3,$4)`, [element.startDate, element.stopDate, element.foreignkey, row])
         })
       } else {
-        // If the user hasn't yet made a purchas eon this day
-        let place = await db.one(`INSERT INTO rented(buyerid, purchasedate) VALUES($1,$2) RETURNING ID`, [buyerId, date])
+        // If the user hasn't yet made a purchas on this day
+        let place = await db.one(`INSERT INTO rented(buyerid, purchasedate, totalcost) VALUES($1,$2,$3) RETURNING ID`, [buyerId, date, total])
           .then(data => { return data })
           .catch(err => { throw new Error(err) })
         items.forEach(element => {
