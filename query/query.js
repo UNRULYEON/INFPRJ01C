@@ -29,6 +29,22 @@ var root = {
     });
     return query
   },
+  popularpaintings: () => {
+    let query = 'SELECT * from schilderijen ORDER BY amountwatched DESC LIMIT 5'
+    return db.manyOrNone(query)
+  },
+  unpopularpaintings: () => {
+    let query = 'SELECT * from schilderijen ORDER BY amountwatched ASC LIMIT 5'
+    return db.manyOrNone(query)
+  },
+  bestsellingpaintings: () => {
+    let query = 'SELECT * from schilderijen ORDER BY amountofpaintings ASC LIMIT 5'
+    return db.manyOrNone(query)
+  },
+  leastsellingpaintings: () => {
+    let query = 'SELECT * from schilderijen ORDER BY amountofpaintings DESC LIMIT 5'
+    return db.manyOrNone(query)
+  },
   //#region Painting
   collection: () => {
     let query = 'SELECT * from schilderijen ORDER BY id_number ASC limit 15'

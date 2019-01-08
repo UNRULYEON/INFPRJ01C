@@ -9,6 +9,10 @@ var schema = buildSchema(`
     hello: String
     """Collection returns an array of paintings ordered by number, with a limit of 15."""
     collection: [Collection]
+    popularpaintings: [Painting]
+    unpopularpaintings: [Painting]
+    bestsellingpaintings: [Painting]
+    leastsellingpaintings: [Painting]
     """CollectionSearch returns an array of paintings ordered by number."""
     collectionSearch: [Collection]
     """PaintingOrderedByPagination takes the page and the amount of items that should be shown per page, and returns an array of paintings."""
