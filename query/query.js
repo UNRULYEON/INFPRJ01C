@@ -648,13 +648,13 @@ var root = {
     // Return the return type
     return OrdersByDate
   },
-  async orderListInsert({ buyerId = 183, items, date }) {
+  async orderListInsert({ buyerId = 183, items, date, total }) {
     let existing = await db.manyOrNone(`SELECT * FROM ordered WHERE buyerid = ${buyerId}`)
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
     if (!existing.length) {
       // If the user hasn't made any orders yet
-      let place = await db.one(`INSERT INTO ordered(buyerid, purchasedate) VALUES($1,$2) RETURNING ID`, [buyerId, date])
+      let place = await db.one(`INSERT INTO ordered(buyerid, purchasedate, totalcost) VALUES($1,$2,$3) RETURNING ID`, [buyerId, date, total])
         .then(data => { return data })
         .catch(err => { throw new Error(err) })
       items.forEach(element => {
@@ -672,13 +672,14 @@ var root = {
         }
       })
       if (row != -1) {
+        db.one(`ALTER ordered SET totalcost = totalcost + ${total}`)
         // If the user has already made a purchase on this day
         items.forEach(element => {
           db.oneOrNone(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`, [row, element.foreignkey])
         })
       } else {
         // If the user hasn't yet made a purchase on this day
-        let place = await db.one(`INSERT INTO ordered(buyerid, purchasedate) VALUES($1,$2) RETURNING ID`, [buyerId, date])
+        let place = await db.one(`INSERT INTO ordered(buyerid, purchasedate, totalcost) VALUES($1,$2,$3) RETURNING ID`, [buyerId, date, total])
           .then(data => { return data })
           .catch(err => { throw new Error(err) })
         items.forEach(element => {

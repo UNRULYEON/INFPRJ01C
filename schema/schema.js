@@ -90,7 +90,7 @@ var schema = buildSchema(`
     removeBabyTabel(id: Int!): String
     shoppingCartInsert(gebruikerId: Int!, items: String!, time: String!): String
     """Provide the id of the buyer and the date at which the items are bought, and provide an array of paintings KEY's"""
-    orderListInsert(buyerId: Int, items: [PaintRef!], date: String!): String
+    orderListInsert(buyerId: Int, items: [PaintRef!], date: String!, total: Int!): String
     """Provide the id of the buyer and the date at which the items are bought, and provide an array of paintings KEY's"""
     rentalListInsert(buyerId: Int!, items: [PaintRefRent!], date: String!): String
     Trackpainting(schilderijid: Int!, date: String!): String
