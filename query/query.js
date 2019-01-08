@@ -232,6 +232,12 @@ var root = {
 
   //#region Admin
 
+  //Visualising stuff
+  async rentedPaintings(){
+    let query = await db.one(`SELECT COUNT(*) from orders`)
+    return query.count
+  },
+
   //#region papa & baby tabel
   papatabel: () => {
     return db.manyOrNone(`SELECT * FROM papatabel`)
