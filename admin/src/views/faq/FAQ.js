@@ -354,7 +354,7 @@ class FAQ extends Component {
         {/* Query Show all FAQ's */}
         <Query
           query={FAQS}
-        pollInterval={5000}
+          pollInterval={5000}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading... :)</p>;

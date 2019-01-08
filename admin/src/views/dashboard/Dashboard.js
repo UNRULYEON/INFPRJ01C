@@ -26,8 +26,6 @@ const data = [
   { name: 'Zondag', aantal: 3490, pv: 4300, amt: 2100 },
 ];
 
-
-
 const aantalGebruikers = gql`
   query gebruiker($amount: Int!, $page: Int!){
     selectAllUsers(amount: $amount, page: $page){
@@ -37,8 +35,38 @@ const aantalGebruikers = gql`
 `;
 
 const bestSold = gql`
-  query thebest{
+  query bestSold{
     bestsellingpaintings{
+      id
+      title
+      amountofpaintings
+    }
+  }
+`;
+
+const populair = gql`
+  query populairpaintings{
+    popularpaintings{
+      id
+      title
+      amountwatched
+    }
+  }
+`;
+
+const leastSold = gql`
+  query leastsellingpaintings{
+    leastsellingpaintings{
+      id
+      title
+      amountofpaintings
+    }
+  }
+`;
+
+const unpopulair = gql`
+  query unpopularpaintings{
+    unpopularpaintings{
       id
       title
       amountwatched
@@ -65,46 +93,74 @@ class Dashboard extends Component {
     return (
       <section className="dashboardSection">
         <Grid container id="aantalGebruikers">
-          <Grid item xs={5}>
+          {/* <Grid item xs={5} container={false}>
 
             <Button onClick={this.toggleShowLine.bind(this)}>Line Example</Button>
             <Charts showLine={this.state.showLine} data={data} />
 
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={5}>
 
+
+
+          <Grid item xs={5} id="meestBekeken">
             <Query
-              query={aantalGebruikers}
-              variables={{ amount: 1, page: 1 }}
-              onCompleted={(data) => {
-                if (this.state.gebruikersGeteld === false) {
-                  this.setState({
-                    aantalGebruikers: data.selectAllUsers.total,
-                    gebruikersGeteld: true,
-                  })
-                }
-              }}
+              query={populair}
+              pollInterval={5000}
             >
-              {({ loading, error }) => {
+              {({ loading, error, data }) => {
                 if (loading) return <p>Loading...</p>;
                 if (error) return <p>Error</p>;
+
+                let rows = []
+
+                for (let i = 0; i < data.popularpaintings.length; i++) {
+                  rows.push(
+                    {
+                      title: data.popularpaintings[i].title,
+                      body: data.popularpaintings[i].amountwatched
+                    }
+                  )
+                }
+
                 return (
-                  <div>Aantal gebruikers: {this.state.aantalGebruikers}</div>
+                  <div>
+                    top 5 meest bekeken schilderijen
+                    <Paper>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell> Title </TableCell>
+                            <TableCell> Aantal</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {
+                            rows.map(row => (
+                              <TableRow>
+                                <TableCell component="th" scope="row">{row.title}</TableCell>
+                                <TableCell component="th" scope="row">{row.body}</TableCell>
+                              </TableRow>
+                            ))
+                          }
+
+                        </TableBody>
+                      </Table>
+                    </Paper>
+                  </div>
                 )
               }}
             </Query>
 
           </Grid>
 
-          <Grid item xs={6}>
-            <Tables colomnName='meest bekeken' />
+          <Grid item xs={1} />
 
-          </Grid>
-          <Grid item xs={6} id="meestVerkocht">
+          <Grid item xs={5} id="meestVerkocht">
 
             <Query
               query={bestSold}
+              pollInterval={5000}
             >
               {({ loading, error, data }) => {
                 if (loading) return <p>Loading...</p>;
@@ -113,25 +169,36 @@ class Dashboard extends Component {
                 let rows = []
 
                 for (let i = 0; i < data.bestsellingpaintings.length; i++) {
-                  console.log(data.bestsellingpaintings[i])
                   rows.push(
                     {
                       title: data.bestsellingpaintings[i].title,
-                      body: data.bestsellingpaintings[i].amountwatched
+                      body: data.bestsellingpaintings[i].amountofpaintings
                     }
                   )
                 }
 
-
-
                 return (
+                  // <div>
+                  // {
+                  //   rows.map(row=>(
+                  //     <Tables colomnName='Meest verkocht' title={row.title} body={row.body} rows={rows}/>
+                  //   ))
+                  // }
+                  // <Tables colomnName='Meest verkocht' rows={rows} {rows.map(row=>(
+
+                  //   ))}>
+
+                  // </Tables>
+                  // </div>
+
                   <div>
+                    Top 5 meest verkochte artikelen
                     <Paper>
                       <Table>
                         <TableHead>
                           <TableRow>
                             <TableCell> Title </TableCell>
-                            <TableCell> meest verkocht</TableCell>
+                            <TableCell> Aantal</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
@@ -158,13 +225,134 @@ class Dashboard extends Component {
 
           </Grid>
 
-          <Grid item xs={8} id="minstBekeken">
-            <Tables colomnName='minst bekeken' />
+
+          <Grid item xs={5} id="minstBekeken">
+            <Query
+              query={unpopulair}
+              pollInterval={5000}
+            >
+              {({ loading, error, data }) => {
+                if (loading) return <p>Loading...</p>;
+                if (error) return <p>Error</p>;
+
+                let rows = []
+
+                for (let i = 0; i < data.unpopularpaintings.length; i++) {
+                  rows.push(
+                    {
+                      title: data.unpopularpaintings[i].title,
+                      body: data.unpopularpaintings[i].amountwatched
+                    }
+                  )
+                }
+
+                return (
+                  <div>
+                    Top 5 minst bekeken schilderijen
+                    <Paper>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell> Title </TableCell>
+                            <TableCell> Aantal </TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {
+                            rows.map(row => (
+                              <TableRow>
+                                <TableCell component="th" scope="row">{row.title}</TableCell>
+                                <TableCell component="th" scope="row">{row.body}</TableCell>
+                              </TableRow>
+                            ))
+                          }
+
+                        </TableBody>
+                      </Table>
+                    </Paper>
+                  </div>
+                )
+              }}
+            </Query>
 
           </Grid>
 
-          <Grid item xs={8} id="minstVerkocht">
-            <Tables colomnName='minst verkocht' />
+          <Grid item xs={1} />
+
+          <Grid item xs={5} id="minstVerkocht">
+            <Query
+              query={leastSold}
+              pollInterval={5000}
+            >
+              {({ loading, error, data }) => {
+                if (loading) return <p>Loading...</p>;
+                if (error) return <p>Error</p>;
+
+                let rows = []
+
+                for (let i = 0; i < data.leastsellingpaintings.length; i++) {
+                  rows.push(
+                    {
+                      title: data.leastsellingpaintings[i].title,
+                      body: data.leastsellingpaintings[i].amountofpaintings
+                    }
+                  )
+                }
+
+                return (
+                  <div>
+                    Top 5 minst verkochte schilderijen
+                    <Paper>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell> Title </TableCell>
+                            <TableCell> Aantal </TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {
+                            rows.map(row => (
+                              <TableRow>
+                                <TableCell component="th" scope="row">{row.title}</TableCell>
+                                <TableCell component="th" scope="row">{row.body}</TableCell>
+                              </TableRow>
+                            ))
+                          }
+
+                        </TableBody>
+                      </Table>
+                    </Paper>
+                  </div>
+                )
+              }}
+            </Query>
+
+          </Grid>
+
+
+          <Grid item xs={8}>
+
+            <Query
+              query={aantalGebruikers}
+              variables={{ amount: 1, page: 1 }}
+              onCompleted={(data) => {
+                if (this.state.gebruikersGeteld === false) {
+                  this.setState({
+                    aantalGebruikers: data.selectAllUsers.total,
+                    gebruikersGeteld: true,
+                  })
+                }
+              }}
+            >
+              {({ loading, error }) => {
+                if (loading) return <p>Loading...</p>;
+                if (error) return <p>Error</p>;
+                return (
+                  <div>Aantal gebruikers: {this.state.aantalGebruikers}</div>
+                )
+              }}
+            </Query>
 
           </Grid>
 
