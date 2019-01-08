@@ -1,3 +1,19 @@
-#chart{
-  background-color: white;
+.dashboardSection{
+  display: block;
+}
+
+#aantalGebruikers{
+  margin-bottom: 20px;
+}
+
+#meestVerkocht{
+  margin-bottom: 20px;
+}
+
+#minstBekeken{
+  margin-bottom: 20px;
+}
+
+#minstVerkocht{
+  margin-bottom: 20px;
 }
