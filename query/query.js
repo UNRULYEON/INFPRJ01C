@@ -659,6 +659,7 @@ var root = {
         .then(data => { return data })
         .catch(err => { throw new Error(err) })
       items.forEach(element => {
+        db.oneOrNone(`UPDATE schilderijen SET amountofpaintings = amountofpaintings - 1 WHERE id_number = ${element.foreignkey}`)
         db.oneOrNone(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`, [place.id, element.foreignkey])
       })
     } else {
@@ -673,9 +674,10 @@ var root = {
         }
       })
       if (row != -1) {
-        db.one(`ALTER ordered SET totalcost = totalcost + ${total}`)
+        db.one(`UPDATE ordered SET totalcost = totalcost + $1 WHERE id = $2`,[total,row])
         // If the user has already made a purchase on this day
         items.forEach(element => {
+          db.oneOrNone(`UPDATE schilderijen SET amountofpaintings = amountofpaintings - 1 WHERE id_number = ${element.foreignkey}`)
           db.oneOrNone(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`, [row, element.foreignkey])
         })
       } else {
@@ -684,6 +686,7 @@ var root = {
           .then(data => { return data })
           .catch(err => { throw new Error(err) })
         items.forEach(element => {
+          db.oneOrNone(`UPDATE schilderijen SET amountofpaintings = amountofpaintings - 1 WHERE id_number = ${element.foreignkey}`)
           db.oneOrNone(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`, [place.id, element.foreignkey])
         })
       }
