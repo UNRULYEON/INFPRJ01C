@@ -233,7 +233,7 @@ var root = {
   //#region Admin
 
   //Visualising stuff
-  async rentedPaintings(){
+  async amountRentedPaintings(){
     let query = await db.one(`SELECT COUNT(*) from orders`)
     return query.count
   },
