@@ -631,6 +631,7 @@ var root = {
         id: koper.id,
         buyerid: koper.buyerid,
         purchasedate: koper.purchasedate,
+        total: koper.totalcost,
         items: []
       })
       // Loop for the total amount of painting bought on a given date 

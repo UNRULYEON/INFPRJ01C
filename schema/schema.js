@@ -143,8 +143,9 @@ var schema = buildSchema(`
   type Ordered{
     id: Int,
     buyerid: Int,
-    purchasedate: String
-    items: [Orders]
+    purchasedate: String,
+    items: [Orders],
+    total: Int
   },
   type Orders{
     id: Int,
