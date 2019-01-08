@@ -353,7 +353,7 @@ var root = {
   //#endregion
 
   //#region alter products
-  async addProduct({ id, title, releasedate, period, description, physicalmedium, amountofpaintings = 1, src, bigsrc, prodplace, principalmaker, width, height, price, rented = false, painterId, amountwatched = 0 }) {
+  async addProduct({ id, title, releasedate, period, description, physicalmedium, amountofpaintings = 100, src, bigsrc, prodplace, principalmaker, width, height, price, rented = false, painterId, amountwatched = 0 }) {
     let painting = await db.oneOrNone(`INSERT INTO schilderijen(id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, principalmakersproductionplaces, principalmaker, width, height, price, rented, amountwatched) 
     VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING id_number`,
       [id, title, releasedate, period, description, physicalmedium, amountofpaintings, src, bigsrc, prodplace, principalmaker, width, height, price, rented, amountwatched])
