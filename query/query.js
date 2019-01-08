@@ -366,7 +366,7 @@ var root = {
     return 200
   },
   //Alter products
-  async alterProduct({ id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings = 1, src, bigsrc, prodplace, width, height, principalmaker, price, rented = false, amountwatched }) {
+  async alterProduct({ id_number, id, title, releasedate, period, description, physicalmedium, amountofpaintings = 100, src, bigsrc, prodplace, width, height, principalmaker, price, rented = false, amountwatched }) {
     const prod = await db.manyOrNone(`SELECT * from schilderijen where id_number = ${id_number}`)
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
