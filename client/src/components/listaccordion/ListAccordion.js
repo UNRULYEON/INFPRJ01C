@@ -67,7 +67,8 @@ class ListAccordion extends Component {
             return (
               <AccordionItem
                 title={Title(order)}
-                key={order.id}>
+                key={order.id}
+              >
                 <div>
                   {order.items.map((item, key) => {
                     return (
@@ -91,7 +92,15 @@ class ListAccordion extends Component {
                                 </Link>
                                 <span className="draggable-details-maker">{data.paintingByID[0].principalmaker}</span>
                               </div>
-													    <div className="draggable-action"></div>
+													    <div className="draggable-status-container">
+                                Status: {item.status}
+                              </div>
+                              {item.rentstart ? (
+                                <div className="draggable-rent-container">
+                                  <span>Start: {item.rentstart}</span>
+                                  <span>Eind: {item.rentstop}</span>
+                                </div>
+                              ) : null}
                               <div className="draggable-price">
                                 <Currency
                                   quantity={data.paintingByID[0].price}
@@ -111,7 +120,7 @@ class ListAccordion extends Component {
                     <Currency
                       className="list-acc-total"
                       quantity={order.total}
-                      symbol="€ "
+                      symbol=" € "
                       decimal=","
                       group="."
                     />

@@ -24,6 +24,10 @@ import nlLocale from 'date-fns/locale/nl';
 // Components
 import PageTitle from '../../components/pageLink/PageLink'
 
+// Luxon
+import DateTime from 'luxon/src/datetime.js'
+import LuxonUtils from '@date-io/luxon';
+
 // Material-UI theme for button
 const theme = new createMuiTheme({
 	palette: {
@@ -286,13 +290,15 @@ class Cart extends Component {
 		for (let i = 0; i < this.state.rental.length; i++) {
 			if (this.state.rental[i].id === id) {
 				let newItem = this.state.rental[i]
-				console.log(newItem)
 				console.log(newItem.startDate)
-				console.log(Date.parse(newItem.startDate))
 				console.log(newItem.endDate)
-				console.log(Date.parse(newItem.endDate))
-				let timeDiff = newItem.endDate - newItem.startDate;
-				console.log(Math.floor(timeDiff / (1000 * 60 * 60 * 24)))
+				console.log(date)
+				let start = DateTime.fromISO(newItem.startDate)
+				let end = DateTime.fromISO(newItem.endDate)
+				let diff = end.diff(start, 'days')
+				diff = diff.toObject()
+				console.log(`${start}, ${end}`)
+				console.log(`${diff.days}`)
 				switch (type) {
 					case 'startDate':
 						newItem.startDate = date
@@ -568,22 +574,24 @@ class Cart extends Component {
 																		</Button>
 																	</Tooltip>
 																	<div className="picker">
-																		<DatePicker
-																			label="Startdatum"
-																			todayLabel="Vandaag"
-																			cancelLabel="Annuleren"
-																			format="dd-MM-yyyy"
-																			disablePast
-																			showTodayButton
-																			maxDateMessage="Date must be less than today"
-																			value={item.startDate}
-																			onChange={(date) => {
-																				this.handleDateChange(date, item.id, 'startDate')
-																			}}
-																			ref={node => {
-																				this.pickerStartDate = node;
-																			}}
-																		/>
+      															<MuiPickersUtilsProvider utils={LuxonUtils}>
+																			<DatePicker
+																				label="Startdatum"
+																				todayLabel="Vandaag"
+																				cancelLabel="Annuleren"
+																				format="dd-MM-yyyy"
+																				disablePast
+																				showTodayButton
+																				maxDateMessage="Date must be less than today"
+																				value={item.startDate}
+																				onChange={(date) => {
+																					this.handleDateChange(date, item.id, 'startDate')
+																				}}
+																				ref={node => {
+																					this.pickerStartDate = node;
+																				}}
+																			/>
+																		</MuiPickersUtilsProvider>
 																	</div>
 																</div>
 																<div>
@@ -599,22 +607,24 @@ class Cart extends Component {
 																		</Button>
 																	</Tooltip>
 																	<div className="picker">
-																		<DatePicker
-																			label="Einddatum"
-																			todayLabel="Vandaag"
-																			cancelLabel="Annuleren"
-																			format="dd-MM-yyyy"
-																			disablePast
-																			showTodayButton
-																			maxDateMessage="Date must be less than today"
-																			value={item.endDate}
-																			onChange={(date) => {
-																				this.handleDateChange(date, item.id, 'endDate')
-																			}}
-																			ref={node => {
-																				this.pickerEndDate = node;
-																			}}
-																		/>
+      															<MuiPickersUtilsProvider utils={LuxonUtils}>
+																			<DatePicker
+																				label="Einddatum"
+																				todayLabel="Vandaag"
+																				cancelLabel="Annuleren"
+																				format="dd-MM-yyyy"
+																				disablePast
+																				showTodayButton
+																				maxDateMessage="Date must be less than today"
+																				value={item.endDate}
+																				onChange={(date) => {
+																					this.handleDateChange(date, item.id, 'endDate')
+																				}}
+																				ref={node => {
+																					this.pickerEndDate = node;
+																				}}
+																			/>
+																		</MuiPickersUtilsProvider>
 																	</div>
 																</div>
 															</MuiPickersUtilsProvider>

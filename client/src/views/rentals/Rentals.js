@@ -20,6 +20,7 @@ query AllOrders ($buyerId: Int!) {
     id
     buyerid
     purchasedate
+    total
     items {
       id
       items
