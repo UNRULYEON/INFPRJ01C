@@ -130,7 +130,7 @@ class Dashboard extends Component {
 
                 return (
                   <div>
-                    top 5 meest bekeken schilderijen
+                    Top 5 meest bekeken schilderijen
                     <Paper>
                       <Table>
                         <TableHead>
@@ -328,7 +328,7 @@ class Dashboard extends Component {
                             rows.map(row => (
                               <TableRow>
                                 <TableCell component="th" scope="row">{row.title}</TableCell>
-                                <TableCell component="th" scope="row">{row.body}</TableCell>
+                                <TableCell component="th" scope="row">{100 - row.body}</TableCell>
                               </TableRow>
                             ))
                           }
@@ -344,7 +344,7 @@ class Dashboard extends Component {
           </Grid>
 
 
-          <Grid item xs={8}>
+          <Grid item xs={8} id="aantalGebruikers">
 
             <Query
               query={aantalGebruikers}
