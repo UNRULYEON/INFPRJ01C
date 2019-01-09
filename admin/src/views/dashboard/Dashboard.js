@@ -39,16 +39,18 @@ const bestSold = gql`
     bestsellingpaintings{
       id
       title
+      principalmaker
       amountofpaintings
     }
   }
 `;
 
 const populair = gql`
-  query populairpaintings{
+  query popularpaintings{
     popularpaintings{
       id
       title
+      principalmaker
       amountwatched
     }
   }
@@ -59,6 +61,7 @@ const leastSold = gql`
     leastsellingpaintings{
       id
       title
+      principalmaker
       amountofpaintings
     }
   }
@@ -69,6 +72,7 @@ const unpopulair = gql`
     unpopularpaintings{
       id
       title
+      principalmaker
       amountwatched
     }
   }
@@ -103,7 +107,7 @@ class Dashboard extends Component {
 
 
 
-          <Grid item xs={5} id="meestBekeken">
+          <Grid item xs id="meestBekeken">
             <Query
               query={populair}
               pollInterval={5000}
@@ -118,6 +122,7 @@ class Dashboard extends Component {
                   rows.push(
                     {
                       title: data.popularpaintings[i].title,
+                      painter: data.popularpaintings[i].principalmaker,
                       body: data.popularpaintings[i].amountwatched
                     }
                   )
@@ -131,6 +136,7 @@ class Dashboard extends Component {
                         <TableHead>
                           <TableRow>
                             <TableCell> Title </TableCell>
+                            <TableCell> Schilder </TableCell>
                             <TableCell> Aantal</TableCell>
                           </TableRow>
                         </TableHead>
@@ -139,6 +145,7 @@ class Dashboard extends Component {
                             rows.map(row => (
                               <TableRow>
                                 <TableCell component="th" scope="row">{row.title}</TableCell>
+                                <TableCell component="th" scope="row">{row.painter}</TableCell>
                                 <TableCell component="th" scope="row">{row.body}</TableCell>
                               </TableRow>
                             ))
@@ -156,7 +163,7 @@ class Dashboard extends Component {
 
           <Grid item xs={1} />
 
-          <Grid item xs={5} id="meestVerkocht">
+          <Grid item xs id="meestVerkocht">
 
             <Query
               query={bestSold}
@@ -172,6 +179,7 @@ class Dashboard extends Component {
                   rows.push(
                     {
                       title: data.bestsellingpaintings[i].title,
+                      painter: data.bestsellingpaintings[i].principalmaker,
                       body: data.bestsellingpaintings[i].amountofpaintings
                     }
                   )
@@ -198,6 +206,7 @@ class Dashboard extends Component {
                         <TableHead>
                           <TableRow>
                             <TableCell> Title </TableCell>
+                            <TableCell> Schilder </TableCell>
                             <TableCell> Aantal</TableCell>
                           </TableRow>
                         </TableHead>
@@ -206,7 +215,8 @@ class Dashboard extends Component {
                             rows.map(row => (
                               <TableRow>
                                 <TableCell component="th" scope="row">{row.title}</TableCell>
-                                <TableCell component="th" scope="row">{row.body}</TableCell>
+                                <TableCell component="th" scope="row">{row.painter}</TableCell>
+                                <TableCell component="th" scope="row">{100 - row.body}</TableCell>
                               </TableRow>
                             ))
                           }
@@ -226,7 +236,10 @@ class Dashboard extends Component {
           </Grid>
 
 
-          <Grid item xs={5} id="minstBekeken">
+          </Grid>
+          <Grid container>    
+
+          <Grid item xs id="minstBekeken">
             <Query
               query={unpopulair}
               pollInterval={5000}
@@ -279,7 +292,7 @@ class Dashboard extends Component {
 
           <Grid item xs={1} />
 
-          <Grid item xs={5} id="minstVerkocht">
+          <Grid item xs id="minstVerkocht">
             <Query
               query={leastSold}
               pollInterval={5000}
