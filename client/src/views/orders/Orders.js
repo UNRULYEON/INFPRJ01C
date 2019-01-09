@@ -18,10 +18,14 @@ const GET_ORDERS = gql`
     orderListSelect
     (buyerId: $buyerId){
       id
-      items
-      status
       buyerid
       purchasedate
+      total
+      items {
+        id
+        items
+        status
+      }
     }
   }
 `;
@@ -60,14 +64,11 @@ class Orders extends Component {
           <PageTitle title="Kooplijst"/>
           <Query
             query={GET_ORDERS}
-            variables={{ buyerId: 182 }}
+            variables={{ buyerId: this.props.user.id }}
           >
             {({ loading, error, data }) => {
               if (loading) return <p>Loading... :)</p>;
               if (error) return <p>Error :(</p>;
-
-              console.log(data.orderListSelect)
-
               return (
                 <ListAccordion data={data.orderListSelect} />
               )

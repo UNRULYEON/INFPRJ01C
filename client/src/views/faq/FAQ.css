@@ -20,6 +20,10 @@
   transition: background-color .3s;
 }
 
+.react-sanfona-item-title:first-letter{
+  text-transform: capitalize;
+}
+
 .react-sanfona-item-body-wrapper{
   padding: 20px;
 }

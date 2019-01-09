@@ -21,6 +21,7 @@
     "graphql-tag": "^2.10.0",
     "keyframe": "^2.1.0",
     "log4js": "^3.0.6",
+    "luxon": "^1.9.0",
     "material-ui-pickers": "^2.0.1",
     "merge": "^1.2.1",
     "moment": "^2.22.2",

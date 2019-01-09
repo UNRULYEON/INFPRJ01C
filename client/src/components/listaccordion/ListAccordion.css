@@ -1,0 +1,10 @@
+.list-acc-painting-container{
+  margin-bottom: 10px;
+  border: 1px solid #EEEEEE;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.list-acc-total{
+  text-align: right;
+}

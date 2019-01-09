@@ -538,14 +538,17 @@ class Order extends Component {
                       {({ container: { insertOrder, insertRental } }) => {
                         const insertOrderQ = async () => {
                           let items = []
+                          let total = 0
                           for (let i = 0; i < this.state.order.length; i++) {
                             items.push({"foreignkey": parseInt(this.state.order[i].id)})
+                            total = total + this.state.order[i].price
                           }
                           await insertOrder.mutation({
                             variables: {
-                              gebruikerId: parseInt(this.state.id),
+                              buyerId: parseInt(this.state.id),
                               items: items,
-                              purchaseDate: new Date()
+                              date: new Date(),
+                              total: total
                             }
                           })
                           let i = []
@@ -554,6 +557,7 @@ class Order extends Component {
 
                         const insertRentalQ = async () => {
                           let items = []
+                          let total = 0
                           for (let i = 0; i < this.state.rental.length; i++) {
                             items.push(
                               {
@@ -562,12 +566,14 @@ class Order extends Component {
                                 "stopDate": this.state.rental[i].endDate
                               }
                             )
+                            total = total + this.state.rental[i].price
                           }
                           await insertRental.mutation({
                             variables: {
-                              gebruikerId: parseInt(this.state.id),
+                              buyerId: parseInt(this.state.id),
                               items: items,
-                              purchaseDate: new Date()
+                              date: new Date(),
+                              total: total
                             }
                           })
                           let i = []

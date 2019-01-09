@@ -286,6 +286,13 @@ class Cart extends Component {
 		for (let i = 0; i < this.state.rental.length; i++) {
 			if (this.state.rental[i].id === id) {
 				let newItem = this.state.rental[i]
+				console.log(newItem)
+				console.log(newItem.startDate)
+				console.log(Date.parse(newItem.startDate))
+				console.log(newItem.endDate)
+				console.log(Date.parse(newItem.endDate))
+				let timeDiff = newItem.endDate - newItem.startDate;
+				console.log(Math.floor(timeDiff / (1000 * 60 * 60 * 24)))
 				switch (type) {
 					case 'startDate':
 						newItem.startDate = date
