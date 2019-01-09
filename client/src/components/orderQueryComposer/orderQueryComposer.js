@@ -4,14 +4,9 @@ import { Mutation } from 'react-apollo'
 import { adopt } from 'react-adopt'
 
 const INSERT_ORDER = gql`
-  mutation orderListInsert(
-    $gebruikerId: Int,
-    $items: [PaintRef!],
-    $purchaseDate: String!){
-      orderListInsert(gebruikerId: $gebruikerId,
-                      items: $items,
-                      purchaseDate: $purchaseDate)
-  }
+mutation orderListInsert($buyerId: Int, $items: [PaintRef!], $date: String!, $total: Int!){
+  orderListInsert(buyerId: $buyerId, items: $items, date: $date, total: $total)
+}
 `
 
 const insertOrder = ({ render }) => (
@@ -22,8 +17,8 @@ const insertOrder = ({ render }) => (
 </Mutation>)
 
 const INSERT_RENTAL = gql`
-mutation rentalListInsert($gebruikerId: Int!, $items: [PaintRefRent!], $purchaseDate: String!){
-  rentalListInsert(gebruikerId: $gebruikerId, items: $items, purchaseDate: $purchaseDate)
+mutation rentalListInsert($buyerId: Int!, $items: [PaintRefRent!], $date: String!, $total: Int!){
+  rentalListInsert(buyerId: $buyerId, items: $items, date: $date, total: $total)
 }
 `
 

@@ -71,7 +71,7 @@ class Schilderijen extends Component {
                     current={this.state.page}
                     locale={nl_NL}
                   />
-                  <Gallery images={data.paintingOrderedByPagination.collection}/>                
+                  <Gallery images={data.paintingOrderedByPagination.collection}/>
                   <Pagination
                     showTotal={(total, range) => `${range[0]} - ${range[1]} van ${total} schilderijen`}
                     pageSize={this.state.pageSize}
