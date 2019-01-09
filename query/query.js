@@ -673,6 +673,7 @@ var root = {
     return OrdersByDate
   },
   async orderListInsert({ buyerId = 183, items, date, total }) {
+    if(items.length <= 0){return 200}
     let existing = await db.manyOrNone(`SELECT * FROM ordered WHERE buyerid = ${buyerId}`)
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
@@ -847,6 +848,7 @@ var root = {
     return RentalsByDate
   },
   async rentalListInsert({ buyerId, items, date, total }) {
+    if(items.length <= 0){return 200}
     let existing = await db.manyOrNone(`SELECT * FROM rented WHERE buyerid = ${buyerId}`)
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
