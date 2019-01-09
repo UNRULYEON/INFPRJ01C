@@ -71,6 +71,7 @@ var root = {
   },
   async paintingByID({ id }) {
     db.oneOrNone(`UPDATE schilderijstatistieken SET amountwatched = amountwatched +1 where schilderijid = ${id}`)
+    db.oneOrNone(`UPDATE schilderijen SET amountwatched = amountwatched +1 where id_number = ${id}`)
     let queryPainting = await db.manyOrNone(`SELECT * from schilderijen where id_number = ${id}`)
     let painting = queryPainting[0]
     let queryPainter = await db.manyOrNone(`SELECT schilder from schilderschilderij where schilderij = ${id}`)
