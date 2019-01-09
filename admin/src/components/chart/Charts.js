@@ -1,57 +1,29 @@
 import React, { Component } from 'react';
-import { Bar, Line, Radar, Doughnut, Pie, Polar, Bubble, Scatter } from 'react-chartjs-2';
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
+
 
 class Chart extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      chartData: props.chartData,
     }
   }
 
-  static defaultProps = {
-    displayTitle: true,
-    displayLegend: true,
-    legendPosition: 'right',
-    about: 'about?'
-  }
-
-  // When calling the Charts component provide the following tags: chartData, showBar(true or false to show the bar), about and legendPosition
+  // When calling the Charts component provide the following tags: chartData, showLine(true or false to show the bar), about and legendPosition
   render() {
     return (
       <div>
-        {/* Bar */}
-        {this.props.showBar ? (<Bar
-          data={this.state.chartData}
-          options={{
-            title: {
-              display: this.props.displayTitle,
-              text: this.props.about,
-              fontSize: 25
-            },
-            legend: {
-              display: this.props.displayLegend,
-              position: this.props.legendPosition
-            }
-          }}
-        />) : console.log('( ͡° ͜ʖ ͡°)')}
+        {this.props.showLine ? (
+          <LineChart width={600} height={300} data={this.props.data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+          <Line type="monotone" dataKey="aantal" stroke="white" />
+          <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+          <XAxis stroke='white' dataKey="name" />
+          <YAxis stroke='white' />
+          <Tooltip wrapperStyle={{ width: 100, backgroundColor: 'white' }} />
+        </LineChart>
+        ): console.log('( ͡° ͜ʖ ͡°)')}
+        
 
-
-        {/* Line */}
-        {this.props.showLine ? (<Line
-          data={this.state.chartData}
-          options={{
-            title: {
-              display: this.props.displayTitle,
-              text: this.props.about,
-              fontSize: 25
-            },
-            legend: {
-              display: this.props.displayLegend,
-              position: this.props.legendPosition
-            }
-          }}
-        />) : console.log('( ͡° ͜ʖ ͡°)')}
       </div>
     )
   }

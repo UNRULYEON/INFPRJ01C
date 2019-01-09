@@ -29,6 +29,22 @@ var root = {
     });
     return query
   },
+  popularpaintings: () => {
+    let query = 'SELECT * from schilderijen ORDER BY amountwatched DESC LIMIT 5'
+    return db.manyOrNone(query)
+  },
+  unpopularpaintings: () => {
+    let query = 'SELECT * from schilderijen ORDER BY amountwatched ASC LIMIT 5'
+    return db.manyOrNone(query)
+  },
+  bestsellingpaintings: () => {
+    let query = 'SELECT * from schilderijen ORDER BY amountofpaintings ASC LIMIT 5'
+    return db.manyOrNone(query)
+  },
+  leastsellingpaintings: () => {
+    let query = 'SELECT * from schilderijen ORDER BY amountofpaintings DESC LIMIT 5'
+    return db.manyOrNone(query)
+  },
   //#region Painting
   collection: () => {
     let query = 'SELECT * from schilderijen ORDER BY id_number ASC limit 15'
@@ -55,6 +71,7 @@ var root = {
   },
   async paintingByID({ id }) {
     db.oneOrNone(`UPDATE schilderijstatistieken SET amountwatched = amountwatched +1 where schilderijid = ${id}`)
+    db.oneOrNone(`UPDATE schilderijen SET amountwatched = amountwatched +1 where id_number = ${id}`)
     let queryPainting = await db.manyOrNone(`SELECT * from schilderijen where id_number = ${id}`)
     let painting = queryPainting[0]
     let queryPainter = await db.manyOrNone(`SELECT schilder from schilderschilderij where schilderij = ${id}`)
@@ -215,6 +232,12 @@ var root = {
   //#endregion
 
   //#region Admin
+
+  //Visualising stuff
+  async amountRentedPaintings(){
+    let query = await db.one(`SELECT COUNT(*) from orders`)
+    return query.count
+  },
 
   //#region papa & baby tabel
   papatabel: () => {
@@ -659,6 +682,7 @@ var root = {
         .then(data => { return data })
         .catch(err => { throw new Error(err) })
       items.forEach(element => {
+        db.oneOrNone(`UPDATE schilderijen SET amountofpaintings = amountofpaintings - 1 WHERE id_number = ${element.foreignkey}`)
         db.oneOrNone(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`, [place.id, element.foreignkey])
       })
     } else {
@@ -673,9 +697,10 @@ var root = {
         }
       })
       if (row != -1) {
-        db.one(`ALTER ordered SET totalcost = totalcost + ${total}`)
+        db.one(`UPDATE ordered SET totalcost = totalcost + $1 WHERE id = $2`,[total,row])
         // If the user has already made a purchase on this day
         items.forEach(element => {
+          db.oneOrNone(`UPDATE schilderijen SET amountofpaintings = amountofpaintings - 1 WHERE id_number = ${element.foreignkey}`)
           db.oneOrNone(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`, [row, element.foreignkey])
         })
       } else {
@@ -684,6 +709,7 @@ var root = {
           .then(data => { return data })
           .catch(err => { throw new Error(err) })
         items.forEach(element => {
+          db.oneOrNone(`UPDATE schilderijen SET amountofpaintings = amountofpaintings - 1 WHERE id_number = ${element.foreignkey}`)
           db.oneOrNone(`INSERT INTO orders(refto_ordered, items) VALUES($1,$2)`, [place.id, element.foreignkey])
         })
       }
@@ -830,6 +856,7 @@ var root = {
         .then(data => { return data })
         .catch(err => { throw new Error(err) })
       items.forEach(element => {
+        db.oneOrNone(`UPDATE schilderijen SET amountofpaintings = amountofpaintings - 1 WHERE id_number = ${element.foreignkey}`)
         db.oneOrNone(`INSERT INTO rentals(rentstart, rentstop, items, refto_rented) VALUES($1,$2,$3,$4)`, [element.startDate, element.stopDate, element.foreignkey, place.id])
       })
     } else {
@@ -847,6 +874,7 @@ var root = {
         db.one(`ALTER rented SET totalcost = totalcost + ${total}`)
         // If the user has already made a purchase on this day
         items.forEach(element => {
+          db.oneOrNone(`UPDATE schilderijen SET amountofpaintings = amountofpaintings - 1 WHERE id_number = ${element.foreignkey}`)
           db.oneOrNone(`INSERT INTO rentals(rentstart, rentstop, items, refto_rented) VALUES($1,$2,$3,$4)`, [element.startDate, element.stopDate, element.foreignkey, row])
         })
       } else {
@@ -855,6 +883,7 @@ var root = {
           .then(data => { return data })
           .catch(err => { throw new Error(err) })
         items.forEach(element => {
+          db.oneOrNone(`UPDATE schilderijen SET amountofpaintings = amountofpaintings - 1 WHERE id_number = ${element.foreignkey}`)
           db.oneOrNone(`INSERT INTO rentals(rentstart, rentstop, items, refto_rented) VALUES($1,$2,$3,$4)`, [element.startDate, element.stopDate, element.foreignkey, place.id])
         })
       }
