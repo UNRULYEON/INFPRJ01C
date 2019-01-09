@@ -235,7 +235,7 @@ var root = {
 
   //Visualising stuff
   async amountRentedPaintings(){
-    let query = await db.one(`SELECT COUNT(*) from orders`)
+    let query = await db.one(`SELECT COUNT(*) from rentals`)
     return query.count
   },
 
