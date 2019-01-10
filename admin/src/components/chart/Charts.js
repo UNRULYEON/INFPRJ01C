@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 
 
 class Chart extends Component {
@@ -13,17 +13,14 @@ class Chart extends Component {
   render() {
     return (
       <div>
-        {this.props.showLine ? (
-          <LineChart width={600} height={300} data={this.props.data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-          <Line type="monotone" dataKey="aantal" stroke="white" />
-          <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-          <XAxis stroke='white' dataKey="name" />
+        <LineChart width={1000} height={300} data={this.props.data} margin={{ top: 5, right: 30, bottom: 5, left: 50 }}>        
+          <CartesianGrid stroke="#ccc" strokeDasharray="3 3" />
+          <XAxis stroke='white' dataKey={this.props.title} />
           <YAxis stroke='white' />
-          <Tooltip wrapperStyle={{ width: 100, backgroundColor: 'white' }} />
+          <Tooltip wrapperStyle={{ backgroundColor: 'white', color: 'black' }} />
+          <Legend />
+          <Line type="monotone" name="aantal" dataKey={this.props.amountwatched} stroke="black" />
         </LineChart>
-        ): console.log('( ͡° ͜ʖ ͡°)')}
-        
-
       </div>
     )
   }

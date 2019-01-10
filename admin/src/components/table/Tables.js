@@ -6,6 +6,33 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
+// export default function Tables(props){
+//   return(
+//     <div>
+//         <Paper>
+//           <Table>
+//             <TableHead>
+//               <TableRow>
+//                 <TableCell> Title </TableCell>
+//                 <TableCell> basic </TableCell>
+//               </TableRow>
+//             </TableHead>
+//             <TableBody>
+//               {
+//                 props.data.map(rows=>(
+//                   <TableRow>
+//                     <TableCell component="th" scope="row">{rows.title}</TableCell>
+//                     <TableCell component="th" scope="row">{rows.body}</TableCell>
+//                   </TableRow>
+//                 ))
+//               }
+//             </TableBody>
+//           </Table>
+//         </Paper>
+//       </div>
+//   )
+// }
+
 class Tables extends Component {
   constructor(props) {
     super(props)
@@ -20,17 +47,25 @@ class Tables extends Component {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell> Title </TableCell>
+                <TableCell> {this.props.title} </TableCell>
+                <TableCell> {this.props.painter} </TableCell>
                 <TableCell> {this.props.colomnName}</TableCell>
+
               </TableRow>
             </TableHead>
             <TableBody>
+              {
+                this.props.data.map(row => (
                   <TableRow>
-                    <TableCell component="th" scope="row">{this.props.title}</TableCell>
-                    <TableCell component="th" scope="row">{this.props.body}</TableCell>
-                  </TableRow>
-
-
+                     {this.props.renderRow(row).map(q=><TableCell>{q}</TableCell>)}
+                     {/*
+                    <TableCell component="th" scope="row">{row.title}</TableCell>
+                    <TableCell component="th" scope="row">{row.painter}</TableCell>
+                    <TableCell component="th" scope="row">{row.body}</TableCell>
+                     */}
+                    </TableRow>
+                ))
+              }
             </TableBody>
           </Table>
         </Paper>
