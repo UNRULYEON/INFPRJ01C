@@ -18,7 +18,7 @@ var root = {
         .catch(err => { throw new Error(err) })
     } else {
       db.oneOrNone(`UPDATE sitevisitdate SET amount = amount + 1 WHERE id = ${existing[0].id}`)
-        .catch(err => {throw new Error(err)})      
+        .catch(err => { throw new Error(err) })
     }
     return 200
   },
@@ -32,6 +32,41 @@ var root = {
   popularpaintings: () => {
     let query = 'SELECT * from schilderijen ORDER BY amountwatched DESC LIMIT 5'
     return db.manyOrNone(query)
+  },
+  async popularPainter() {
+    // select all paintings
+    let query = await db.manyOrNone(`SELECT * FROM schilderijen ORDER BY amountwatched`)
+    // count the total amount of views, where the painter is the same
+    // return the top 5
+    let retType = []
+    console.log("Starting")
+    for (let i = 0; i < query.length; i++) {
+      console.log(i)
+      const elementI = query[i];
+      let contains = false
+      for (let j = 0; j < retType.length; j++) {
+        console.log(j, i)
+        const elementJ = retType[j].principalmaker;
+        console.log(elementJ, elementI.principalmaker)
+        if(elementJ.principalmaker == elementI.principalmaker){
+          contains = true
+          return
+        }
+      }
+      if (contains) {
+        console.log(elementI.principalmaker, "already exists")
+      } else {
+        // console.log("doesn't yet exist")
+        // console.log(retType)
+        retType.push({
+          amountwatched: elementI.amountwatched,
+          principalmaker: elementI.principalmaker
+        })
+        // console.log(element.principalmaker, element.amountwatched)
+
+      }
+    }
+    return query
   },
   unpopularpaintings: () => {
     let query = 'SELECT * from schilderijen ORDER BY amountwatched ASC LIMIT 5'
@@ -234,7 +269,7 @@ var root = {
   //#region Admin
 
   //Visualising stuff
-  async amountRentedPaintings(){
+  async amountRentedPaintings() {
     let query = await db.one(`SELECT COUNT(*) from rentals`)
     return query.count
   },
@@ -673,7 +708,7 @@ var root = {
     return OrdersByDate
   },
   async orderListInsert({ buyerId = 183, items, date, total }) {
-    if(items.length <= 0){return 200}
+    if (items.length <= 0) { return 200 }
     let existing = await db.manyOrNone(`SELECT * FROM ordered WHERE buyerid = ${buyerId}`)
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
@@ -698,7 +733,7 @@ var root = {
         }
       })
       if (row != -1) {
-        db.one(`UPDATE ordered SET totalcost = totalcost + $1 WHERE id = $2`,[total,row])
+        db.one(`UPDATE ordered SET totalcost = totalcost + $1 WHERE id = $2`, [total, row])
         // If the user has already made a purchase on this day
         items.forEach(element => {
           db.oneOrNone(`UPDATE schilderijen SET amountofpaintings = amountofpaintings - 1 WHERE id_number = ${element.foreignkey}`)
@@ -848,7 +883,7 @@ var root = {
     return RentalsByDate
   },
   async rentalListInsert({ buyerId, items, date, total }) {
-    if(items.length <= 0){return 200}
+    if (items.length <= 0) { return 200 }
     let existing = await db.manyOrNone(`SELECT * FROM rented WHERE buyerid = ${buyerId}`)
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
