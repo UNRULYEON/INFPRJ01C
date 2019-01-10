@@ -130,34 +130,6 @@ class Favorite extends Component {
             </div>
           </div>
         )}
-        {this.props.loggedIn ? (
-        <div className="fav-sync-container">
-          <ApolloConsumer>
-            {client => (
-              <div>
-                <Button
-                  disabled={this.state.isFetching}
-                  variant="outlined"
-                  color="primary"
-                  onClick={async () => {
-                    this.setState({
-                      isFetching: true,
-                      syncButtonText: 'Synchroniseren...'
-                    })
-                    const { data } = await client.query({
-                      query: GET_FAVORITES,
-                      variables: { userId: this.props.user.id }
-                    });
-                    this.onFavoritesFetched(data);
-                  }}
-                >
-                  <Icon style={{ marginRight: '5px' }}>sync</Icon> {this.state.syncButtonText}
-                </Button>
-              </div>
-            )}
-          </ApolloConsumer>
-        </div>
-        ) : null}
           {this.props.favorite.items.length > 0 ? (
             <div className="fav-item-container">
               {this.props.favorite.items.map((item) =>

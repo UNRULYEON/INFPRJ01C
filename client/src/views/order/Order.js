@@ -398,7 +398,7 @@ class Order extends Component {
                 <div className="order-item-price">
                   <p>
                     <Currency
-                      quantity={item.price * item.amount}
+                      quantity={item.priceWithDays / 20}
                       symbol="€ "
                       decimal=","
                       group="."

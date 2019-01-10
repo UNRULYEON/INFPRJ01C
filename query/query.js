@@ -18,7 +18,7 @@ var root = {
         .catch(err => { throw new Error(err) })
     } else {
       db.oneOrNone(`UPDATE sitevisitdate SET amount = amount + 1 WHERE id = ${existing[0].id}`)
-        .catch(err => {throw new Error(err)})      
+        .catch(err => { throw new Error(err) })
     }
     return 200
   },
@@ -32,6 +32,38 @@ var root = {
   popularpaintings: () => {
     let query = 'SELECT * from schilderijen ORDER BY amountwatched DESC LIMIT 5'
     return db.manyOrNone(query)
+  },
+  async popularPainter() {
+    // select all paintings
+    let query = await db.manyOrNone(`SELECT * FROM schilderijen ORDER BY amountwatched`)
+    // count the total amount of views, where the painter is the same
+    let retType = []
+    console.log("\nStarting")
+    for (let i = 0; i < query.length; i++) {
+      const elementI = query[i];
+      let contains = false
+      for (let j = 0; j < retType.length; j++) {
+        const elementJ = retType[j].principalmaker;
+        if(elementI.principalmaker == elementJ){
+          contains = true
+          retType[j].amountwatched += elementI.amountwatched
+          break
+        }
+      }
+      if (!contains) {
+        retType.push({
+          amountwatched: elementI.amountwatched,
+          principalmaker: elementI.principalmaker
+        })
+      }
+    }
+    // return the top 5
+    retType.sort((a,b) => parseFloat(b.amountwatched - a.amountwatched))
+    // console.log(retType)
+    retType.shift()
+    retType.length = 5
+
+    return retType
   },
   unpopularpaintings: () => {
     let query = 'SELECT * from schilderijen ORDER BY amountwatched ASC LIMIT 5'
@@ -234,7 +266,7 @@ var root = {
   //#region Admin
 
   //Visualising stuff
-  async amountRentedPaintings(){
+  async amountRentedPaintings() {
     let query = await db.one(`SELECT COUNT(*) from rentals`)
     return query.count
   },
@@ -363,6 +395,41 @@ var root = {
       [name, surname, mail, aanhef, adres, city, postalcode, housenumber, paymentmethod, admin])
       .catch(err => { throw new Error(510) })
     return 200
+  },
+  async alterUserClient({ id, name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod }) {
+    const user = await db.manyOrNone(`SELECT * from gebruiker where id = ${[id]}`)
+      .then(data => { return data })
+      .catch(err => { throw new Error(err) })
+    if (!user.length) {
+      return 311
+    }
+
+    if (password === '') {
+      db.oneOrNone(`UPDATE gebruiker set
+        name = $1, surname = $2, mail = $3, aanhef = $4, adres = $5, city = $6, postalcode = $7,
+        housenumber = $8, paymentmethod = $9 WHERE id = ${id}`,
+        [name, surname, mail, aanhef, adres, city, postalcode, housenumber, paymentmethod])
+        .catch(err => { throw new Error(510) })
+      return 200
+    } else {
+      let saltedPassword = await bcrypt.hash(password, 10)
+
+      db.oneOrNone(`UPDATE gebruiker set
+              name = $1, surname = $2, mail = $3, aanhef = $4, adres = $5, city = $6, postalcode = $7,
+              housenumber = $8, paymentmethod = $9, password = $10 WHERE id = ${id}`,
+        [name, surname, mail, aanhef, adres, city, postalcode, housenumber, paymentmethod, saltedPassword])
+        .catch(err => { throw new Error(510) })
+      return 200
+    }
+  },
+  async deleteUser({ id }) {
+    let user = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${id}`)
+    if (user.length) {
+      db.oneOrNone(`DELETE from gebruiker WHERE id = ${id}`)
+      return 200
+    } else {
+      return 311
+    }
   },
   async deleteUser({ id }) {
     let user = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${id}`)
@@ -673,7 +740,7 @@ var root = {
     return OrdersByDate
   },
   async orderListInsert({ buyerId = 183, items, date, total }) {
-    if(items.length <= 0){return 200}
+    if (items.length <= 0) { return 200 }
     let existing = await db.manyOrNone(`SELECT * FROM ordered WHERE buyerid = ${buyerId}`)
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
@@ -698,7 +765,7 @@ var root = {
         }
       })
       if (row != -1) {
-        db.one(`UPDATE ordered SET totalcost = totalcost + $1 WHERE id = $2`,[total,row])
+        db.one(`UPDATE ordered SET totalcost = totalcost + $1 WHERE id = $2`, [total, row])
         // If the user has already made a purchase on this day
         items.forEach(element => {
           db.oneOrNone(`UPDATE schilderijen SET amountofpaintings = amountofpaintings - 1 WHERE id_number = ${element.foreignkey}`)
@@ -848,7 +915,7 @@ var root = {
     return RentalsByDate
   },
   async rentalListInsert({ buyerId, items, date, total }) {
-    if(items.length <= 0){return 200}
+    if (items.length <= 0) { return 200 }
     let existing = await db.manyOrNone(`SELECT * FROM rented WHERE buyerid = ${buyerId}`)
       .then(data => { return data })
       .catch(err => { throw new Error(err) })
@@ -973,9 +1040,11 @@ var root = {
       return 315
     }
     const valid = await bcrypt.compare(password, user[0].password)
+    console.log(user)
+    console.log(valid)
 
     if (!valid) {
-      return 316
+      throw new Error("Password not valid")
     }
 
     let token = jwt.sign(

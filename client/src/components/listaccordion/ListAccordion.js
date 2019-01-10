@@ -58,6 +58,19 @@ class ListAccordion extends Component {
     }))
   }
 
+  CalcPrice = (start, stop, price) => {
+    let one_day = 1000 * 60 * 60 * 24
+    let startDate = new Date(start).getTime();
+    let endDate = new Date(stop).getTime();
+
+    let diff_ms = endDate - startDate
+    let diff = Math.round(diff_ms/one_day)
+
+    let priceCalc = (price * diff) / 20
+
+    return priceCalc
+  }
+
   render() {
 
     return (
@@ -67,7 +80,8 @@ class ListAccordion extends Component {
             return (
               <AccordionItem
                 title={Title(order)}
-                key={order.id}>
+                key={order.id}
+              >
                 <div>
                   {order.items.map((item, key) => {
                     return (
@@ -91,10 +105,18 @@ class ListAccordion extends Component {
                                 </Link>
                                 <span className="draggable-details-maker">{data.paintingByID[0].principalmaker}</span>
                               </div>
-													    <div className="draggable-action"></div>
+													    <div className="draggable-status-container">
+                                Status: {item.status}
+                              </div>
+                              {item.rentstart ? (
+                                <div className="draggable-rent-container">
+                                  <span>Start: {item.rentstart}</span>
+                                  <span>Eind: {item.rentstop}</span>
+                                </div>
+                              ) : null}
                               <div className="draggable-price">
                                 <Currency
-                                  quantity={data.paintingByID[0].price}
+                                  quantity={this.props.rental ? this.CalcPrice(item.rentstart, item.rentstop, data.paintingByID[0].price) : data.paintingByID[0].price}
                                   symbol="€ "
                                   decimal=","
                                   group="."
@@ -110,8 +132,8 @@ class ListAccordion extends Component {
                     Totaal:
                     <Currency
                       className="list-acc-total"
-                      quantity={order.total}
-                      symbol="€ "
+                      quantity={this.props.rental ? order.total / 20 : order.total}
+                      symbol=" € "
                       decimal=","
                       group="."
                     />

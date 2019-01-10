@@ -8,3 +8,19 @@
 .list-acc-total{
   text-align: right;
 }
+
+.draggable-status-container{
+  margin-left: auto;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.draggable-rent-container{
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  margin: 0 30px;
+}

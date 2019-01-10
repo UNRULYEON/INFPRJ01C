@@ -99,6 +99,7 @@ class Login extends Component {
   }
 
   setUserApp(user, isLoggedIn) {
+    console.log(user)
     this.props.setUser(user, isLoggedIn)
   }
 

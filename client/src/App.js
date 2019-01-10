@@ -271,12 +271,36 @@ class App extends Component {
       })
     }
 
-    // Check if order rental is present as a cookie
+    // Check if rental rental is present as a cookie
     if (localStorage.getItem('RENTAL')) {
       const localRental = JSON.parse(localStorage.getItem('RENTAL'));
 
+      let rentals = {}
+      let items = []
+
+      for (let i = 0; i < localRental.rental.items.length; i++) {
+        items.push({
+          id: localRental.rental.items[i].id,
+          amount: localRental.rental.items[i].amount,
+          price: localRental.rental.items[i].price,
+          height: localRental.rental.items[i].height,
+          width: localRental.rental.items[i].width,
+          principalmaker: localRental.rental.items[i].principalmaker,
+          src: localRental.rental.items[i].src,
+          title: localRental.rental.items[i].title,
+          priceWithDays: localRental.rental.items[i].priceWithDays,
+          days: localRental.rental.items[i].days,
+          endDate: new Date(localRental.rental.items[i].endDate),
+          startDate: new Date(localRental.rental.items[i].startDate),
+        })
+      }
+
+      rentals.total = localRental.rental.total
+      rentals.timestamp = localRental.rental.timestamp
+      rentals.items = items
+
       this.setState({
-        rental: localRental.rental
+        rental: rentals
       })
     }
   }
@@ -565,6 +589,27 @@ class App extends Component {
     }
   }
 
+  handleSnackbar = (type) => {
+    switch(type) {
+      case 'EDIT_USER_SUCCESS':
+        this.setState(({
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "Je gegevens zijn succesvol gewijzigd"
+        }))
+        break;
+      case 'EDIT_USER_ERROR':
+        this.setState(({
+          snackbarOpen: true,
+          snackbarVariant: "error",
+          snackbarMessage: "Er is een fout opgetreden bij het aanpassen van je gegevens. Probeer het later opnieuw."
+        }))
+        break;
+      default:
+        break;
+    }
+  }
+
   updateCart = (items) => {
     let total = 0
 
@@ -613,7 +658,7 @@ class App extends Component {
     let total = 0
 
     for (let i = 0; i < items.length; i++) {
-      total = (items[i].price * items[i].amount / 20) + total
+      total = (items[i].priceWithDays * items[i].amount / 20) + total
     }
 
     const rental = {
@@ -779,6 +824,7 @@ class App extends Component {
                     {...props}
                     user={this.state.user}
                     setUser={this.setUser}
+                    handleSnackbar={this.handleSnackbar}
                     loggedIn={this.state.loggedIn}
                 />} />
                 <Route
