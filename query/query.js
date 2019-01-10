@@ -59,11 +59,9 @@ var root = {
     }
     // return the top 5
     retType.sort((a,b) => parseFloat(b.amountwatched - a.amountwatched))
-    // retType.sort(function(a,b){return b-a})
     // console.log(retType)
     retType.shift()
     retType.length = 5
-    console.log(retType)
 
     return retType
   },
