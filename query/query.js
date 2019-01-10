@@ -396,6 +396,41 @@ var root = {
       .catch(err => { throw new Error(510) })
     return 200
   },
+  async alterUserClient({ id, name, surname, mail, password, aanhef, adres, city, postalcode, housenumber, paymentmethod }) {
+    const user = await db.manyOrNone(`SELECT * from gebruiker where id = ${[id]}`)
+      .then(data => { return data })
+      .catch(err => { throw new Error(err) })
+    if (!user.length) {
+      return 311
+    }
+
+    if (password === '') {
+      db.oneOrNone(`UPDATE gebruiker set
+        name = $1, surname = $2, mail = $3, aanhef = $4, adres = $5, city = $6, postalcode = $7,
+        housenumber = $8, paymentmethod = $9 WHERE id = ${id}`,
+        [name, surname, mail, aanhef, adres, city, postalcode, housenumber, paymentmethod])
+        .catch(err => { throw new Error(510) })
+      return 200
+    } else {
+      let saltedPassword = await bcrypt.hash(password, 10)
+
+      db.oneOrNone(`UPDATE gebruiker set
+              name = $1, surname = $2, mail = $3, aanhef = $4, adres = $5, city = $6, postalcode = $7,
+              housenumber = $8, paymentmethod = $9, password = $10 WHERE id = ${id}`,
+        [name, surname, mail, aanhef, adres, city, postalcode, housenumber, paymentmethod, saltedPassword])
+        .catch(err => { throw new Error(510) })
+      return 200
+    }
+  },
+  async deleteUser({ id }) {
+    let user = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${id}`)
+    if (user.length) {
+      db.oneOrNone(`DELETE from gebruiker WHERE id = ${id}`)
+      return 200
+    } else {
+      return 311
+    }
+  },
   async deleteUser({ id }) {
     let user = await db.manyOrNone(`SELECT * from gebruiker WHERE id = ${id}`)
     if (user.length) {
@@ -1005,9 +1040,11 @@ var root = {
       return 315
     }
     const valid = await bcrypt.compare(password, user[0].password)
+    console.log(user)
+    console.log(valid)
 
     if (!valid) {
-      return 316
+      throw new Error("Password not valid")
     }
 
     let token = jwt.sign(

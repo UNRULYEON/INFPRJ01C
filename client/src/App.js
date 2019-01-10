@@ -274,7 +274,6 @@ class App extends Component {
     // Check if rental rental is present as a cookie
     if (localStorage.getItem('RENTAL')) {
       const localRental = JSON.parse(localStorage.getItem('RENTAL'));
-      console.log(localRental.rental)
 
       let rentals = {}
       let items = []
@@ -299,8 +298,6 @@ class App extends Component {
       rentals.total = localRental.rental.total
       rentals.timestamp = localRental.rental.timestamp
       rentals.items = items
-
-      console.log(rentals)
 
       this.setState({
         rental: rentals
@@ -592,6 +589,27 @@ class App extends Component {
     }
   }
 
+  handleSnackbar = (type) => {
+    switch(type) {
+      case 'EDIT_USER_SUCCESS':
+        this.setState(({
+          snackbarOpen: true,
+          snackbarVariant: "success",
+          snackbarMessage: "Je gegevens zijn succesvol gewijzigd"
+        }))
+        break;
+      case 'EDIT_USER_ERROR':
+        this.setState(({
+          snackbarOpen: true,
+          snackbarVariant: "error",
+          snackbarMessage: "Er is een fout opgetreden bij het aanpassen van je gegevens. Probeer het later opnieuw."
+        }))
+        break;
+      default:
+        break;
+    }
+  }
+
   updateCart = (items) => {
     let total = 0
 
@@ -806,6 +824,7 @@ class App extends Component {
                     {...props}
                     user={this.state.user}
                     setUser={this.setUser}
+                    handleSnackbar={this.handleSnackbar}
                     loggedIn={this.state.loggedIn}
                 />} />
                 <Route
