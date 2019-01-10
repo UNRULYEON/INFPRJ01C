@@ -8,10 +8,11 @@ import { Query } from "react-apollo";
 import gql from "graphql-tag";
 
 
-const aantalGebruikers = gql`
-  query gebruiker($amount: Int!, $page: Int!){
-    selectAllUsers(amount: $amount, page: $page){
-      total
+const populairpainter = gql`
+  query populairpainter{
+    popularPainter{
+      principalmaker
+      amountwatched
     }
   }
 `;
@@ -60,6 +61,14 @@ const unpopulair = gql`
   }
 `;
 
+const aantalGebruikers = gql`
+  query gebruiker($amount: Int!, $page: Int!){
+    selectAllUsers(amount: $amount, page: $page){
+      total
+    }
+  }
+`;
+
 const amountRented = gql`
   query amountRentedPaintings{
     amountRentedPaintings
@@ -77,46 +86,67 @@ class Dashboard extends Component {
     return (
       <section className="dashboardSection">
         <Grid container>
-          <Grid item xs id="meestBekeken">
-            <Query query={populair} pollInterval={5000}>
+
+          <Grid container id="meestBekekenSchilder">
+            <Query query={populairpainter} pollInterval={20000}>
               {({ loading, error, data }) => {
                 if (loading) return <p>Loading...</p>;
                 if (error) return <p>Error</p>;
-
-                const rowData = (row) => [row.title, row.principalmaker, row.amountwatched]
-
+                console.log("( ͡° ͜ʖ ͡°)")
                 return (
                   <div>
-                    <Charts data={data.popularpaintings} title="title" amountwatched="amountwatched" />
+                    Top 5 populairste Schilders
+                    <Charts data={data.popularPainter} title="principalmaker" amountwatched="amountwatched" />
+                  </div>
 
-                    Top 5 meest bekeken schilderijen
+                )
+              }}
+            </Query>
+          </Grid>
+
+          <Grid container id="meestBekekenEnVerkocht">
+
+            <Grid item xs id="meestBekekenSchilderij">
+              <Query query={populair} pollInterval={5000}>
+                {({ loading, error, data }) => {
+                  if (loading) return <p>Loading...</p>;
+                  if (error) return <p>Error</p>;
+
+                  const rowData = (row) => [row.title, row.principalmaker, row.amountwatched]
+
+                  return (
+                    <div>
+                      Top 5 meest bekeken schilderijen
                     <Tables data={data.popularpaintings} renderRow={rowData} title="Title" painter="Schilder" colomnName="Aantal" />
-                  </div>
-                )
-              }}
-            </Query>
-          </Grid>
+                    </div>
+                  )
+                }}
+              </Query>
+            </Grid>
 
-          <Grid item xs id="meestVerkocht">
+            <Grid item xs={1} />
 
-            <Query query={bestSold} pollInterval={5000}>
-              {({ loading, error, data }) => {
-                if (loading) return <p>Loading...</p>;
-                if (error) return <p>Error</p>;
+            <Grid item xs id="meestVerkocht">
 
-                const rowData = (row) => [row.title, row.principalmaker, (100 - row.amountofpaintings)]
+              <Query query={bestSold} pollInterval={5000}>
+                {({ loading, error, data }) => {
+                  if (loading) return <p>Loading...</p>;
+                  if (error) return <p>Error</p>;
 
-                return (
-                  <div>
-                    Top 5 meest verkochte artikelen
+                  const rowData = (row) => [row.title, row.principalmaker, (100 - row.amountofpaintings)]
+
+                  return (
+                    <div>
+                      Top 5 meest verkochte artikelen
                     <Tables data={data.bestsellingpaintings} renderRow={rowData} title="Title" painter="Schilder" colomnName="Aantal" />
-                  </div>
-                )
-              }}
-            </Query>
+                    </div>
+                  )
+                }}
+              </Query>
 
+            </Grid>
           </Grid>
-
+          
           <Grid container id="minstBekekenEnVerkocht">
 
             <Grid item xs id="minstBekeken">

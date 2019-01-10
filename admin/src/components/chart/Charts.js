@@ -19,7 +19,7 @@ class Chart extends Component {
           <YAxis stroke='white' />
           <Tooltip wrapperStyle={{ backgroundColor: 'white', color: 'black' }} />
           <Legend />
-          <Line type="monotone" name="aantal" dataKey={this.props.amountwatched} stroke="black" />
+          <Line type="monotone" name="Aantal" dataKey={this.props.amountwatched} stroke="black" />
         </LineChart>
       </div>
     )

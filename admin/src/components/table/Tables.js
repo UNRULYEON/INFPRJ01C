@@ -57,13 +57,8 @@ class Tables extends Component {
               {
                 this.props.data.map(row => (
                   <TableRow>
-                     {this.props.renderRow(row).map(q=><TableCell>{q}</TableCell>)}
-                     {/*
-                    <TableCell component="th" scope="row">{row.title}</TableCell>
-                    <TableCell component="th" scope="row">{row.painter}</TableCell>
-                    <TableCell component="th" scope="row">{row.body}</TableCell>
-                     */}
-                    </TableRow>
+                    {this.props.renderRow(row).map(q => <TableCell>{q}</TableCell>)}
+                  </TableRow>
                 ))
               }
             </TableBody>
