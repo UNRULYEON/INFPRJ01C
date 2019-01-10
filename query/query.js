@@ -37,36 +37,34 @@ var root = {
     // select all paintings
     let query = await db.manyOrNone(`SELECT * FROM schilderijen ORDER BY amountwatched`)
     // count the total amount of views, where the painter is the same
-    // return the top 5
     let retType = []
-    console.log("Starting")
+    console.log("\nStarting")
     for (let i = 0; i < query.length; i++) {
-      console.log(i)
       const elementI = query[i];
       let contains = false
       for (let j = 0; j < retType.length; j++) {
-        console.log(j, i)
         const elementJ = retType[j].principalmaker;
-        console.log(elementJ, elementI.principalmaker)
-        if(elementJ.principalmaker == elementI.principalmaker){
+        if(elementI.principalmaker == elementJ){
           contains = true
-          return
+          retType[j].amountwatched += elementI.amountwatched
+          break
         }
       }
-      if (contains) {
-        console.log(elementI.principalmaker, "already exists")
-      } else {
-        // console.log("doesn't yet exist")
-        // console.log(retType)
+      if (!contains) {
         retType.push({
           amountwatched: elementI.amountwatched,
           principalmaker: elementI.principalmaker
         })
-        // console.log(element.principalmaker, element.amountwatched)
-
       }
     }
-    return query
+    // return the top 5
+    retType.sort((a,b) => parseFloat(b.amountwatched - a.amountwatched))
+    // retType.sort(function(a,b){return b-a})
+    // console.log(retType)
+    retType.length = 5
+    console.log(retType)
+
+    return retType
   },
   unpopularpaintings: () => {
     let query = 'SELECT * from schilderijen ORDER BY amountwatched ASC LIMIT 5'
