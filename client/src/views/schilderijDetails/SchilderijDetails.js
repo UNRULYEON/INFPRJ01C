@@ -135,6 +135,8 @@ class SchilderijDetails extends Component {
 												const height = data.paintingByID[0].height
 												const price = data.paintingByID[0].price
 												const amount = 1
+												const priceWithDays = data.paintingByID[0].price
+												const days = 1
 												const startDate = new Date()
 												let endDate = new Date()
 												endDate.setDate(endDate.getDate() + 1)
@@ -148,6 +150,8 @@ class SchilderijDetails extends Component {
 													height,
 													price,
 													amount,
+													priceWithDays,
+													days,
 													startDate,
 													endDate
 												}

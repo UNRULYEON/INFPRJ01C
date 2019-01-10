@@ -58,6 +58,19 @@ class ListAccordion extends Component {
     }))
   }
 
+  CalcPrice = (start, stop, price) => {
+    let one_day = 1000 * 60 * 60 * 24
+    let startDate = new Date(start).getTime();
+    let endDate = new Date(stop).getTime();
+
+    let diff_ms = endDate - startDate
+    let diff = Math.round(diff_ms/one_day)
+
+    let priceCalc = (price * diff) / 20
+
+    return priceCalc
+  }
+
   render() {
 
     return (
@@ -103,7 +116,7 @@ class ListAccordion extends Component {
                               ) : null}
                               <div className="draggable-price">
                                 <Currency
-                                  quantity={data.paintingByID[0].price}
+                                  quantity={this.props.rental ? this.CalcPrice(item.rentstart, item.rentstop, data.paintingByID[0].price) : data.paintingByID[0].price}
                                   symbol="€ "
                                   decimal=","
                                   group="."
@@ -119,7 +132,7 @@ class ListAccordion extends Component {
                     Totaal:
                     <Currency
                       className="list-acc-total"
-                      quantity={order.total}
+                      quantity={this.props.rental ? order.total / 20 : order.total}
                       symbol=" € "
                       decimal=","
                       group="."

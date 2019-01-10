@@ -138,6 +138,7 @@ class Cart extends Component {
 
 	componentDidMount = () => {
 		this.props.order.items.length >= 1 || this.props.rental.items.length >= 1 ? this.setState({ buttonDisabledState: false }) : this.setState({ buttonDisabledState: true })
+		// this.getRentalPrice()
 	}
 
 	onDragEnd = (result) => {
@@ -290,27 +291,41 @@ class Cart extends Component {
 		for (let i = 0; i < this.state.rental.length; i++) {
 			if (this.state.rental[i].id === id) {
 				let newItem = this.state.rental[i]
-				console.log(newItem.startDate)
-				console.log(newItem.endDate)
-				console.log(date)
-				let start = DateTime.fromISO(newItem.startDate)
-				let end = DateTime.fromISO(newItem.endDate)
-				let diff = end.diff(start, 'days')
-				diff = diff.toObject()
-				console.log(`${start}, ${end}`)
-				console.log(`${diff.days}`)
+				console.log(`Item start date: ${newItem.startDate}`)
+				console.log(`Item end date: ${newItem.endDate}`)
+				console.log(`Date provided: ${date}`)
+				console.log(newItem)
+
+				let one_day = 1000 * 60 * 60 * 24
+				let startDate = newItem.startDate.getTime();
+				let endDate = newItem.endDate.getTime();
+				let dateProv = date.getTime();
+
 				switch (type) {
 					case 'startDate':
+						let diff_ms_start = endDate - dateProv
+						let diff_start = Math.round(diff_ms_start/one_day)
+						console.log(`Diff when start is changed: ${diff_start} days`)
 						newItem.startDate = date
+						newItem.days = diff_start
+						newItem.priceWithDays = newItem.price * diff_start
 						break;
 					case 'endDate':
+						let diff_ms_end = dateProv - startDate
+						let diff_end = Math.round(diff_ms_end/one_day)
+						console.log(`Diff when end is changed: ${diff_end} days`)
 						newItem.endDate = date
+						newItem.days = diff_end
+						newItem.priceWithDays = newItem.price * diff_end
 						break;
 					default:
 						break;
 				}
+				console.log(`pushing:`)
 				newArr.push(newItem)
 			} else {
+				console.log(`pushing:`)
+				console.log(this.state.rental[i])
 				newArr.push(this.state.rental[i])
 			}
 		}
@@ -574,12 +589,13 @@ class Cart extends Component {
 																		</Button>
 																	</Tooltip>
 																	<div className="picker">
-      															<MuiPickersUtilsProvider utils={LuxonUtils}>
+      															<MuiPickersUtilsProvider utils={DateFnsUtils}>
 																			<DatePicker
 																				label="Startdatum"
 																				todayLabel="Vandaag"
 																				cancelLabel="Annuleren"
 																				format="dd-MM-yyyy"
+																				maxDate={item.endDate}
 																				disablePast
 																				showTodayButton
 																				maxDateMessage="Date must be less than today"
@@ -607,12 +623,13 @@ class Cart extends Component {
 																		</Button>
 																	</Tooltip>
 																	<div className="picker">
-      															<MuiPickersUtilsProvider utils={LuxonUtils}>
+      															<MuiPickersUtilsProvider utils={DateFnsUtils}>
 																			<DatePicker
 																				label="Einddatum"
 																				todayLabel="Vandaag"
 																				cancelLabel="Annuleren"
 																				format="dd-MM-yyyy"
+																				minDate={item.startDate}
 																				disablePast
 																				showTodayButton
 																				maxDateMessage="Date must be less than today"
@@ -666,7 +683,7 @@ class Cart extends Component {
 													</div>
 													<div className="draggable-price">
 														<Currency
-															quantity={(item.price * item.amount) / 20}
+															quantity={(item.priceWithDays * item.amount) / 20}
 															symbol="€ "
 															decimal=","
 															group="."

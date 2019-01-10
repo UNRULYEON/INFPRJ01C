@@ -23,7 +23,7 @@ class CartList extends Component {
               <div className="cart-item-price">
                 <p>
                   <Currency
-                    quantity={item.price * item.amount}
+                    quantity={this.props.rental ? item.priceWithDays / 20 : item.price}
                     symbol="€ "
                     decimal=","
                     group="."

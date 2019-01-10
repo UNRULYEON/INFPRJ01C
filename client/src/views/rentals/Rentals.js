@@ -67,7 +67,7 @@ class Rentals extends Component {
               if (loading) return <p>Loading... :)</p>;
               if (error) return <p>Error :(</p>;
               return (
-                <ListAccordion data={data.rentalListSelect} />
+                <ListAccordion data={data.rentalListSelect} rental={true} />
               )
             }}
           </Query>

@@ -79,6 +79,7 @@ class CartMenu extends Component {
           {this.props.rental.items.length ? (
             <CartList
               list={this.props.rental}
+              rental={true}
               closeModal={this.props.closeModal}
               />
           ) : (
