@@ -273,17 +273,19 @@ class Details extends Component {
                   onCompleted={(data) => {
                     console.log(`Query complete: ${data}`)
                     let user = {
-                      id: this.state.userID,
+                      id: this.props.user.id,
                       name: this.state.name,
                       surname: this.state.surname,
                       aanhef: this.state.aanhef,
-                      mail: this.state.mail,
-                      adres: this.state.adres,
+                      email: this.state.mail,
+                      address: this.state.adres,
                       housenumber: this.state.housenumber,
                       postalcode: this.state.postalcode,
                       city: this.state.city,
                       paymentmethod: this.state.paymentmethod,
                     }
+                    console.log(`QUERY COMPLETED`)
+                    console.log(user)
                     this.props.setUser(user, true)
                     this.props.handleSnackbar('EDIT_USER_SUCCESS')
                   }}
