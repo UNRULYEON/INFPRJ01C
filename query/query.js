@@ -38,7 +38,6 @@ var root = {
     let query = await db.manyOrNone(`SELECT * FROM schilderijen ORDER BY amountwatched`)
     // count the total amount of views, where the painter is the same
     let retType = []
-    console.log("\nStarting")
     for (let i = 0; i < query.length; i++) {
       const elementI = query[i];
       let contains = false
