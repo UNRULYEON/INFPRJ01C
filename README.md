@@ -33,7 +33,7 @@ As for the admin panel:
 * Add / alter / remove products
 * Add / alter / remove users
 
-Screenshots of the webshop can be found [here](https://github.com/UNRULYEON/INFPRJ01C/tree/master/screenshots/client/png) ([ZIP](https://github.com/UNRULYEON/INFPRJ01C/blob/master/screenshots/client/png/artic.zip)) and of the admin panel [here](https://github.com/UNRULYEON/INFPRJ01C/tree/master/screenshots/admin/png) ([ZIP](https://github.com/UNRULYEON/INFPRJ01C/blob/master/screenshots/admin/png/artic.zip))
+Screenshots of the webshop can be found [here](https://github.com/UNRULYEON/INFPRJ01C/tree/master/screenshots/client/png) ([ZIP](https://github.com/UNRULYEON/INFPRJ01C/raw/master/screenshots/client/png/artic.zip)) and of the admin panel [here](https://github.com/UNRULYEON/INFPRJ01C/tree/master/screenshots/admin/png) ([ZIP](https://github.com/UNRULYEON/INFPRJ01C/raw/master/screenshots/admin/png/artic.zip))
 
 ## Getting Started
 
