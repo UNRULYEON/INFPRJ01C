@@ -35,6 +35,12 @@ As for the admin panel:
 
 Screenshots of the webshop can be found [here](https://github.com/UNRULYEON/INFPRJ01C/tree/master/screenshots/client/png) ([ZIP](https://github.com/UNRULYEON/INFPRJ01C/raw/master/screenshots/client/png/artic.zip)) and of the admin panel [here](https://github.com/UNRULYEON/INFPRJ01C/tree/master/screenshots/admin/png) ([ZIP](https://github.com/UNRULYEON/INFPRJ01C/raw/master/screenshots/admin/png/artic.zip))
 
+## Live demo
+
+- Website: [http://project-c.demo.amar.sh](http://project-c.demo.amar.sh)
+- Admin: [http://project-c.demo.amar.sh/admin](http://project-c.demo.amar.sh/admin)
+- GraphQL endpoint: [http://project-c.demo.amar.sh/graphql](http://project-c.demo.amar.sh/grahpql)
+
 ## Getting Started
 
 ### Prerequisites
